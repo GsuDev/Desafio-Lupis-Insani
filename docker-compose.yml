@@ -1,0 +1,55 @@
+services:
+  # 🐘 Backend (Laravel + PHP)
+  laravel:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: laravel-app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/var/www/html
+    depends_on:
+      - mariadb
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=mariadb
+      - DB_PORT=3306
+      - DB_DATABASE=laravel
+      - DB_USERNAME=laravel
+      - DB_PASSWORD=secret
+    command: >
+      sh -c "composer install --no-interaction --prefer-dist &&
+           php artisan key:generate &&
+           php artisan migrate --force &&
+           php artisan serve --host=0.0.0.0 --port=8000"
+  # 🛢️ Base de datos MariaDB
+  mariadb:
+    image: mariadb:11
+    container_name: mariadb
+    restart: always
+    environment:
+      - MARIADB_ROOT_PASSWORD=root
+      - MARIADB_DATABASE=laravel
+      - MARIADB_USER=laravel
+      - MARIADB_PASSWORD=secret
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+  # ⚡ Frontend con Node + Vite
+  node:
+    image: node:22
+    container_name: vite-client
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "5173:5173"
+    command: sh -c "npm install && npm run dev"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+
+volumes:
+  mariadb_data:

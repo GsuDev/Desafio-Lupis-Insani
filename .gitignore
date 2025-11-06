@@ -1,0 +1,58 @@
+# ========================================
+# 🐘 Laravel (backend)
+# ========================================
+/backend/vendor/
+backend/.env.backup
+backend/.phpunit.result.cache
+backend/storage/*
+!backend/storage/app/
+!backend/storage/framework/
+!backend/storage/logs/
+backend/storage/framework/cache/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+backend/storage/logs/*
+backend/public/storage
+
+# Composer
+backend/composer.lock
+
+# ========================================
+# ⚡ Node / Vite (frontend)
+# ========================================
+/frontend/node_modules/
+/frontend/dist/
+/frontend/.vite/
+
+# Logs y cache
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+
+# ========================================
+# 🐋 Docker y sistema
+# ========================================
+.docker/
+docker-compose.override.yml
+*.pid
+*.seed
+*.pid.lock
+
+# ========================================
+# 🧰 Sistema y editor
+# ========================================
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# ========================================
+# 🔐 Otros
+# ========================================
+*.key
