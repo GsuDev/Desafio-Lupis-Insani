@@ -8,9 +8,7 @@ backend/storage/*
 !backend/storage/app/
 !backend/storage/framework/
 !backend/storage/logs/
-backend/storage/framework/cache/*
-backend/storage/framework/sessions/*
-backend/storage/framework/views/*
+backend/storage/framework/*
 backend/storage/logs/*
 backend/public/storage
 
@@ -45,7 +43,6 @@ docker-compose.override.yml
 .DS_Store
 Thumbs.db
 .idea/
-.vscode/
 *.log
 *.tmp
 *.bak
