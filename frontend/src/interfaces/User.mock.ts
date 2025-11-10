@@ -22,7 +22,7 @@ export interface RegisterData {
     email:string;
     password:string;
     password_confirmation:string;
-    birthdat:string;
+    birthday:string;
     profile_url?:string; //opcional
 
 }

@@ -26,7 +26,7 @@ export const initController = (
 // La función principal que el formulario llamará al hacer Submit
 // Usamos 'async' porque llamaremos a una Promesa (el Provider)
 export const handleRegister = async(data:RegisterData) => {
-    clearValidationErrors(); //paso1: limpia errores anteriores (llama a la vista)
+    clearValidationErrors(); // limpia errores anteriores (llama a la vista)
     disableForm(true); //Desactuva el formulario mientras trabaja (llama a la vista)
     //Validación Visual/Frontend (HU4 Requisito: validaciones visuales)
     let hasError = false;
