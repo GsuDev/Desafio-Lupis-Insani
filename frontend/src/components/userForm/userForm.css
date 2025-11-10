@@ -1,0 +1,194 @@
+/* * userForm.css
+ * NOTA: Estas variables son locales ("guarripei") como hemos hablado.
+ * Más adelante, se moverán a un archivo global.
+ * Colores tomados de la Guía de Estilos .
+ */
+
+ @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;700&family=Lato:wght@400;700&display=swap');
+
+ :root {
+    --color-noche: #1a1a2e;    
+  --color-sombra: #2a2a4e;   
+  --color-hueso: #e0e0e0;    
+  --color-sangre: #9b2226;   
+  --color-luna: #fca311;     
+  
+  
+  --font-titulo: 'Crimson Text', serif; 
+  --font-cuerpo: 'Lato', sans-serif;    
+ }
+
+ /*Estilos del componente*/
+ /*El contenedor que creamos en el TS (#register-container)
+ * Lo usamos para centrar el formulario en la pantalla
+ */
+
+ #register-container{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; 
+    background-color: var(--color-noche);
+    font-family: var(--font-cuerpo);
+    color: var(--color-hueso);
+
+ }
+
+ /* * La tarjeta (card) que envuelve el formulario.
+ */
+
+ .card {
+  background-color: var(--color-sombra);
+  padding: 1.5rem 1.25rem; /* menos padding horizontal y vertical más compacto */
+  border-radius: 10px;
+  width: 100%;
+  max-width: 450px; 
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255,255,255,0.03);
+}
+
+
+#registration-form{
+  display:flex;
+  flex-direction: column;
+  gap: 1.25rem; /* un poco más de espacio entre secciones para mejor lectura */
+  position: relative; /* para posicionar los mensajes globales sin romper el flujo */
+  padding-top: 56px; /* deja espacio reservado para el mensaje global */
+}
+
+
+/*
+*Estilos para Grupos de inputs
+*/
+.input-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.input-group label {
+  margin-bottom: 0.35rem; 
+  font-weight: bold;
+  font-family: var(--font-titulo); 
+  color: var(--color-hueso);
+  font-size: 0.95rem;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-hueso);
+  border-radius: 4px;
+  background-color: var(--color-noche); 
+  color: var(--color-hueso); 
+  font-family: var(--font-cuerpo);
+  font-size: 0.85rem;
+  height: 40px; /* tamaño consistente */
+  box-sizing: border-box;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: var(--color-luna);
+  box-shadow: 0 0 0 2px rgba(252, 163, 17, 0.2);
+}
+
+.row-group {
+  display: flex;
+  gap: 0.9rem; /* separación ligeramente mayor para que no se peguen los inputs */
+}
+
+/* * Hacemos que los .input-group dentro de una fila
+ * compartan el espacio (ocupen el 50% cada uno)
+ */
+.row-group > .input-group {
+  flex: 1; /* Esto hace que ambos crezcan por igual */
+}
+
+/* Asegurar que inputs en fila no se sobrepongan en tamaño reducido */
+.row-group > .input-group { min-width: 0; }
+
+/* Separadores visuales entre secciones */
+.input-group + .input-group,
+.row-group + .row-group {
+  margin-top: 0.25rem;
+}
+
+/*Estilos para botonos y mensajes*/
+#submit-button {
+  display: block;
+  margin: 1.6rem auto 0 auto;
+  width: 180px;
+  padding: 0.6rem 1.25rem;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--color-luna); 
+  color: var(--color-noche); 
+  font-family: var(--font-titulo);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.16s ease, background-color 0.16s ease, box-shadow 0.16s ease;
+  box-shadow: 0 6px 14px rgba(252,163,17,0.12);
+}
+
+#submit-button:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 10px 20px rgba(252,163,17,0.16);
+}
+
+#submit-button:disabled {
+  background-color: #ccc; /* Color gris si está desactivado */
+  cursor: not-allowed;
+  transform: none;
+}
+
+/*Estilos para mensajes(Error/Exito)*/
+.error-message{
+  color:var(--color-sangre);
+  font-size: 0.8rem;
+  margin-top: 0.28rem;
+  min-height: 1rem;
+  line-height: 1rem;
+}
+
+.global-message{
+    position: absolute;
+    top: 8px;
+    left: 0;
+    right: 0;
+    margin: 0; /* evita cambios de layout */
+    font-size: 0.9rem;
+    padding: 0.6rem 0.8rem;
+    border-radius: 6px;
+    text-align: center;
+    visibility: hidden; /* reserva el espacio pero oculta visualmente */
+    opacity: 0;
+    transition: opacity 0.16s ease, visibility 0.16s ease;
+}
+
+/* Si tienen texto, se muestran sin desplazar el resto del formulario */
+.global-message:not(:empty) {
+  visibility: visible;
+  opacity: 1;
+}
+
+.global-message.success {
+  background-color: var(--color-bosque); 
+  color: var(--color-hueso);
+}
+
+.global-message.error {
+  background-color: var(--color-sangre); 
+  color: var(--color-hueso);
+}
+
+
+
+
+
+
+
+
+
+

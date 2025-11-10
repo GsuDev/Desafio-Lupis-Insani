@@ -1,3 +1,4 @@
+import './userForm.css';
 import { handleRegister,initController } from "../../controllers/usersController";
 import type { RegisterData } from "../../interfaces/User.mock";
 
@@ -91,20 +92,37 @@ export const renderUserForm = (appContainer: HTMLDivElement) => {
     //añadimos los inputs
     const nicknameGroup = createInputGroup('nickname','Nickname','text','nickname');
     form.appendChild(nicknameGroup)
+
+    const rowNombre = document.createElement('div');
+    rowNombre.className = 'row-group';
+
     const nameGroup = createInputGroup('name','Nombre','text','name');
-    form.appendChild(nameGroup);
     const lastnameGroup = createInputGroup('lastname', 'Apellidos', 'text','lastname');
-    form.appendChild(lastnameGroup);
+
+    rowNombre.appendChild(nameGroup);
+    rowNombre.appendChild(lastnameGroup);
+    form.appendChild(rowNombre);
+    
+
     const emailGroup = createInputGroup('email','correo Electrónico','email','email');
     form.appendChild(emailGroup);
+
+    const rowPassword = document.createElement('div');
+    rowPassword.className = 'row-group';
+
     const passwordGroup = createInputGroup('password','Contraseña','password','password');
-    form.appendChild(passwordGroup);
     const passwordConfGroup = createInputGroup('password_confirmation', 'Repite Contraseña', 'password', 'password_confirmation');
-    form.appendChild(passwordConfGroup);
+    
+    rowPassword.appendChild(passwordGroup);
+    rowPassword.appendChild(passwordConfGroup);
+    form.appendChild(rowPassword);
+
     const birthdayGroup = createInputGroup('birthday', 'Fecha de Nacimiento', 'date', 'birthday', false); // false = no requerido
     form.appendChild(birthdayGroup);
+
     const profileUrlGroup = createInputGroup('profile_url', 'Foto de Perfil (URL)', 'url', 'profile_url', false); // false = no requerido
     form.appendChild(profileUrlGroup);
+
     // (Añadiremos los inputs en el siguiente bloque)
     form.appendChild(submitButton);
 
