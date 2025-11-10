@@ -21,6 +21,7 @@ backend/composer.lock
 /frontend/node_modules/
 /frontend/dist/
 /frontend/.vite/
+/frontend/package-lock.json
 
 # Logs y cache
 frontend/npm-debug.log*
