@@ -1,0 +1,19 @@
+includes:
+    - ./vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app
+        - database
+        - routes
+        - tests
+    level: 7
+
+    # Ignora algunos falsos positivos comunes en Laravel
+    ignoreErrors:
+        - '#Model does not accept property#'
+        - '#Call to an undefined method Illuminate\\Support\\Collection#'
+
+    # Opcional: mejora rendimiento
+    tmpDir: storage/framework/phpstan
+    reportUnmatchedIgnoredErrors: false

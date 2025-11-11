@@ -1,0 +1,14 @@
+{
+  // PHPStan / Larastan
+  "phpstan.enabled": true,
+  "phpstan.path": "docker exec laravel-app vendor/bin/phpstan",
+  "phpstan.configuration": "phpstan.neon",
+  "phpstan.memoryLimit": "-1",
+  "phpstan.containerPath": "/var/www/html",
+  "phpstan.dockerContainer": "laravel-app",
+  "files.exclude": {
+    "**/.git": false
+  }
+,
+"editor.tabSize": 4
+}
