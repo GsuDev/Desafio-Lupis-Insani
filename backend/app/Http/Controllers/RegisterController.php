@@ -39,11 +39,24 @@ class RegisterController extends Controller
 
       ];
 
+      //esto se descomentará cuando el Modelo user esté listo, es solo para prueba
+
+      /*
+      $user = User::create($userData);
+
+      $token = $user->createToken('auth_token')->plainTextToken;
+
+      return response()->json([
+        'user' => $user,
+        'token' => $token,
+        'message' => 'Usuario registrado con exito'
+      ]);
+      */
+
+
+
     
-        return response()->json([
-            'message' => 'Validación superada , Lógica de creación pendiente',
-            'datos_preparados' => $userData // se devuelve esto para depurar
-        ],200);
+       
     }
     
 }
