@@ -4,17 +4,16 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('mensajes', function (Blueprint $table) {
+        Schema::create('messages', function (Blueprint $table) {
             $table->id();
-            $table->string('cotenido');
-            $table->foreignId('partida_id')->index()->references('id')->on('partidas')->onDelete('cascade');
+            $table->string('cotent');
+            $table->foreignId('game_id')->index()->references('id')->on('games')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -24,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('mensajes');
+        Schema::dropIfExists('messages');
     }
 };

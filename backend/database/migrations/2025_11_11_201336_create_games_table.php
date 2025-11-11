@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('partidas', function (Blueprint $table) {
+        Schema::create('games', function (Blueprint $table) {
             $table->id()->unique();
-            $table->boolean('finalizada')->default(false);
-            $table->string('url');
+            $table->boolean('ended')->default(false);
+            $table->string('url')->nullable();
             $table->softDeletes();
             $table->timestamps();
 
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('partidas');
+        Schema::dropIfExists('ended');
     }
 };
