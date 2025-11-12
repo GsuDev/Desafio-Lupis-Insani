@@ -12,70 +12,40 @@ class Message extends Model
 
 
     protected $fillable = [
-        'content',
+        'type',
+        'user_id',
+        'message',
         'game_id',
+        'created_at',
     ];
     protected $hidden = [
-        'created_at',
         'updated_at',
     ];
-
-    protected $appends = ['time', 'type', 'user', 'message'];
-
 
     public function game()
     {
         return $this->belongsTo(Game::class, 'game_id');
     }
-
-
-    public function getTimeAttribute()
+    public function user()
     {
-        return $this->parseContent()['time'] ?? '';
+        return $this->belongsTo(User::class, 'user_id')->withDefault([
+            'name'=> 'Anónimo',
+        ]);// con esto controlo que sea un usuario anonimo
+
     }
 
-    public function getTypeAttribute()
-    {
-        return $this->parseContent()['type'] ?? '';
-    }
-
-    public function getUserAttribute()
-    {
-        return $this->parseContent()['user'] ?? '';
-    }
-
-    public function getMessageAttribute()
-    {
-        return $this->parseContent()['message'] ?? '';
-    }
-    private function parseContent()
-    {
-        if (empty($this->content)) {
-            return [];
-        }
-
-        $parts = explode('-', $this->content, 4);
-
-        return [
-            'time' => $parts[0] ?? '',
-            'type' => $parts[1] ?? '',
-            'user' => $parts[2] ?? '',
-            'message' => $parts[3] ?? $this->content,
-        ];
-
-
-    }
 
     //Crea un mensaje formateado
-    public static function createFormattedMessage(
-        string $time,
+    public static function createMessage(
         string $type,
-        string $user,
+        ?int $userID, // como es nullable
         string $message,
         int $gameId
     ) {
         return self::create([
-            'content' => "{$time}-{$type}-{$user}-{$message}",
+            'type' => $type,
+            'user_id' => $userID,
+            'message' => $message,
             'game_id' => $gameId
         ]);
     }
@@ -84,11 +54,10 @@ class Message extends Model
     public function toStructured()
     {
         return [
-            'time' => $this->time,
+            'time' => $this->created_at,
             'type' => $this->type,
-            'user' => $this->user,
+            'user' => $this->user->name,
             'message' => $this->message,
-            'timestamp' => $this->created_at
         ];
     }
 }

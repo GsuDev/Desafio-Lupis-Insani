@@ -12,8 +12,11 @@ return new class extends Migration {
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
-            $table->string('cotent');
+            $table->string('type');
+            $table->foreignId('user_id')->index()->references('id')->on('users')->onDelete('set null')->nullable();
+            $table->string('message');
             $table->foreignId('game_id')->index()->references('id')->on('games')->onDelete('cascade');
+
             $table->timestamps();
         });
     }

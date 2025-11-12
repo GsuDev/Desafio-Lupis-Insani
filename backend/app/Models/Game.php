@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Game extends Model
 {
@@ -31,27 +32,38 @@ class Game extends Model
     {
         return $this->belongsToMany(
             User::class,
-            'stadistics',
+            'game_participants',
             'game_id',
             'user_id');
     }
 
     // Sobre todo como admin o para debuggar, mostrar los mensajes en una partida
-/*    public function getStatisticsChat()
-    {
-        $messages = $this->messages;
+    public function getDetailedStatistics(){
+        $this->loadCount('messages');
+
+        $uniqueUsersCount= $this->messages()//cuenta los usuarios unicos registrados en la partida
+            ->whereNotNull('user_id')
+            ->distinct('user_id')
+            ->count('user_id');
+
+        $messageTypes = $this->messages()
+            ->groupBy('type')
+            ->select('type', DB::raw('COUNT(*) as total'))
+            ->get()
+            ->pluck('total','type'); //Ej: ['INFO' => 50, 'CHAT' => 70]
+
         return [
-            'total_messages' => $messages->count(),
-            'unique_users' => $messages->unique('user')->count(),//solo cuenta anonimo 1 vez tal y como lo tenemos planteado
-            'message_type' => $messages->groupBy('type')->map->count(),
+            'total_messages' => $this->messages_count,
+            'unique_users' => $uniqueUsersCount,
+            'message_types' => $messageTypes,
         ];
+
+
     }
-*/
-    //no se si es correcto hacerlo aquí
-    public function addMessage(string $type, string $user, string $message)
+
+    public function addMessage(string $type, ?int $userID, string $message)
     {
-        $time = now()->format('Y/m/d|H:i:s');// se puede cambiar a un metodo que le guste al equipo
-        return Message::createFormattedMessage($time, $type, $user, $message, $this->id);
+        return Message::createMessage($type, $userID, $message, $this->id);
     }
     public function getStructuredMessages()
     {
