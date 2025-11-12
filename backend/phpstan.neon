@@ -16,6 +16,8 @@ parameters:
         - '#Missing typehint for iterable item#'
         - message: "#Relation '.*' is not found in.*#"
         
+        
     # Opcional: mejora rendimiento
     tmpDir: storage/framework/phpstan
     reportUnmatchedIgnoredErrors: false
+    treatPhpDocTypesAsCertain: false

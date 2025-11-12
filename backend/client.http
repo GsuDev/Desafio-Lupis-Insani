@@ -23,7 +23,7 @@ Content-Type: application/json
 
 ### Logout (necesita token)
 POST http://localhost:8000/api/logout
-Authorization: Bearer 2|qa9PnlQrujyfLd3NsqkSbpAXPWyWP5PVnlhgAsZa7b7c52c1
+Authorization: Bearer 1|QhUo6PyGuvM6wgWoz8M0IUvBRwkILnYEYKFzGAh3a7a4e2fc
 ### Guardar token que devuelve el login (copia lo que te devuelva)
 # token: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsInR...
 

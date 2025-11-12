@@ -9,6 +9,9 @@ Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logo
 
 Route::post('/users', [UserController::class, 'store']); // registro público
 
+Route::middleware('auth:sanctum')->get('/user', [UserController::class, 'showItself']);
+
+// Endpoints /users protegidos
 Route::middleware('auth:sanctum')->group(function () {
 
     // Listado → solo tokens con ability 'list-users'

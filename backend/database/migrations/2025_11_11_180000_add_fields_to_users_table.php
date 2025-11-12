@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('nickname')->after('name');
             $table->string('lastname')->after('nickname');
             $table->date('birthdate')->after('email');
-            $table->string('profile_image_url')->nullable()->after('password');
+            $table->string('profile_url')->nullable()->after('password');
         });
     }
 

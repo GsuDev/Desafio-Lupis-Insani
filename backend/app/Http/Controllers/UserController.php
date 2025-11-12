@@ -24,7 +24,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8',
             'birthdate' => 'required|date',
-            'profile_image_url' => 'nullable|string',
+            'profile_url' => 'nullable|string',
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
@@ -33,7 +33,7 @@ class UserController extends Controller
         try {
             $user->roles()->attach(2);
         } catch (Exception) {
-            return response()->json(['error' => 'No hay roles para asignar'], 500);
+            return response()->json(['message' => 'No hay roles para asignar'], 500);
         }
 
         return response()->json($user->load('roles'), 201);
@@ -42,6 +42,18 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::with('roles')->findOrFail($id);
+
+        if (!$user) {
+            return response()->json($user);
+        }
+
+        return response()->json($user);
+    }
+
+    // Método para obtener el usuario de quien lo solicita
+    public function showItself(Request $request)
+    {
+        $user = $request->user();
 
         return response()->json($user);
     }
@@ -88,9 +100,11 @@ class UserController extends Controller
         try {
             $user->roles()->attach($validated['roles']);
         } catch (Exception) {
-            return response()->json(['error' => 'No se ha podido añadir el rol'], 304);
+            return response()->json(["success" => false,'message' => 'No se ha podido añadir el rol'], 304);
         }
 
         return response()->json($user->load('roles'));
     }
+
+    
 }
