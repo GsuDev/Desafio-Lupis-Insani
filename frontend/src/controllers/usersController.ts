@@ -1,9 +1,8 @@
 import { registerUser } from "../providers/userProvider";
 import type {RegisterData} from "../interfaces/User.mock";
 
-// CALLBACKS: Funciones que la Vista (el DOM) le pasa al Controller para mostrar resultados
-// NOTA: Declaramos variables globales para que la Vista las inicialice
-// [HU4 Requisito: Mostrar mensajes de error/éxito]
+// Declaramos variables globales para que la Vista las inicialice
+
 
 let showValidationError: (field:string,message:string) => void;
 let clearValidationErrors: () => void;
@@ -28,7 +27,6 @@ export const initController = (
 export const handleRegister = async(formData:FormData) => {
     clearValidationErrors(); // limpia errores anteriores (llama a la vista)
     disableForm(true); //Desactuva el formulario mientras trabaja (llama a la vista)
-    //Validación Visual/Frontend (HU4 Requisito: validaciones visuales)
     const data: RegisterData = {
         nickname:formData.get('nickname') as string,
         name: formData.get('name') as string,
@@ -36,7 +34,7 @@ export const handleRegister = async(formData:FormData) => {
         email: formData.get('email') as string,
         password: formData.get('password') as string,
         password_confirmation: formData.get('password_confirmation') as string,
-        birthday: formData.get('birthday') as string,
+        birthdate: formData.get('birthdate') as string,
     };
     let hasError = false;
     if (data.password !== data.password_confirmation) {
@@ -62,25 +60,19 @@ export const handleRegister = async(formData:FormData) => {
 
     try {
         // Llama al Provider (el Mensajero) y espera (await) la respuesta
-        console.log('CONTROLLER: Llamando al Provider...');
         const authResponse = await registerUser(formData); // El 'await' espera que la Promesa se resuelva
 
-        //  Éxito: El registro fue exitoso
-        console.log('CONTROLLER: Registro exitoso. Token:', authResponse.token);
-        showGlobalMessage('¡Registro Exitoso! Redirigiendo...', true); // Muestra éxito
+       localStorage.setItem('auth_token',authResponse.token);
+        showGlobalMessage('¡Registro Exitoso! Redirigiendo...', true);
+        //Aqui iria la redireccion a la pantalla del perfil del usuario o del lobby
+        //o donde se diriga despues
         
-        // Aquí se guardaría el token en localStorage y se redirigiría
 
     } catch (error: any) {
-        //  Error: Si la Promesa falla (error del Mock/Servidor)
-        console.error('CONTROLLER: Error durante el registro:', error);
         
-        // Asumiendo que el error del servidor es el que devuelve el Provider Mock.
         showGlobalMessage(`Error: ${error.message || 'Error desconocido del servidor.'}`, false); 
-
-    } finally {
-        // Se ejecuta siempre, haya éxito o error
         disableForm(false);
+
     }
 
 };
