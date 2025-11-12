@@ -1,194 +1,294 @@
-/* * userForm.css
- * NOTA: Estas variables son locales ("guarripei") como hemos hablado.
- * Más adelante, se moverán a un archivo global.
- * Colores tomados de la Guía de Estilos .
- */
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;700&family=Lato:wght@400;700&display=swap');
 
- @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;700&family=Lato:wght@400;700&display=swap');
+:root {
+    --color-noche: #1a1a2e;
+    --color-sombra: #2a2a4e;
+    --color-hueso: #e0e0e0;
+    --color-sangre: #9b2226;
+    --color-luna: #fca311;
+    --color-verde: #7dd3c0;
+    
+    --font-titulo: 'Crimson Text', serif;
+    --font-cuerpo: 'Lato', sans-serif;
+}
 
- :root {
-    --color-noche: #1a1a2e;    
-  --color-sombra: #2a2a4e;   
-  --color-hueso: #e0e0e0;    
-  --color-sangre: #9b2226;   
-  --color-luna: #fca311;     
-  
-  
-  --font-titulo: 'Crimson Text', serif; 
-  --font-cuerpo: 'Lato', sans-serif;    
- }
-
- /*Estilos del componente*/
- /*El contenedor que creamos en el TS (#register-container)
- * Lo usamos para centrar el formulario en la pantalla
- */
-
- #register-container{
-    display:flex;
+#register-container {
+    display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh; 
+    min-height: 100vh;
     background-color: var(--color-noche);
     font-family: var(--font-cuerpo);
     color: var(--color-hueso);
-
- }
-
- /* * La tarjeta (card) que envuelve el formulario.
- */
-
- .card {
-  background-color: var(--color-sombra);
-  padding: 1.5rem 1.25rem; /* menos padding horizontal y vertical más compacto */
-  border-radius: 10px;
-  width: 100%;
-  max-width: 450px; 
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255,255,255,0.03);
+    padding: 1rem;
 }
 
-
-#registration-form{
-  display:flex;
-  flex-direction: column;
-  gap: 1.25rem; /* un poco más de espacio entre secciones para mejor lectura */
-  position: relative; /* para posicionar los mensajes globales sin romper el flujo */
-  padding-top: 56px; /* deja espacio reservado para el mensaje global */
+.card {
+    background-color: var(--color-sombra);
+    padding: 2rem;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 550px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
+#registration-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: relative;
+    padding-top: 56px;
+}
 
-/*
-*Estilos para Grupos de inputs
-*/
+/* perfil mas datos*/
+.top-section {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+.profile-container {
+    flex-shrink: 0;
+    width: 120px;
+    height: 120px;
+}
+
+.profile-input-group {
+    width: 100%;
+    height: 100%;
+}
+
+.profile-input-group label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 120px;
+    height: 120px;
+    border: 2px solid var(--color-verde);
+    border-radius: 50%;
+    background-color: var(--color-verde);
+    color: var(--color-noche);
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 0.5rem;
+    box-sizing: border-box;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.profile-input-group label:hover {
+    transform: scale(1.05);
+}
+
+/* Cuando no tiene imagen */
+.profile-input-group label:not(.has-image):hover {
+    background-color: rgba(125, 211, 192, 0.8);
+}
+
+/* Cuando tiene imagen,  overlay sutil al hacer hover */
+.profile-input-group label.has-image:hover::after {
+    content: '📷';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+}
+
+.profile-input-group label.has-image {
+    position: relative;
+    background-color: transparent;
+}
+
+.profile-input-group input {
+    display: none;
+}
+
+.profile-input-group .error-message {
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+}
+
+.right-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* estilos generales inputs*/
 .input-group {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
 .input-group label {
-  margin-bottom: 0.35rem; 
-  font-weight: bold;
-  font-family: var(--font-titulo); 
-  color: var(--color-hueso);
-  font-size: 0.95rem;
+    margin-bottom: 0.35rem;
+    font-weight: bold;
+    font-family: var(--font-titulo);
+    color: var(--color-hueso);
+    font-size: 0.95rem;
 }
 
 .input-group input {
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--color-hueso);
-  border-radius: 4px;
-  background-color: var(--color-noche); 
-  color: var(--color-hueso); 
-  font-family: var(--font-cuerpo);
-  font-size: 0.85rem;
-  height: 40px; /* tamaño consistente */
-  box-sizing: border-box;
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border: 2px solid var(--color-verde);
+    border-radius: 6px;
+    background-color: var(--color-noche);
+    color: var(--color-hueso);
+    font-family: var(--font-cuerpo);
+    font-size: 0.85rem;
+    height: 40px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
 }
 
 .input-group input:focus {
-  outline: none;
-  border-color: var(--color-luna);
-  box-shadow: 0 0 0 2px rgba(252, 163, 17, 0.2);
+    outline: none;
+    border-color: var(--color-luna);
+    box-shadow: 0 0 0 3px rgba(252, 163, 17, 0.2);
+    background-color: rgba(26, 26, 46, 0.8);
 }
 
+.input-group input::placeholder {
+    color: rgba(224, 224, 224, 0.5);
+}
+
+/* filas inputs*/
 .row-group {
-  display: flex;
-  gap: 0.9rem; /* separación ligeramente mayor para que no se peguen los inputs */
+    display: flex;
+    gap: 1rem;
 }
 
-/* * Hacemos que los .input-group dentro de una fila
- * compartan el espacio (ocupen el 50% cada uno)
- */
 .row-group > .input-group {
-  flex: 1; /* Esto hace que ambos crezcan por igual */
+    flex: 1;
+    min-width: 0;
 }
 
-/* Asegurar que inputs en fila no se sobrepongan en tamaño reducido */
-.row-group > .input-group { min-width: 0; }
-
-/* Separadores visuales entre secciones */
-.input-group + .input-group,
-.row-group + .row-group {
-  margin-top: 0.25rem;
-}
-
-/*Estilos para botonos y mensajes*/
+/* boton submit*/
 #submit-button {
-  display: block;
-  margin: 1.6rem auto 0 auto;
-  width: 180px;
-  padding: 0.6rem 1.25rem;
-  border: none;
-  border-radius: 8px;
-  background-color: var(--color-luna); 
-  color: var(--color-noche); 
-  font-family: var(--font-titulo);
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 0.16s ease, background-color 0.16s ease, box-shadow 0.16s ease;
-  box-shadow: 0 6px 14px rgba(252,163,17,0.12);
+    display: block;
+    margin: 1.5rem auto 0 auto;
+    width: 200px;
+    padding: 0.7rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--color-verde);
+    color: var(--color-noche);
+    font-family: var(--font-titulo);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(125, 211, 192, 0.3);
 }
 
 #submit-button:hover {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 10px 20px rgba(252,163,17,0.16);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(125, 211, 192, 0.4);
+    background-color: rgba(125, 211, 192, 0.9);
+}
+
+#submit-button:active {
+    transform: translateY(0);
 }
 
 #submit-button:disabled {
-  background-color: #ccc; /* Color gris si está desactivado */
-  cursor: not-allowed;
-  transform: none;
+    background-color: #999;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
-/*Estilos para mensajes(Error/Exito)*/
-.error-message{
-  color:var(--color-sangre);
-  font-size: 0.8rem;
-  margin-top: 0.28rem;
-  min-height: 1rem;
-  line-height: 1rem;
+/* mensajes de error*/
+.error-message {
+    color: var(--color-sangre);
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    min-height: 1rem;
+    line-height: 1rem;
 }
 
-.global-message{
+/* mensajes globales*/
+.global-message {
     position: absolute;
     top: 8px;
     left: 0;
     right: 0;
-    margin: 0; /* evita cambios de layout */
+    margin: 0;
     font-size: 0.9rem;
     padding: 0.6rem 0.8rem;
     border-radius: 6px;
     text-align: center;
-    visibility: hidden; /* reserva el espacio pero oculta visualmente */
+    visibility: hidden;
     opacity: 0;
-    transition: opacity 0.16s ease, visibility 0.16s ease;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-/* Si tienen texto, se muestran sin desplazar el resto del formulario */
 .global-message:not(:empty) {
-  visibility: visible;
-  opacity: 1;
+    visibility: visible;
+    opacity: 1;
 }
 
 .global-message.success {
-  background-color: var(--color-bosque); 
-  color: var(--color-hueso);
+    background-color: var(--color-verde);
+    color: var(--color-noche);
 }
 
 .global-message.error {
-  background-color: var(--color-sangre); 
-  color: var(--color-hueso);
+    background-color: var(--color-sangre);
+    color: var(--color-hueso);
 }
 
+/* responsive*/
+@media (max-width: 600px) {
+    .card {
+        padding: 1.5rem;
+    }
 
+    .top-section {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
 
+    .profile-container {
+        width: 100px;
+        height: 100px;
+    }
 
+    .profile-input-group label {
+        width: 100px;
+        height: 100px;
+        font-size: 0.8rem;
+    }
 
+    .right-section {
+        width: 100%;
+    }
 
+    .row-group {
+        flex-direction: column;
+        gap: 1rem;
+    }
 
-
-
-
+    #submit-button {
+        width: 100%;
+    }
+}
