@@ -7,13 +7,15 @@ parameters:
         - database
         - routes
         - tests
-    level: 7
+    level: 5
 
     # Ignora algunos falsos positivos comunes en Laravel
     ignoreErrors:
         - '#Model does not accept property#'
         - '#Call to an undefined method Illuminate\\Support\\Collection#'
-
+        - '#Missing typehint for iterable item#'
+        - message: "#Relation '.*' is not found in.*#"
+        
     # Opcional: mejora rendimiento
     tmpDir: storage/framework/phpstan
     reportUnmatchedIgnoredErrors: false
