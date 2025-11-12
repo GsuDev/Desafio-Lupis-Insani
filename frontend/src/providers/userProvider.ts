@@ -1,36 +1,37 @@
-import type { AuthResponse, RegisterData } from "../interfaces/User.mock";
+import type { AuthResponse} from "../interfaces/User.mock";
 
-/**
- * IMPORTANTE: Esta función es un Mock (Simulación) temporal para el desarrollo del Frontend.
- * Simula el endpoint POST /api/register que será implementado en el Backend (DWES).
- * Esta función debe ser REEMPLAZADA por la lógica real de FETCH una vez que el backend esté listo.
- */
+const API_URL = 'http://localhost:8000/api';
+//Esta función llama el endpoint del backend
+//enviando el objeto FormData completo
+export const registerUser = async (formData:FormData): Promise<AuthResponse> => {
+    console.log('PROVIDER Real: Enviando FormData al backend...',formData);
+    try{
+        const response = await fetch(`${API_URL}/register`, {
+            method: 'POST',
+            body: formData,
+        
+        });
+        console.log(formData);
 
-export const registerUser = (formData:RegisterData): Promise<AuthResponse> => {
-    console.log('PROVIDER MOCK: Intentando registrar usuario...',formData);
-    //NOTA: Simulamos la respuesta correcta que esperamos del servidor
-    return new Promise((resolve,reject) => {
-        //simulamos un tiempo de espera de 1.5 segundos
-        setTimeout(() =>{
-            //Lógica de simulacion de error(por ejemplo si el email es 'error@ejemplo.com')
-            if (formData.email.includes('error')) {
-                return reject({message: 'El servidor simulado devolvió un error: Email ya en uso'});
+        const data = await response.json();
+
+        if (!response.ok) {
+            //si la respuesta no es un 200-299 (por ejemeplo 422 del validator)
+            //lanza un error para que lo coja el 'catch' del controller
+
+            //Mapeamos los errores del validator de laravel
+            if (response.status === 422) {
+                const errors = Object.values(data.errors).join(', ');
+                throw new Error(errors);
             }
+            throw new Error(data.message || 'Error desconocido del servidor');
+        }
 
-            //Respuesta simulada de ecito (status 201 created)
-            const mockUser: AuthResponse = {
-                user: {
-                    id: Math.floor(Math.random() * 1000), // ID simulado
-                    nickname:formData.nickname,
-                    name:formData.name,
-                    lastname: formData.lastname,
-                    email: formData.email,
-
-                },
-                token: 'MOCK_JWT_TOKEN_PARA_AUTENTICACION', // Token de prueba
-            };
-
-            resolve(mockUser);
-        },1500);
-    });
+        //si la respuesta es ok (200 o 201)
+        return data;
+    }catch(error){
+        console.error('Error en registerUser Provider:', error);
+        throw error;
+    }
+    
 };
