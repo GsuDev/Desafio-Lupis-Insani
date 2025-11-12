@@ -4,14 +4,20 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
+
+// Rutas publicas
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/users', [UserController::class, 'store']); 
+
+
+// Ruta /user protegida: Obtener los datos de usuario con sesion iniciada
+Route::middleware('auth:sanctum')->get('/user', [UserController::class, 'showItself']);
+// Ruta /logout protegida: Cerrar la sesion
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
-Route::post('/users', [UserController::class, 'store']); // registro público
-
-Route::middleware('auth:sanctum')->get('/user', [UserController::class, 'showItself']);
-
+// ---------------------------
 // Endpoints /users protegidos
+// ---------------------------
 Route::middleware('auth:sanctum')->group(function () {
 
     // Listado → solo tokens con ability 'list-users'
@@ -35,6 +41,8 @@ Route::middleware('auth:sanctum')->group(function () {
         ->middleware('assign-roles');
 });
 
+
+// Ruta si el user no tiene la sesion iniciada
 Route::get('/nologin', function () {
     return response()->json(['success' => false, 'message' => 'Unauthorised'], 203);
 });

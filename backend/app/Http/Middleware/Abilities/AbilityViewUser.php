@@ -11,7 +11,7 @@ class AbilityViewUser
     {
         $user = $request->user();
         $id = (int) $request->route('id'); // casteamos a int
-        $isItself = $user && $user->id == $id;
+        // $isItself = $user && $user->id == $id;
 
         // Si no hay usuario autenticado
         if (! $user) {
@@ -23,10 +23,10 @@ class AbilityViewUser
             return $next($request);
         }
 
-        // Si puede verse a sí mismo y está viendo su propio perfil
-        if ($user->tokenCan('view-itself') && $isItself) {
-            return $next($request);
-        }
+        // // Si puede verse a sí mismo y está viendo su propio perfil
+        // if ($user->tokenCan('view-itself') && $isItself) {
+        //     return $next($request);
+        // }
 
         // En cualquier otro caso → 403
         return response()->json(['message' => 'No tienes permiso'], 403);
