@@ -1,0 +1,46 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Role;
+use App\Models\User;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+
+class UserSeeder extends Seeder
+{
+    public function run(): void
+    {
+        // Usuario admin
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'nickname' => 'admin',
+                'name' => 'Administrador',
+                'lastname' => 'DelJuego',
+                'password' => Hash::make('password'), // cámbialo si quieres
+                'birthdate' => '1990-01-01',
+            ]
+        );
+
+        // Usuario normal
+        $user = User::firstOrCreate(
+            ['email' => 'user@example.com'],
+            [
+                'nickname' => 'usuario1',
+                'name' => 'Jugador',
+                'lastname' => 'Prueba',
+                'password' => Hash::make('password'),
+                'birthdate' => '2000-05-05',
+            ]
+        );
+
+        // Roles
+        $adminRole = Role::where('name', 'admin')->first();
+        $userRole = Role::where('name', 'user')->first();
+
+        // Asignar roles (many-to-many)
+        $admin->roles()->syncWithoutDetaching([$adminRole->id]);
+        $user->roles()->syncWithoutDetaching([$userRole->id]);
+    }
+}

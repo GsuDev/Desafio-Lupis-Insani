@@ -12,7 +12,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            // Middlewares de abilities
+            'list-users' => \App\Http\Middleware\Abilities\AbilityListUsers::class,
+            'view-user' => \App\Http\Middleware\Abilities\AbilityViewUser::class,
+            'update-user' => \App\Http\Middleware\Abilities\AbilityUpdateUser::class,
+            'delete-user' => \App\Http\Middleware\Abilities\AbilityDeleteUser::class,
+            'assign-roles' => \App\Http\Middleware\Abilities\AbilityAssignRoles::class,
+        ]);
+        $middleware->redirectGuestsTo('/api/nologin');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
