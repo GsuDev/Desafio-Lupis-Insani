@@ -11,14 +11,29 @@ class AuthController extends Controller
     // Login y creación de token
     public function login(Request $request)
     {
-        $credentials = $request->validate([
+          $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required|string',
         ]);
 
         $user = User::where('email', $credentials['email'])->first();
+        $this->publicLogin($user);
 
-        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
+    }
+
+    // Logout (revocar token actual)
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json(['message' => 'Sesión cerrada']);
+    }
+
+    public static function publicLogin($user){
+      
+        
+
+        if (! $user || ! Hash::check($user['password'], $user->password)) {
             return response()->json(['message' => 'Credenciales inválidas'], 401);
         }
 
@@ -48,13 +63,5 @@ class AuthController extends Controller
             'user' => $user,
             'token' => $token,
         ]);
-    }
-
-    // Logout (revocar token actual)
-    public function logout(Request $request)
-    {
-        $request->user()->currentAccessToken()->delete();
-
-        return response()->json(['message' => 'Sesión cerrada']);
     }
 }

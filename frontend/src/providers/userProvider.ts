@@ -1,5 +1,20 @@
+
 import apiClient from '../services/apiClient'
 import type { User } from '../models/User'
+
+export async function registerUser(formData: FormData): Promise<User> {
+    const { data } = await apiClient.post<{
+        token?: string
+        user: User
+    }>('/register', formData)
+
+    // Guardar token si existe
+    if (data.token) {
+        localStorage.setItem('token', data.token)
+    }
+
+    return data.user
+}
 
 /**
  * Login del usuario
@@ -42,27 +57,7 @@ export async function getProfile(): Promise<User> {
 }
 
 /*
-Export async function register(userData: {
-    nickname: string
-    name: string
-    lastname: string
-    email: string
-    password: string
-    birthdate: string
-    profile_url?: string
-}): Promise<User> {
-    const { data } = await apiClient.post<{
-        token?: string
-        user: User
-    }>('/register', userData)
 
-    // Guardar token si existe
-    if (data.token) {
-        localStorage.setItem('token', data.token)
-    }
-
-    return data.user
-}
  */
 
 /**

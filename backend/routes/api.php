@@ -3,11 +3,15 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\RegisterController;
+
+
 
 
 // Rutas publicas
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/users', [UserController::class, 'store']); 
+Route::post('/register', [RegisterController::class, 'register']);
 
 
 // Ruta /user protegida: Obtener los datos de usuario con sesion iniciada
