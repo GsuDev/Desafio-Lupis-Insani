@@ -123,6 +123,7 @@ class UserController {
     async handleRegister(formData:FormData){
         clearValidationErrors(); // limpia errores anteriores (llama a la vista)
         disableForm(true); //Desactuva el formulario mientras trabaja (llama a la vista)
+        
         const data: RegisterData = {
             nickname:formData.get('nickname') as string,
             name: formData.get('name') as string,

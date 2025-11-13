@@ -60,12 +60,12 @@ return [
             'report' => false,
         ],
         'cloudinary' => [
-            'driver' => 'cloudinary',
-            'key' => env('265365253277531'),
-            'secret' => env('cFKb9gTO2R1tt-bzwB5SEOCFFng'),
-            'cloud' => env('dpxmyd9bv'),
-            'url' => env('CLOUDINARY_URL=cloudinary://265365253277531:cFKb9gTO2R1tt-bzwB5SEOCFFng@dpxmyd9bv'),
-            'secure' => (bool) env('CLOUDINARY_SECURE', false),
+             'driver' => 'cloudinary',
+            'key' => env('CLOUDINARY_KEY'),
+            'secret' => env('CLOUDINARY_SECRET'),
+            'cloud' => env('CLOUDINARY_CLOUD_NAME'),
+            'url' => env('CLOUDINARY_URL'),
+            'secure' => (bool) env('CLOUDINARY_SECURE', true),
             'prefix' => env('CLOUDINARY_PREFIX'),
         ],
 

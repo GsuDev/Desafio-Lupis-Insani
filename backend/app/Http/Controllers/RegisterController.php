@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -18,13 +19,15 @@ class RegisterController extends Controller
         $imageUrl = null;
 
         try {
+
+
             if ($request->hasFile('profile_picture')) {
                 $file = $request->file('profile_picture');
 
                 // Creamos un nombre de archivo único
                 $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
                 $extension = $file->getClientOriginalExtension();
-                $filename = 'perfil_'.uniqid().'_'.Str::slug($originalName).'.'.$extension;
+                $filename = 'perfil_' . uniqid() . '_' . Str::slug($originalName) . '.' . $extension;
 
                 // Subimos los archivos a cloudinary
                 $uploadedFilePath = Storage::disk('cloudinary')->putFileAs(
@@ -32,6 +35,7 @@ class RegisterController extends Controller
                     $file,
                     $filename
                 );
+
 
                 $imageUrl = Storage::disk('cloudinary')->url($uploadedFilePath);
             }
@@ -44,6 +48,7 @@ class RegisterController extends Controller
 
     public function register(Request $request)
     {
+
         // Validación
         $messages = [
             'nickname.required' => 'El nickname es obligatorio.',
@@ -65,11 +70,12 @@ class RegisterController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'birthdate' => 'nullable|date',
-            'profile_picture' => 'nullable|file|image|max:2048',
+            //'profile_picture' => 'nullable|file|image|max:2048',
         ], $messages);
 
+
         if ($validator->fails()) {
-            // El frontend leerá esto en el bloque 'catch'
+
             return response()->json($validator->errors(), 422);
         }
 
@@ -83,15 +89,11 @@ class RegisterController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'birthdate' => $request->birthdate,
-            'profile_image_url' => $imageUrl,
+            'profile_url' => $imageUrl,
         ];
 
         $user = User::create($userData);
 
         AuthController::publicLogin($user);
-
-
-       
-
     }
 }

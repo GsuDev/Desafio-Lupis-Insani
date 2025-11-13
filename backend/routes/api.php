@@ -6,11 +6,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RegisterController;
 
 
-Route::post('/register', [RegisterController::class, 'register']);
+
 
 // Rutas publicas
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/users', [UserController::class, 'store']); 
+Route::post('/register', [RegisterController::class, 'register']);
 
 
 // Ruta /user protegida: Obtener los datos de usuario con sesion iniciada
