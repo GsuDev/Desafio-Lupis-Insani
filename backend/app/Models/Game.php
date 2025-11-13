@@ -13,21 +13,22 @@ class Game extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'started',
         'ended',
         'url',
     ];
+
     protected $hidden = [
         'deleted_at',
         'created_at',
         'updated_at',
     ];
 
-
-
     public function messages()
     {
         return $this->hasMany(Message::class, 'game_id', 'id');
     }
+
     public function users()
     {
         return $this->belongsToMany(
@@ -38,10 +39,11 @@ class Game extends Model
     }
 
     // Sobre todo como admin o para debuggar, mostrar los mensajes en una partida
-    public function getDetailedStatistics(){
+    public function getDetailedStatistics()
+    {
         $this->loadCount('messages');
 
-        $uniqueUsersCount= $this->messages()//cuenta los usuarios unicos registrados en la partida
+        $uniqueUsersCount = $this->messages()// cuenta los usuarios unicos registrados en la partida
             ->whereNotNull('user_id')
             ->distinct('user_id')
             ->count('user_id');
@@ -50,7 +52,7 @@ class Game extends Model
             ->groupBy('type')
             ->select('type', DB::raw('COUNT(*) as total'))
             ->get()
-            ->pluck('total','type'); //Ej: ['INFO' => 50, 'CHAT' => 70]
+            ->pluck('total', 'type'); // Ej: ['INFO' => 50, 'CHAT' => 70]
 
         return [
             'total_messages' => $this->messages_count,
@@ -58,13 +60,13 @@ class Game extends Model
             'message_types' => $messageTypes,
         ];
 
-
     }
 
     public function addMessage(string $type, ?int $userID, string $message)
     {
         return Message::createMessage($type, $userID, $message, $this->id);
     }
+
     public function getStructuredMessages()
     {
         return $this->messages->map(function ($messages) {

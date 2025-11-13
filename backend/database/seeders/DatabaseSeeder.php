@@ -31,12 +31,12 @@ class DatabaseSeeder extends Seeder
             ->has(
                 Message::factory()
                     ->count(20)
-                    ->state(function(array $attributes, Game $game) use ($users){
-                        $userId = fake()->boolean(80) ? $users->random()->id : null;//20 % pos de que sea anonimo
+                    ->state(function (array $attributes, Game $game) use ($users) {
+                        $userId = fake()->boolean(80) ? $users->random()->id : null; // 20 % pos de que sea anonimo
+
                         return ['user_id' => $userId];
                     })
             )
             ->create();
     }
-
 }

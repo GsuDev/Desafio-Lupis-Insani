@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Models\Game;
+use App\Models\Message;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use App\Models\Game;
-use App\Models\User;
-use App\Models\Message;
 
 class GameControllerTest extends TestCase
 {
@@ -16,6 +16,7 @@ class GameControllerTest extends TestCase
 
     /**
      * Prueba que podemos crear un nuevo juego.
+     *
      * @test
      */
     public function test_can_create_a_game()
@@ -39,6 +40,7 @@ class GameControllerTest extends TestCase
 
     /**
      * Prueba que podemos obtener un juego existente.
+     *
      * @test
      */
     public function test_can_get_a_game()
@@ -59,6 +61,7 @@ class GameControllerTest extends TestCase
 
     /**
      * Prueba que obtener un juego inexistente devuelve 404.
+     *
      * @test
      */
     public function test_get_game_returns_404_for_non_existent_game()
@@ -72,13 +75,14 @@ class GameControllerTest extends TestCase
 
     /**
      * Prueba que podemos obtener un juego por su URL.
+     *
      * @test
      */
     public function test_can_get_a_game_by_url()
     {
         // Arrange: Crea un juego con una URL específica
         $game = Game::factory()->create([
-            'url' => 'test-url-unica-123'
+            'url' => 'test-url-unica-123',
         ]);
 
         // Act: Llama al endpoint para obtener el juego por URL
@@ -91,8 +95,10 @@ class GameControllerTest extends TestCase
                 'url' => 'test-url-unica-123',
             ]);
     }
+
     /**
      * Prueba que obtener un juego por URL inexistente devuelve 404.
+     *
      * @test
      */
     public function test_get_game_by_url_returns_404_for_non_existent_url()
@@ -106,6 +112,7 @@ class GameControllerTest extends TestCase
 
     /**
      * Prueba que podemos obtener una lista de todos los juegos.
+     *
      * @test
      */
     public function test_can_get_all_games()
@@ -123,6 +130,7 @@ class GameControllerTest extends TestCase
 
     /**
      *  Prueba que la lista de juegos está vacía si no hay juegos.
+     *
      * @test
      */
     public function test_get_all_games_returns_empty_array_when_no_games()
@@ -136,10 +144,9 @@ class GameControllerTest extends TestCase
             ->assertJson([]); // Comprueba que la respuesta es un array vacío
     }
 
-
-
     /**
      * Prueba que podemos actualizar un juego (marcarlo como terminado).
+     *
      * @test
      */
     public function test_can_update_a_game()
@@ -167,6 +174,7 @@ class GameControllerTest extends TestCase
 
     /**
      * Prueba que la validación falla si 'ended' no se envía.
+     *
      * @test
      */
     public function test_update_game_fails_validation_for_missing_ended()
@@ -184,6 +192,7 @@ class GameControllerTest extends TestCase
 
     /**
      * Prueba que podemos hacer un "soft delete" a un juego.
+     *
      * @test
      */
     public function test_can_soft_delete_a_game()
@@ -206,6 +215,7 @@ class GameControllerTest extends TestCase
 
     /**
      * Prueba que podemos obtener los mensajes de un juego.
+     *
      * @test
      */
     public function test_can_get_messages_by_game()
@@ -225,7 +235,7 @@ class GameControllerTest extends TestCase
         // Assert: Comprueba la respuesta
         $response->assertStatus(200)
             ->assertJsonStructure([ // Comprueba que es un array de objetos
-                '*' => ['time', 'type', 'user', 'message', 'timestamp']
+                '*' => ['time', 'type', 'user', 'message', 'timestamp'],
             ])
             ->assertJsonFragment([
                 'message' => 'Este es un mensaje de prueba',
@@ -235,6 +245,7 @@ class GameControllerTest extends TestCase
 
     /**
      * Prueba que podemos añadir un mensaje a un juego.
+     *
      * @test
      */
     public function test_can_add_message_to_game()
@@ -267,6 +278,7 @@ class GameControllerTest extends TestCase
 
     /**
      * Prueba que la validación falla al añadir un mensaje sin datos.
+     *
      * @test
      */
     public function test_add_message_fails_validation_for_missing_data()

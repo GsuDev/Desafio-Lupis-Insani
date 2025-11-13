@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -13,7 +14,7 @@ return new class extends Migration {
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
             $table->string('type');
-            $table->foreignId('user_id')->index()->references('id')->on('users')->onDelete('set null')->nullable();
+            $table->foreignId('user_id')->nullable()->index()->references('id')->on('users')->onDelete('set null');
             $table->string('message');
             $table->foreignId('game_id')->index()->references('id')->on('games')->onDelete('cascade');
 

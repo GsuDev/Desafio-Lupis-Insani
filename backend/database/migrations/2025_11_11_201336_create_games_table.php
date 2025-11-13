@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('games', function (Blueprint $table) {
             $table->id()->unique();
+            $table->boolean('started');
             $table->boolean('ended')->default(false);
             $table->string('url')->nullable();
             $table->softDeletes();
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ended');
+        Schema::dropIfExists('games');
     }
 };

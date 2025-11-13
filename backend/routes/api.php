@@ -1,10 +1,7 @@
 <?php
 
 use App\Http\Controllers\GameController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-
 
 /*
 |--------------------------------------------------------------------------
@@ -43,15 +40,12 @@ Route::prefix('/games/{game}')->group(function () {
     // POST /api/games/{game}/messages -> GameController@addMessageByGame
     Route::post('/messages', [GameController::class, 'addMessageByGame']);
 
-
     // --- RUTAS DE JUGADORES ---
     // Necesitarás esta ruta para llenar la UI de WaitingRoom
 
     // GET /api/games/{game}/players
     // (Necesitarás crear este método 'getPlayersByGame' en tu GameController)
-        //Route::get('/players', [GameController::class, 'getPlayersByGame']);-> para introducir los jugadores en la sala pero esto pertenece a otra HU
+    // Route::get('/players', [GameController::class, 'getPlayersByGame']);-> para introducir los jugadores en la sala pero esto pertenece a otra HU
     //
-    }
+}
 );
-
-

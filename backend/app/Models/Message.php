@@ -10,7 +10,6 @@ class Message extends Model
     /** @use HasFactory<\Database\Factories\MessageFactory> */
     use HasFactory;
 
-
     protected $fillable = [
         'type',
         'user_id',
@@ -18,6 +17,7 @@ class Message extends Model
         'game_id',
         'created_at',
     ];
+
     protected $hidden = [
         'updated_at',
     ];
@@ -26,16 +26,16 @@ class Message extends Model
     {
         return $this->belongsTo(Game::class, 'game_id');
     }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id')->withDefault([
-            'name'=> 'Anónimo',
-        ]);// con esto controlo que sea un usuario anonimo
+            'name' => 'Anónimo',
+        ]); // con esto controlo que sea un usuario anonimo
 
     }
 
-
-    //Crea un mensaje formateado
+    // Crea un mensaje formateado
     public static function createMessage(
         string $type,
         ?int $userID, // como es nullable
@@ -46,10 +46,9 @@ class Message extends Model
             'type' => $type,
             'user_id' => $userID,
             'message' => $message,
-            'game_id' => $gameId
+            'game_id' => $gameId,
         ]);
     }
-
 
     public function toStructured()
     {
