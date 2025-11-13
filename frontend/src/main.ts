@@ -20,7 +20,7 @@ if (appContainer) {
     // (Lógica anterior de userForm)
     // renderUserForm(appContainer);
 } else {
-    console.error(
-        'Error Fatal: No se encontró el contenedor #app en el index.html'
-    )
+    // Console.error(
+    //     'Error Fatal: No se encontró el contenedor #app en el index.html'
+    // )
 }

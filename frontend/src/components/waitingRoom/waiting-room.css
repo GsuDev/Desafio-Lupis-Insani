@@ -213,9 +213,8 @@ html {
 
 .global-message.is-error,
 .error-message {
-   
     display: block;
- 
+
     background-color: var(--color-status-error);
     color: var(--color-text-light);
 }
@@ -229,12 +228,10 @@ html {
 
     .wr-players,
     .wr-chat-area {
-        
         width: 100%;
     }
 
     .wr-players {
-        
         max-height: 40vh;
     }
 
