@@ -19,6 +19,10 @@ const xoConfig: FlatXoConfig = [
         rules: {
             'no-console': 'warn',
             'import-x/no-absolute-path': 'off',
+            'import-x/extensions': 'off',
+            'unicorn/filename-case': 'off',
+            '@typescript-eslint/member-ordering': 'off',
+            '@typescript-eslint/consistent-type-definitions': 'warn',
             quotes: ['error', 'single'],
         },
     },
