@@ -1,24 +1,25 @@
 import './style.css'
-import typescriptLogo from './typescript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.ts'
+// import typescriptLogo from './typescript.svg'
+// import viteLogo from '/vite.svg'
+// import { setupCounter } from './counter.ts'
+import { renderWaitingRoom } from './components/waitingRoom/waitingRoom';
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+/**
+ * PUNTO DE ENTRADA DE LA APLICACIÓN
+ */
+
+// 1. Buscamos el "Escenario" (el <div id="app"> del index.html)
+const appContainer = document.querySelector('#app') as HTMLDivElement;
+
+// 2. Comprobamos si el escenario existe
+if (appContainer) {
+    // 3. Llamamos al componente de Sala de Espera para que se pinte
+    // (Simulamos que queremos cargar la partida con ID "1")
+    renderWaitingRoom(appContainer, "1");
+    
+    // (Lógica anterior de userForm)
+    // renderUserForm(appContainer);
+} else {
+    console.error('Error Fatal: No se encontró el contenedor #app en el index.html');
+}

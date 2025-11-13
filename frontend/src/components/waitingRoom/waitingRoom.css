@@ -1,0 +1,237 @@
+/*
+ * --- Guía de Estilos (Variables CSS) ---
+ * 
+ */
+:root {
+  /* Colores Primarios */
+  --color-primary: #DF3F1F;       /* Naranja */
+  --color-primary-accent: #E8AD3B; /* Amarillo */
+  --color-primary-light: #ECEDE6;  /* Blanco */
+  --color-primary-dark: #111613;   /* Negro */
+
+  /* Colores Secundarios */
+  --color-secondary-brown: #5D4037;  /* Marrón Rústico */
+  --color-secondary-purple: #4A235A; /* Púrpura Místico */
+  --color-secondary-green: #386641;  /* Verde Bosque */
+
+  /* Colores de Estado */
+  --color-status-success: #28A745;
+  --color-status-error: #DC3545;
+  --color-status-warning: #E8AD3B;
+  --color-status-info: #17A2B8;
+  --color-status-disabled: #6C757D;
+
+  /* Colores de Fondo y UI */
+  --color-bg-hud: #002D50;          /* Fondo Noche / HUD */
+  --color-bg-day: #ECEDE6;          /* Fondo Día */
+  --color-bg-card-dark: #212529;    /* Fondo Cartas (Oscuro) */
+  --color-bg-card-light: #FFFFFF;   /* Fondo Cartas (Claro) */
+  --color-border-separator: #CED4DA; /* Bordes / Separadores */
+
+  /* Colores de Texto */
+  --color-text-dark: #111613;         /* Sobre fondo claro */
+  --color-text-light: #ECEDE6;        /* Sobre fondo oscuro */
+  --color-text-muted: #495057;
+  --color-text-server: #FF8FCC;       /* Mensajes Sistema */
+  --color-text-nicks: #FF2525;         /* Nicks de Usuarios */
+
+  /* Colores de Botones */
+  --color-btn-primary-bg: #DF3F1F;
+  --color-btn-primary-text: #ECEDE6;
+  --color-btn-primary-hover: #C1351A;
+
+  --color-btn-danger-bg: #DC3545;
+  --color-btn-danger-text: #ECEDE6;
+  --color-btn-danger-hover: #B02A37;
+}
+
+/* --- Estilos Globales --- */
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+/* --- Estilos del Componente WaitingRoom --- */
+.waiting-room-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  /* Fondo principal (Día) */
+  background-color: var(--color-bg-day);
+  /* Texto principal (Sobre fondo claro) */
+  color: var(--color-text-dark);
+  padding: 1rem;
+  gap: 1rem;
+  font-family: Arial, sans-serif;
+}
+
+.wr-header {
+  width: 100%;
+  text-align: center;
+  padding: 1rem;
+  /* Usamos el Marrón Rústico para el header (como un letrero de madera) */
+  background-color: var(--color-secondary-brown);
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+}
+
+.wr-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+  /* Texto claro sobre fondo oscuro */
+  color: var(--color-text-light);
+}
+
+.wr-main {
+  flex-grow: 1;
+  display: flex;
+  gap: 1rem;
+  min-height: 0; /* Permite que los hijos 'flex-grow' funcionen */
+}
+
+/* Columna Izquierda */
+.wr-players {
+  width: 33.33%;
+  display: flex;
+  flex-direction: column;
+  /* Fondo de Cartas (Claro) */
+  background-color: var(--color-bg-card-light);
+  border: 1px solid var(--color-border-separator);
+  border-radius: 0.5rem;
+}
+
+.wr-players-header {
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--color-border-separator);
+}
+
+.wr-players-header span {
+  font-weight: bold;
+}
+
+.wr-players-list {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 0.5rem;
+  list-style: none;
+  margin: 0;
+}
+
+.player-item {
+  padding: 0.25rem 0.5rem;
+  /* Color de Nicks de Usuario */
+  color: var(--color-text-nicks);
+  font-weight: 500;
+}
+
+.wr-players-footer {
+  padding: 0.5rem;
+  border-top: 1px solid var(--color-border-separator);
+}
+
+.start-button {
+  width: 100%;
+  /* Estilo Botón Primario */
+  background-color: var(--color-btn-primary-bg);
+  color: var(--color-btn-primary-text);
+  border: none; 
+  font-weight: bold;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease; 
+}
+
+.start-button:hover {
+  background-color: var(--color-btn-primary-hover);
+}
+
+.start-button:disabled {
+  background-color: var(--color-status-disabled);
+  color: var(--color-text-light);
+  cursor: not-allowed;
+}
+
+
+/* Columna Derecha */
+.wr-chat-area {
+  width: 66.66%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg-card-light);
+  border: 1px solid var(--color-border-separator);
+  border-radius: 0.5rem;
+}
+
+.wr-chat-header {
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--color-border-separator);
+  font-weight: bold;
+}
+
+.wr-chat-placeholder {
+  flex-grow: 1;
+  padding: 1rem;
+  border-radius: 0 0 0.5rem 0.5rem;
+  /* Usamos un tono marrón muy claro (Marrón Rústico con 5% opacidad) */
+  background-color: rgba(93, 64, 55, 0.05);
+  /* Borde discontinuo con el Marrón Rústico */
+  border: 2px dashed var(--color-secondary-brown);
+  margin: 0.5rem;
+  color: var(--color-text-muted);
+}
+
+/* --- Estados Globales (Loading/Error) --- */
+
+.global-message {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  display: none; /* Oculto por defecto, JS lo muestra */
+  text-align: center;
+  font-weight: bold;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.global-message.is-loading {
+  display: block;
+  /* Fondo oscuro (HUD) con texto claro */
+  background-color: var(--color-bg-hud);
+  color: var(--color-text-light);
+}
+
+.global-message.is-error,
+.error-message { /* Damos soporte al className antiguo */
+  display: block;
+  /* Color de estado Error */
+  background-color: var(--color-status-error);
+  color: var(--color-text-light);
+}
+
+
+/* --- Media Query para Responsividad --- */
+@media (max-width: 768px) {
+  .wr-main {
+    /* Apila las columnas en vertical */
+    flex-direction: column;
+  }
+
+  .wr-players,
+  .wr-chat-area {
+    /* Ambas columnas ocupan todo el ancho */
+    width: 100%;
+  }
+
+  .wr-players {
+    /* Evita que la lista de jugadores ocupe toda la pantalla */
+    max-height: 40vh;
+  }
+
+  .wr-chat-area {
+    /* El chat ocupa el espacio restante */
+    flex-grow: 1;
+  }
+}
