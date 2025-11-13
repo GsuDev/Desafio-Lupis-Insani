@@ -1,6 +1,6 @@
 import './userForm.css';
-import { handleRegister, initController } from "../../controllers/usersController";
-import type { RegisterData } from "../../interfaces/User.mock";
+import {userController} from "../../controllers/UserController";
+import type { RegisterData } from "../../interfaces/RegisterData";
 
 const createInputGroup = (
     id: string,
@@ -196,7 +196,7 @@ export const renderUserForm = (appContainer: HTMLDivElement) => {
         submitButton.textContent = disabled ? 'Creando cuenta..' : 'Crear Cuenta';
     };
 
-    initController(
+    userController.initController(
         showValidationError,
         clearValidationErrors,
         showGlobalMessage,
@@ -207,6 +207,6 @@ export const renderUserForm = (appContainer: HTMLDivElement) => {
         e.preventDefault();
         console.log('VISTA: Submit detectado. Creando FormData..');
         const formData = new FormData(form);
-        handleRegister(formData);
+        userController.handleRegister(formData);
     });
 };

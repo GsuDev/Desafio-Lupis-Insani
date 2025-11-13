@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use App\Http\Controllers\AuthController;
+
 
 class RegisterController extends Controller
 {
@@ -85,13 +87,11 @@ class RegisterController extends Controller
         ];
 
         $user = User::create($userData);
-        $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json([
-            'user' => $user,
-            'token' => $token,
-            'message' => 'Usuario registrado con éxito',
-        ], 201);
+        AuthController::publicLogin($user);
+
+
+       
 
     }
 }
