@@ -41,7 +41,7 @@ export const initGameController = (
 /**
  * La Vista llama a esta función cuando necesita cargar los datos.
  */
-export const handleLoadGame = async (gameId: string) => {
+export const handleLoadGame = async (gameId: string) => {// al componente
     // 1. Informar a la vista que estamos cargando
     _showLoading(true)
     _showGlobalError('') // Limpiar errores antiguos
@@ -51,7 +51,8 @@ export const handleLoadGame = async (gameId: string) => {
         // 2. Llamar al Provider (la API real)
         // (Este 'getGame' es la función inteligente que
         // trae partida, jugadores y mensajes)
-        const game = await getGame(gameId)
+        //en el component hacer llamar al getter de la clase
+        const game = await getGame(gameId)//-> aqui
 
         // 3. Si todo va bien, pasar los datos a la vista para que pinte
         _renderGameDetails(game)
@@ -72,7 +73,7 @@ export const handleLoadGame = async (gameId: string) => {
 /**
  * La Vista llama a esta función cuando se pulsa "Iniciar"
  */
-export const handleStartGame = () => {
+export const handleStartGame = () => {// al componente
     _disableStartButton(true)
     _showLoading(true) // O mostrar un mensaje "Iniciando..."
 

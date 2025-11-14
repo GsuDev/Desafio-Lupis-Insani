@@ -83,10 +83,10 @@ Route::prefix('/games/{game}')->group(function () {
     // --- RUTAS DE MENSAJES ---
 
     // GET /api/games/{game}/messages -> GameController@getMessagesByGame
-    Route::get('/messages', [GameController::class, 'getMessagesByGame']);
+    Route::get('/messages/{id}', [GameController::class, 'getMessagesByGame']);
 
     // POST /api/games/{game}/messages -> GameController@addMessageByGame
-    Route::post('/messages', [GameController::class, 'addMessageByGame']);
+    Route::post('/messages/{id}', [GameController::class, 'addMessageByGame']);
 
     // --- RUTAS DE JUGADORES ---
     // Necesitarás esta ruta para llenar la UI de WaitingRoom

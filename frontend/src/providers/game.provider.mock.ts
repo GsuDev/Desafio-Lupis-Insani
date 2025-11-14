@@ -79,7 +79,7 @@ export const addMessage = async (
                 id: Math.floor(Math.random() * 10_000),
                 gameId: Number.parseInt(gameId, 10),
                 message: messageContent,
-                playerName: player?.name ?? 'Jugador Desconocido',
+                playerName: player?.name ?? 'Jugador Anonimo',
                 createdAt: new Date().toISOString(),
             }
 

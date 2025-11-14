@@ -2,6 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Game;
+use App\Models\Message;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -12,6 +15,10 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             UserSeeder::class,
         ]);
+
+        
+        $users = User::all();
+
 
         Game::factory()
             ->count(5)
