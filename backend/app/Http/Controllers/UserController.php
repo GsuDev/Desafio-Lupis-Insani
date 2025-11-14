@@ -43,7 +43,7 @@ class UserController extends Controller
     {
         $user = User::with('roles')->findOrFail($id);
 
-        if (!$user) {
+        if (! $user) {
             return response()->json($user);
         }
 
@@ -100,11 +100,9 @@ class UserController extends Controller
         try {
             $user->roles()->attach($validated['roles']);
         } catch (Exception) {
-            return response()->json(["success" => false,'message' => 'No se ha podido añadir el rol'], 304);
+            return response()->json(['success' => false, 'message' => 'No se ha podido añadir el rol'], 304);
         }
 
         return response()->json($user->load('roles'));
     }
-
-    
 }

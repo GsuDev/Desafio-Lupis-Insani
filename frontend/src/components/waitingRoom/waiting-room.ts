@@ -136,7 +136,7 @@ export const renderWaitingRoom = (
 
     // 4. Definir los Callbacks que el Controlador usará
     // (Estas funciones SÍ tocan el DOM)
-//-----------
+    //-----------
     const showLoading = (isLoading: boolean) => {
         if (isLoading) {
             globalMessage.textContent = 'Cargando datos de la partida...'

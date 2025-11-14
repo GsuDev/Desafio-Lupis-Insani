@@ -8,7 +8,7 @@ import { renderWaitingRoom } from './components/waitingRoom/waiting-room.ts'
  * PUNTO DE ENTRADA DE LA APLICACIÓN
  */
 // src/app.ts
-//Import  {renderUserForm} from './components/userForm/userForm.ts';
+// Import  {renderUserForm} from './components/userForm/userForm.ts';
 
 // 1. Buscamos el "Escenario" (el <div id="app"> del index.html)
 const appContainer = document.querySelector('#app')!

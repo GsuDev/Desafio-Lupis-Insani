@@ -16,9 +16,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
         ]);
 
-        
         $users = User::all();
-
 
         Game::factory()
             ->count(5)

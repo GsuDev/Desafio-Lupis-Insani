@@ -1,19 +1,15 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\GameController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RegisterController;
-
-
-
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 
 // Rutas publicas
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/users', [UserController::class, 'store']);
 Route::post('/register', [RegisterController::class, 'register']);
-
 
 // Ruta /user protegida: Obtener los datos de usuario con sesion iniciada
 Route::middleware('auth:sanctum')->get('/user', [UserController::class, 'showItself']);
@@ -45,7 +41,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/users/{id}/roles', [UserController::class, 'assignRoles'])
         ->middleware('assign-roles');
 });
-
 
 // Ruta si el user no tiene la sesion iniciada
 Route::get('/nologin', function () {
