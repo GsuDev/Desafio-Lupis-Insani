@@ -1,10 +1,7 @@
 // 1. Importar modelos y el *Controlador*
 import type { Game, Player } from '../../interfaces/game.models'
-import {
-    initGameController,
-    handleLoadGame,
-    handleStartGame,
-} from '../../controllers/game-controller.ts'
+import { gameController } from '../../controllers/game-controller.ts'
+
 // 2. Importar el CSS
 import './waiting-room.css'
 
@@ -159,11 +156,11 @@ export const renderWaitingRoom = (
     const renderGameDetails = (game: Game) => {
         // Llama al callback específico de la columna de jugadores
         updatePlayersView(game)
-        // (Aquí se llamaría a 'updateChatView(game.messages)' en el futuro)
+        // (Aquí se llamaría a 'updateChatView(game.messages)' en el futuro supongo)
     }
 
     // 5. Conectar la Vista con el Controlador
-    initGameController(
+    gameController.init(
         showLoading,
         showGlobalError,
         renderGameDetails,
@@ -175,11 +172,11 @@ export const renderWaitingRoom = (
     if (startButton) {
         startButton.addEventListener('click', () => {
             // La vista solo le dice al controlador "han hecho clic"
-            handleStartGame()
+            gameController.handleStartGame()
         })
     }
 
     // 7. Iniciar la carga de datos
     // La vista le dice al controlador "ok, estoy lista, carga los datos"
-    void handleLoadGame(gameId)
+    void gameController.handleLoadGame(gameId)
 }
