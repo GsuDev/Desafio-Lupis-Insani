@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Http\Controllers\AuthController;
+use Exception;
 
 
 class RegisterController extends Controller
@@ -93,6 +94,12 @@ class RegisterController extends Controller
         ];
 
         $user = User::create($userData);
+
+        try {
+            $user->roles()->attach(2);
+        } catch (Exception) {
+            return response()->json(['message' => 'No hay roles para asignar'], 500);
+        }
 
         AuthController::publicLogin($user);
     }
