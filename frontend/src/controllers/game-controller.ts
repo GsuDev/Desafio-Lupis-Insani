@@ -66,7 +66,9 @@ class GameController {
             //this._disableStartButton(game.players.length < 2)  Ejemplo de lógica
         } catch (error: any) {
             // 4. Si hay un error, informar a la vista
-            this._showGlobalError(`Error al cargar la partida: ${error.message}`)
+            this._showGlobalError(
+                `Error al cargar la partida: ${error.message}`
+            )
         } finally {
             // 5. Informar a la vista que hemos terminado de cargar
             this._showLoading(false)
@@ -84,7 +86,6 @@ class GameController {
 
         // Simulamos que tarda 1 segundo
         setTimeout(() => {
-         
             this._disableStartButton(false)
             this._showLoading(false)
         }, 1000)
