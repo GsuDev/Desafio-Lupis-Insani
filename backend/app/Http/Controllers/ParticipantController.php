@@ -11,11 +11,17 @@ use Illuminate\Validation\ValidationException;
 class ParticipantController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Obtiene todos los participantes de una partida.
+     * Este es un método interno.
      */
-    public function index()
+    public function index($game_id)
     {
-        //
+        $participants = participant::where('game_id', $game_id)
+            ->with(['user', 'character', 'game'])
+            ->get();
+
+        
+        return $participants;
     }
 
     /**
