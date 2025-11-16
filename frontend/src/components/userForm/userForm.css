@@ -7,7 +7,7 @@
     --color-sangre: #9b2226;
     --color-luna: #fca311;
     --color-verde: #7dd3c0;
-    
+
     --font-titulo: 'Crimson Text', serif;
     --font-cuerpo: 'Lato', sans-serif;
 }
@@ -238,7 +238,9 @@
     text-align: center;
     visibility: hidden;
     opacity: 0;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition:
+        opacity 0.3s ease,
+        visibility 0.3s ease;
 }
 
 .global-message:not(:empty) {

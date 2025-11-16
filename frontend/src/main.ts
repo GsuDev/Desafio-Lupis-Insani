@@ -1,18 +1,28 @@
-// src/app.ts
-import  {renderUserForm} from './components/userForm/userForm.ts';
+import './style.css'
+// Import typescriptLogo from './typescript.svg'
+// import viteLogo from '/vite.svg'
+// import { setupCounter } from './counter.ts'
+import { renderWaitingRoom } from './components/waitingRoom/waiting-room.ts'
 
 /**
  * PUNTO DE ENTRADA DE LA APLICACIÓN
  */
+// src/app.ts
+// Import  {renderUserForm} from './components/userForm/userForm.ts';
 
 // 1. Buscamos el "Escenario" (el <div id="app"> del index.html)
-const appContainer = document.querySelector('#app') as HTMLDivElement;
+const appContainer = document.querySelector('#app')!
 
 // 2. Comprobamos si el escenario existe
 if (appContainer) {
-    // 3. Llamamos al componente de registro para que se pinte dentro del escenario
-    // (En el futuro, aquí habrá un Router que decida qué pintar)
-    renderUserForm(appContainer);
+    // 3. Llamamos al componente de Sala de Espera para que se pinte
+    // (Simulamos que queremos cargar la partida con ID "1")
+    renderWaitingRoom(appContainer, '1')
+
+    // (Lógica anterior de userForm)
+    // renderUserForm(appContainer);
 } else {
-    console.error('Error Fatal: No se encontró el contenedor #app en el index.html');
+    // Console.error(
+    //     'Error Fatal: No se encontró el contenedor #app en el index.html'
+    // )
 }

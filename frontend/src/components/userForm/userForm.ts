@@ -1,13 +1,12 @@
 import './userForm.css'
 import { userController } from '../../controllers/UserController'
 
-
 const createInputGroup = (
     id: string,
     labelText: string,
     inputType: string,
     name: string,
-    required: boolean = true
+    required = true
 ): HTMLDivElement => {
     const group = document.createElement('div')
     group.className = 'input-group'
@@ -31,11 +30,11 @@ const createInputGroup = (
 
     const errorP = document.createElement('p')
     errorP.className = 'error-message'
-    errorP.setAttribute('data-input', id)
+    errorP.dataset.input = id
 
-    group.appendChild(label)
-    group.appendChild(input)
-    group.appendChild(errorP)
+    group.append(label)
+    group.append(input)
+    group.append(errorP)
 
     return group
 }
@@ -61,10 +60,10 @@ export const renderUserForm = (appContainer: HTMLDivElement) => {
     globalError.id = 'global-error'
     globalError.className = 'global-message error'
 
-    form.appendChild(globalSuccess)
-    form.appendChild(globalError)
+    form.append(globalSuccess)
+    form.append(globalError)
 
-    // circulo perfil + nickname + nombre y apellidos
+    // Circulo perfil + nickname + nombre y apellidos
     const topSection = document.createElement('div')
     topSection.className = 'top-section'
 
@@ -81,13 +80,9 @@ export const renderUserForm = (appContainer: HTMLDivElement) => {
     )
     profilePictureGroup.className = 'input-group profile-input-group'
 
-    const fileInput = profilePictureGroup.querySelector(
-        'input'
-    ) as HTMLInputElement
-    const profileLabel = profilePictureGroup.querySelector(
-        'label'
-    ) as HTMLLabelElement
-    //form.appendChild(fileInput);
+    const fileInput = profilePictureGroup.querySelector('input')!
+    const profileLabel = profilePictureGroup.querySelector('label')!
+    // Form.appendChild(fileInput);
 
     if (fileInput) {
         fileInput.accept = 'image/png, image/jpeg'
@@ -100,7 +95,7 @@ export const renderUserForm = (appContainer: HTMLDivElement) => {
 
                 // Usamos FileReader para leer el archivo como una URL
                 const reader = new FileReader()
-                reader.onload = (e) => {
+                reader.addEventListener('load', (e) => {
                     // Cuando esté cargado, lo ponemos como fondo del label (círculo)
                     if (e.target?.result && profileLabel) {
                         profileLabel.style.backgroundImage = `url(${e.target.result})`
@@ -111,7 +106,7 @@ export const renderUserForm = (appContainer: HTMLDivElement) => {
                         // Añadimos una clase para indicar que tiene imagen
                         profileLabel.classList.add('has-image')
                     }
-                }
+                })
                 reader.readAsDataURL(file)
             } else {
                 // Si no hay archivo, restauramos el estado original
@@ -123,8 +118,9 @@ export const renderUserForm = (appContainer: HTMLDivElement) => {
             }
         })
     }
-    console.log('hola ', profilePictureGroup)
-    profileContainer.appendChild(profilePictureGroup)
+
+    console.log('hola', profilePictureGroup)
+    profileContainer.append(profilePictureGroup)
 
     // Contenedor derecho (nickname, nombre, apellidos)
     const rightSection = document.createElement('div')
@@ -136,7 +132,7 @@ export const renderUserForm = (appContainer: HTMLDivElement) => {
         'text',
         'nickname'
     )
-    rightSection.appendChild(nicknameGroup)
+    rightSection.append(nicknameGroup)
 
     const rowNombre = document.createElement('div')
     rowNombre.className = 'row-group'
@@ -149,13 +145,13 @@ export const renderUserForm = (appContainer: HTMLDivElement) => {
         'lastname'
     )
 
-    rowNombre.appendChild(nameGroup)
-    rowNombre.appendChild(lastnameGroup)
-    rightSection.appendChild(rowNombre)
+    rowNombre.append(nameGroup)
+    rowNombre.append(lastnameGroup)
+    rightSection.append(rowNombre)
 
-    topSection.appendChild(profileContainer)
-    topSection.appendChild(rightSection)
-    form.appendChild(topSection)
+    topSection.append(profileContainer)
+    topSection.append(rightSection)
+    form.append(topSection)
 
     const emailGroup = createInputGroup(
         'email',
@@ -163,7 +159,7 @@ export const renderUserForm = (appContainer: HTMLDivElement) => {
         'email',
         'email'
     )
-    form.appendChild(emailGroup)
+    form.append(emailGroup)
 
     const rowPassword = document.createElement('div')
     rowPassword.className = 'row-group'
@@ -181,9 +177,9 @@ export const renderUserForm = (appContainer: HTMLDivElement) => {
         'password_confirmation'
     )
 
-    rowPassword.appendChild(passwordGroup)
-    rowPassword.appendChild(passwordConfGroup)
-    form.appendChild(rowPassword)
+    rowPassword.append(passwordGroup)
+    rowPassword.append(passwordConfGroup)
+    form.append(rowPassword)
 
     const birthdayGroup = createInputGroup(
         'birthday',
@@ -192,17 +188,17 @@ export const renderUserForm = (appContainer: HTMLDivElement) => {
         'birthdate',
         false
     )
-    form.appendChild(birthdayGroup)
+    form.append(birthdayGroup)
 
     const submitButton = document.createElement('button')
     submitButton.type = 'submit'
     submitButton.id = 'submit-button'
     submitButton.textContent = 'Crear Cuenta'
-    form.appendChild(submitButton)
+    form.append(submitButton)
 
-    card.appendChild(form)
-    container.appendChild(card)
-    appContainer.appendChild(container)
+    card.append(form)
+    container.append(card)
+    appContainer.append(container)
 
     // Callbacks
     const showValidationError = (field: string, message: string) => {
@@ -216,9 +212,9 @@ export const renderUserForm = (appContainer: HTMLDivElement) => {
 
     const clearValidationErrors = () => {
         const allErrorElements = container.querySelectorAll('.error-message')
-        allErrorElements.forEach((el) => {
-            el.textContent = ''
-        })
+        for (const element of allErrorElements) {
+            element.textContent = ''
+        }
     }
 
     const showGlobalMessage = (message: string, isSuccess: boolean) => {
@@ -250,10 +246,12 @@ export const renderUserForm = (appContainer: HTMLDivElement) => {
         console.log('VISTA: Submit detectado. Creando FormData..')
 
         const formData = new FormData(form)
-        const fileInput = document.querySelector<HTMLInputElement>('#profile_picture')
+        const fileInput =
+            document.querySelector<HTMLInputElement>('#profile_picture')
         if (fileInput?.files?.[0]) {
             formData.append('profile_picture', fileInput.files[0])
         }
+
         userController.handleRegister(formData)
     })
 }
