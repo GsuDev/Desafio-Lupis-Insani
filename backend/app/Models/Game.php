@@ -33,7 +33,7 @@ class Game extends Model
     {
         return $this->belongsToMany(
             User::class,
-            'game_participants',
+            'participants',
             'game_id',
             'user_id');
     }

@@ -53,7 +53,7 @@ class ParticipantController extends Controller
             'is_bot' => $is_bot,
             'game_id' => $game_id,
             'bot_name' => null,
-            'character_id' => null, // Por defecto, se asignará en otra HU
+            //'character_id' => null, // Por defecto, se asignará en otra HU
 
         ];
 
@@ -115,7 +115,7 @@ class ParticipantController extends Controller
             'user_id' => $data['user_id'],
             'is_bot' => $data['is_bot'],
             'bot_name' => $data['bot_name'],
-            'character_id' => $data['character_id'],
+            //'character_id' => $data['character_id'],
 
         ]);
 
@@ -134,6 +134,8 @@ class ParticipantController extends Controller
             'data' => $participant
         ];
     }
+
+
 
     /**
      * Display the specified resource.

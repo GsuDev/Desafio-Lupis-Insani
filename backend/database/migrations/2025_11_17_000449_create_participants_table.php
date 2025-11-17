@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('bot_name')->nullable();
             
             $table->foreignId('character_id')
+                  ->nullable()
                   ->constrained('characters')
                   ->onDelete('cascade');
 
@@ -36,10 +37,10 @@ return new class extends Migration
             //  estas validaciones van en el controlador pero las pongo aquí como doble seguro
             
             // Un usuario no puede estar dos veces en la misma partida
-            $table->unique(['game_id', 'user_id']);
+            //$table->unique(['game_id', 'user_id']);
             
             // Un personaje no puede estar dos veces en la misma partida
-            $table->unique(['game_id', 'character_id']);
+           // $table->unique(['game_id', 'character_id']);
         });
         
     }
