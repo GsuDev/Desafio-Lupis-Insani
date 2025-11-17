@@ -1,3 +1,4 @@
+import type { Participant } from '../models/Participant'
 /**
  * Modelos de Dominio del Frontend
  * (Sincronizados con la API del Backend)
@@ -23,5 +24,6 @@ export type Game = {
     url: string
     players: Player[]
     messages: Message[]
+    participants: Participant[] //TOCADO
     createdAt: string
 }

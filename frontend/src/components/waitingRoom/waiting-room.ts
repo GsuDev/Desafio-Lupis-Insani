@@ -1,72 +1,13 @@
 // 1. Importar modelos y el *Controlador*
-import type { Game, Player } from '../../interfaces/game.models'
+import { createParticipantList } from '../participantList/participantList'
+import { participantController } from '../../controllers/participantController'
+import type { Game } from '../../interfaces/game.models'
 import { gameController } from '../../controllers/game-controller.ts'
+import { getGameParticipants } from '../../providers/game.provider.mock.ts'
 
 // 2. Importar el CSS
 import './waiting-room.css'
-
-// --------------------------------------------------
-// Funciones "Constructoras" de HTML
-//
-// --------------------------------------------------
-
-/**
- * Crea la columna izquierda (Jugadores)
- */
-const createPlayersColumn = (): [
-    HTMLElement,
-    (game: Game) => void,
-    (isDisabled: boolean) => void,
-] => {
-    const aside = document.createElement('aside')
-    aside.className = 'wr-players'
-
-    // Header
-    const header = document.createElement('header')
-    header.className = 'wr-players-header'
-    header.id = 'player-count-header'
-    header.textContent = 'Cargando...'
-
-    // Lista
-    const ul = document.createElement('ul')
-    ul.className = 'wr-players-list'
-    ul.id = 'player-list'
-
-    // Footer
-    const footer = document.createElement('footer')
-    footer.className = 'wr-players-footer'
-
-    const startButton = document.createElement('button')
-    startButton.className = 'start-button'
-    startButton.id = 'start-game-button'
-    startButton.textContent = 'Iniciar'
-    startButton.disabled = true // Deshabilitado hasta que cargue
-
-    footer.append(startButton)
-    aside.append(header)
-    aside.append(ul)
-    aside.append(footer)
-
-    // Definimos la función de "callback" que actualizará esta columna
-    const updatePlayersColumn = (game: Game) => {
-        header.innerHTML = `<span>${game.players.length}/30</span> Jugadores`
-
-        // Genera el HTML de la lista
-        ul.innerHTML = game.players
-            .map((player) => `<li class="player-item">${player.name}</li>`)
-            .join('')
-    }
-
-    // Callback para habilitar/deshabilitar el botón
-    const disableButton = (isDisabled: boolean) => {
-        startButton.disabled = isDisabled
-        startButton.textContent = isDisabled ? 'Cargando...' : 'Iniciar'
-    }
-
-    // Devolvemos el elemento HTML y la función para actualizarlo
-    return [aside, updatePlayersColumn, disableButton]
-}
-
+ 
 /**
  * Crea la columna derecha (Chat)
  */
@@ -118,11 +59,11 @@ export const renderWaitingRoom = (
     main.className = 'wr-main'
 
     // 3. Crear columnas usando las funciones helpers
-    const [playersColumn, updatePlayersView, disableStartButton] =
-        createPlayersColumn()
+    const [participantsColumn, updatePlayersView, disableStartButton] =
+        createParticipantList()
     const chatColumn = createChatColumn()
 
-    main.append(playersColumn)
+    main.append(participantsColumn)
     main.append(chatColumn)
 
     roomContainer.append(header)
@@ -153,9 +94,10 @@ export const renderWaitingRoom = (
         }
     }
 
-    const renderGameDetails = (game: Game) => {
+    const renderGameDetails = (game: Game) => { 
         // Llama al callback específico de la columna de jugadores
-        updatePlayersView(game)
+        const participants = game.participants || []
+        updatePlayersView(participants)
         // (Aquí se llamaría a 'updateChatView(game.messages)' en el futuro supongo)
     }
 

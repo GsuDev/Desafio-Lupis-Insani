@@ -5,7 +5,8 @@
  */
 
 import type { Game } from '../interfaces/game.models'
-import { getGame } from '../providers/game.provider' // Importamos el provider REAL
+//import { getGame } from '../providers/game.provider' // Importamos el provider REAL
+import { getGame } from '../providers/game.provider.mock' // MOCK con participants para probar
 
 class GameController {
     private static instance: GameController
@@ -57,6 +58,7 @@ class GameController {
 
         try {
             // 2. Llamar al Provider (la API real)
+            //llama al mock //TOCADO
             const game = await getGame(gameId)
 
             // 3. Si todo va bien, pasar los datos a la vista para que pinte

@@ -1,7 +1,7 @@
 
 import type { Participant } from '../models/Participant';
 import { ParticipantComponent } from '../components/participant/participant';
-import { getGameParticipants } from '../providers/game.provider';
+import { getGameParticipants } from '../providers/game.provider.mock';
 
 class ParticipantController {
     private static instance: ParticipantController;
@@ -19,12 +19,12 @@ class ParticipantController {
      * Devuelve un array de participantes del currentGame.
      * y extraer los participantes de ahí.
      */
-    /* 
+    
     public async getParticipants(gameId: string): Promise<Participant[]> {
         // Esto llama directamente a getGameParticipants del gameProvider
         const participants = await getGameParticipants(gameId);
         return participants;
-    }*/
+    }
 
 
 
