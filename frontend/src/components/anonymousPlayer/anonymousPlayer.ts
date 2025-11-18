@@ -13,13 +13,22 @@ import './anonymousPlayer.css'
 
 // URL del villager desde src/assets usando import.meta.url (compatible con Vite)
 // Ejemplos de rutas de imágenes empaquetadas por Vite.
-const villagerUrl = new URL('../../assets/characters/villager.png', import.meta.url).href
-const wereWolfUrl = new URL('../../assets/characters/werewolf.png', import.meta.url).href
-const witchUrl = new URL('../../assets/characters/witch.png', import.meta.url).href
-const seerUrl = new URL('../../assets/characters/seer.png', import.meta.url).href
-const hunterUrl = new URL('../../assets/characters/hunter.png', import.meta.url).href
-const thiefUrl = new URL('../../assets/characters/thief.png', import.meta.url).href
-
+const villagerUrl = new URL(
+    '../../assets/characters/villager.png',
+    import.meta.url
+).href
+const wereWolfUrl = new URL(
+    '../../assets/characters/werewolf.png',
+    import.meta.url
+).href
+const witchUrl = new URL('../../assets/characters/witch.png', import.meta.url)
+    .href
+const seerUrl = new URL('../../assets/characters/seer.png', import.meta.url)
+    .href
+const hunterUrl = new URL('../../assets/characters/hunter.png', import.meta.url)
+    .href
+const thiefUrl = new URL('../../assets/characters/thief.png', import.meta.url)
+    .href
 
 /**
  * Describe una opción de personaje en el grid.
@@ -194,7 +203,9 @@ export class AnonymousSelectorComponent {
      */
     private setupEventListeners(): void {
         const characterGrid = this.rootElement.querySelector('#character-grid')
-        const createButton = this.rootElement.querySelector('#create-room-button')
+        const createButton = this.rootElement.querySelector(
+            '#create-room-button'
+        )
         const nicknameInput = this.rootElement.querySelector(
             '#nickname-input'
         ) as HTMLInputElement
@@ -203,9 +214,9 @@ export class AnonymousSelectorComponent {
         if (characterGrid) {
             characterGrid.addEventListener('click', (event) => {
                 const target = event.target as HTMLElement
-                const circle = target.closest('.character-circle') as
-                    | HTMLElement
-                    | null
+                const circle = target.closest(
+                    '.character-circle'
+                ) as HTMLElement | null
                 if (circle) {
                     this.handleCharacterSelect(circle)
                 }
@@ -237,7 +248,8 @@ export class AnonymousSelectorComponent {
      */
     private handleCharacterSelect(circleElement: HTMLElement): void {
         // Quitar selección anterior
-        const allCircles = this.rootElement.querySelectorAll('.character-circle')
+        const allCircles =
+            this.rootElement.querySelectorAll('.character-circle')
         allCircles.forEach((circle) => circle.classList.remove('selected'))
 
         // Agregar selección al nuevo
@@ -338,9 +350,9 @@ export class AnonymousSelectorComponent {
                 if (circleElement && imagePath) {
                     // Asegurar que haya un <img> dentro y actualizar su `src`
                     circleElement.style.backgroundColor = 'transparent'
-                    let img = circleElement.querySelector('img') as
-                        | HTMLImageElement
-                        | null
+                    let img = circleElement.querySelector(
+                        'img'
+                    ) as HTMLImageElement | null
                     if (!img) {
                         img = document.createElement('img')
                         img.alt = ''

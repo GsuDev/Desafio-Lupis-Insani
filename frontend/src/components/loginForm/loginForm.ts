@@ -161,7 +161,9 @@ export class LoginFormComponent {
 
         const form = event.target as HTMLFormElement
         const emailInput = form.querySelector('#email') as HTMLInputElement
-        const passwordInput = form.querySelector('#password') as HTMLInputElement
+        const passwordInput = form.querySelector(
+            '#password'
+        ) as HTMLInputElement
 
         const email = emailInput.value.trim()
         const password = passwordInput.value.trim()
@@ -240,7 +242,8 @@ export class LoginFormComponent {
     private clearErrors(): void {
         if (!this.formElement) return
 
-        const errorElements = this.formElement.querySelectorAll('.error-message')
+        const errorElements =
+            this.formElement.querySelectorAll('.error-message')
         errorElements.forEach((element) => {
             element.textContent = ''
         })
