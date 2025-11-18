@@ -1,50 +1,49 @@
+import type { ISlideData } from '../../interfaces/carousel'
 
-import type {ISlideData} from '../../interfaces/carousel';
+export class Slide {
+    private slideData: ISlideData
+    private slideElement: HTMLDivElement
 
-export class Slide{
-    private slideData: ISlideData;
-    private slideElement: HTMLDivElement;
-
-    constructor(slideData: ISlideData){
-        this.slideData = slideData;
-        this.slideElement = this.createSlideElement();
+    constructor(slideData: ISlideData) {
+        this.slideData = slideData
+        this.slideElement = this.createSlideElement()
     }
 
     /**
      * Método por el que genera y devuelve el elemento HTML para esta diapositiva
      * @returns HTMLDivElement
      */
-    private createSlideElement(): HTMLDivElement{
+    private createSlideElement(): HTMLDivElement {
         //Contenedor principal
-        const slide = document.createElement('div');
-        slide.classList.add('carousel-slide');
+        const slide = document.createElement('div')
+        slide.classList.add('carousel-slide')
 
         //Imagen
-        const img = document.createElement('img');
-        img.classList.add('slide-image');
-        img.src = this.slideData.imageUrl;
-        img.alt = `Step ${this.slideData.stepNumber}`;
-        slide.appendChild(img);
+        const img = document.createElement('img')
+        img.classList.add('slide-image')
+        img.src = this.slideData.imageUrl
+        img.alt = `Step ${this.slideData.stepNumber}`
+        slide.appendChild(img)
 
         //Contenido de texto
-        const textContent = document.createElement('div');
-        textContent.classList.add('slide-text-content');
+        const textContent = document.createElement('div')
+        textContent.classList.add('slide-text-content')
         //Titulo
-        const title = document.createElement('h3');
-        title.textContent = this.slideData.tittle;
-        textContent.appendChild(title);
+        const title = document.createElement('h3')
+        title.textContent = this.slideData.tittle
+        textContent.appendChild(title)
 
         //Descripción
-        const description = document.createElement('p');
-        description.textContent = this.slideData.description;
-        textContent.appendChild(description);
+        const description = document.createElement('p')
+        description.textContent = this.slideData.description
+        textContent.appendChild(description)
 
-        slide.appendChild(textContent);
+        slide.appendChild(textContent)
 
-        return slide;
+        return slide
     }
 
-    public getElement(): HTMLDivElement{
-        return this.slideElement;
+    public getElement(): HTMLDivElement {
+        return this.slideElement
     }
 }
