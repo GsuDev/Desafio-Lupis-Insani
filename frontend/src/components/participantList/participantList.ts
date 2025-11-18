@@ -1,4 +1,4 @@
-import './participantList.css';
+import './participantList.css'
 import type { Participant } from '../../models/Participant'
 import { participantController } from '../../controllers/participantController'
 
@@ -7,10 +7,10 @@ import { participantController } from '../../controllers/participantController'
  * Maneja la lista de participantes (jugadores y bots) en la sala de espera
  */
 export class ParticipantList {
-    private container: HTMLElement;
-    private header: HTMLElement;
-    private list: HTMLElement;
-    private footer: HTMLElement;
+    private container: HTMLElement
+    private header: HTMLElement
+    private list: HTMLElement
+    private footer: HTMLElement
     private btnIniciar: HTMLButtonElement
 
     constructor() {
@@ -24,7 +24,7 @@ export class ParticipantList {
     private createContainer(): HTMLElement {
         const container = document.createElement('div')
         container.className = 'participant-list'
-        return container;
+        return container
     }
 
     private createHeader(): HTMLElement {
@@ -32,14 +32,14 @@ export class ParticipantList {
         header.className = 'participant-list-header'
         header.id = 'participant-count-header'
         header.textContent = 'Cargando...'
-        return header;
+        return header
     }
 
     private createList(): HTMLElement {
         const list = document.createElement('div')
         list.className = 'participant-list-body'
         list.id = 'participant-list-body'
-        return list;
+        return list
     }
 
     private createButton(): HTMLButtonElement {
@@ -49,7 +49,7 @@ export class ParticipantList {
         btnIniciar.className = 'btn-iniciar'
         btnIniciar.id = 'start-game-button'
         btnIniciar.textContent = 'Iniciar'
-        btnIniciar.disabled = true;
+        btnIniciar.disabled = true
 
         this.footer.appendChild(btnIniciar)
 
@@ -68,14 +68,14 @@ export class ParticipantList {
      * Habilita o deshabilita el botón de iniciar
      */
     disableButton(isDisabled: boolean): void {
-        this.btnIniciar.disabled = isDisabled;
+        this.btnIniciar.disabled = isDisabled
         this.btnIniciar.textContent = isDisabled ? 'Cargando...' : 'Iniciar'
     }
 
     /**
      * Renderiza el componente y devuelve el elemento HTML
      */
-     render(): HTMLElement {
+    render(): HTMLElement {
         // ✅ Orden correcto: header → list → footer
         this.container.appendChild(this.header)
         this.container.appendChild(this.list)

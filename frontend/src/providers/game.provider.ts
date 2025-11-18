@@ -69,8 +69,6 @@ export const getGame = async (gameId: string): Promise<Game> => {
     return game
 }
 
-
-
 /**
  * Llama a: GameController@addMessageByGame
  */
@@ -127,7 +125,9 @@ export const addPlayerToGame = async (
  * Llama a: GET /api/games/{id}/participants
  * Se usa DESPUÉS de pulsar "Iniciar" para obtener la lista definitiva
  */
-export const getGameParticipants = async (gameId: string): Promise<Participant[]> => {
+export const getGameParticipants = async (
+    gameId: string
+): Promise<Participant[]> => {
     const response = await fetch(`${apiUrl}/games/${gameId}/participants`)
     return handleResponse<Participant[]>(response)
 }

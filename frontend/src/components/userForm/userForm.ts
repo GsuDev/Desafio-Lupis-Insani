@@ -123,7 +123,6 @@ export const renderUserForm = (appContainer: HTMLDivElement) => {
         })
     }
 
-    
     profileContainer.append(profilePictureGroup)
 
     // Contenedor derecho (nickname, nombre, apellidos)
@@ -143,7 +142,14 @@ export const renderUserForm = (appContainer: HTMLDivElement) => {
     const rowNombre = document.createElement('div')
     rowNombre.className = 'row-group'
 
-    const nameGroup = createInputGroup('name', 'Nombre', 'text', 'name', true, 'Lupi')
+    const nameGroup = createInputGroup(
+        'name',
+        'Nombre',
+        'text',
+        'name',
+        true,
+        'Lupi'
+    )
     const lastnameGroup = createInputGroup(
         'lastname',
         'Apellidos',
