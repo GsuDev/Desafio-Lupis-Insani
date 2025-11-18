@@ -13,36 +13,35 @@ return new class extends Migration
     {
         Schema::create('participants', function (Blueprint $table) {
             $table->id();
-            
+
             $table->foreignId('game_id')
-                  ->constrained('games')
-                  ->onDelete('cascade');
-                  
+                ->constrained('games')
+                ->onDelete('cascade');
+
             $table->foreignId('user_id')
-                  ->nullable() // Para los bots
-                  ->constrained('users')
-                  ->onDelete('cascade');
-            
+                ->nullable() // Para los bots
+                ->constrained('users')
+                ->onDelete('cascade');
+
             $table->boolean('is_bot')->default(false);
             $table->string('bot_name')->nullable();
-            
+
             $table->foreignId('character_id')
-                  ->nullable()
-                  ->constrained('characters')
-                  ->onDelete('cascade');
+                ->nullable()
+                ->constrained('characters')
+                ->onDelete('cascade');
 
             $table->timestamps();
-            
-            
+
             //  estas validaciones van en el controlador pero las pongo aquí como doble seguro
-            
+
             // Un usuario no puede estar dos veces en la misma partida
-            //$table->unique(['game_id', 'user_id']);
-            
+            // $table->unique(['game_id', 'user_id']);
+
             // Un personaje no puede estar dos veces en la misma partida
-           // $table->unique(['game_id', 'character_id']);
+            // $table->unique(['game_id', 'character_id']);
         });
-        
+
     }
 
     /**
