@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\RestorePasswordMail;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
     // Login y creación de token
-    public function login(Request $request)
+    public function publicLogin(Request $request)
     {
         $credentials = $request->validate([
             'email' => 'required|email',
@@ -17,8 +19,8 @@ class AuthController extends Controller
         ]);
 
         $user = User::where('email', $credentials['email'])->first();
-        $this->publicLogin($user);
 
+        return response()->json($this->login($user));
     }
 
     // Logout (revocar token actual)
@@ -29,7 +31,7 @@ class AuthController extends Controller
         return response()->json(['message' => 'Sesión cerrada']);
     }
 
-    public static function publicLogin($user)
+    public static function login($user)
     {
 
         if (! $user || ! Hash::check($user['password'], $user->password)) {
@@ -58,9 +60,72 @@ class AuthController extends Controller
 
         $token = $user->createToken('auth-token', $abilities)->plainTextToken;
 
-        return response()->json([
+        return [
             'user' => $user,
             'token' => $token,
+        ];
+    }
+
+    public function restorePassword(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => 'required|email',
         ]);
+
+        $user = User::where('email', $validated['email'])->first();
+
+        if (! $user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'El email no está registrado',
+                'data' => null,
+            ], 404);
+        }
+
+        // 1. Crear token de Sanctum
+        $token = $user->createToken('auth-token', ['reset-password'])->plainTextToken;
+
+        // 2. Borrar todos los demás tokens excepto este
+        $user->tokens()->delete();
+
+        // 3. Enviar correo al usuario
+        Mail::to($user->email)->send(new RestorePasswordMail($token));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Se ha enviado un correo para restaurar la contraseña',
+            'data' => null,
+        ], 200);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $validated = $request->validate([
+            'password' => 'required|string|min:8',
+        ]);
+
+        // 4. Obtener usuario
+        $user = $request->user();
+
+        if (! $user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'El usuario no existe',
+                'data' => null,
+            ], 404);
+        }
+
+        // 5. Cambiar contraseña
+        $user->password = Hash::make($validated['password']);
+        $user->save();
+
+        // 6. Borrar TODOS los tokens (logout global)
+        $user->tokens()->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'La contraseña ha sido restablecida correctamente',
+            'data' => null,
+        ], 200);
     }
 }

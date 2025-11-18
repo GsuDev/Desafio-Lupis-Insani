@@ -6,19 +6,43 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-// Rutas publicas
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+*/
+
+// --------------
+// Rutas públicas
+// --------------
+
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/users', [UserController::class, 'store']);
 Route::post('/register', [RegisterController::class, 'register']);
+// Solicitar recuperación de contraseña
+Route::post('/restore-password', [AuthController::class, 'restorePassword']);
+
+// ------------------------------------------------------------------------
+
+// ----------------------------
+// Rutas protegidas de usuarios
+// ----------------------------
 
 // Ruta /user protegida: Obtener los datos de usuario con sesion iniciada
 Route::middleware('auth:sanctum')->get('/user', [UserController::class, 'showItself']);
+
 // Ruta /logout protegida: Cerrar la sesion
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
+
+// Ruta /reset-password: Nueva contraseña al recuperar
+Route::middleware('auth:sanctum')->post('/reset-password', [AuthController::class, 'reset-password']);
+
+// ------------------------------------------------------------------------
 
 // ---------------------------
 // Endpoints /users protegidos
 // ---------------------------
+
 Route::middleware('auth:sanctum')->group(function () {
 
     // Listado → solo tokens con ability 'list-users'
@@ -33,6 +57,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/users/{id}', [UserController::class, 'update'])
         ->middleware('update-user');
 
+    // Actualizar contraseña → 'update-user'
+    Route::put('/users/{id}/change-password', [UserController::class, 'updatePassword'])
+        ->middleware('update-user');
+
     // Eliminar → 'delete-user'
     Route::delete('/users/{id}', [UserController::class, 'destroy'])
         ->middleware('delete-user');
@@ -44,15 +72,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Ruta si el user no tiene la sesion iniciada
 Route::get('/nologin', function () {
-    return response()->json(['success' => false, 'message' => 'Unauthorised'], 203);
+    return response()->json(['success' => false, 'message' => 'Unauthorised', 'data' => null], 203);
 });
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-*/
 
-// --- RUTAS DE GAME ---
+// ------------------------------------------------------------------------
+
+// ----------------------------
+// Rutas protegidas de partidas
+// ----------------------------
 
 // POST /api/games -> GameController@createGame
 Route::post('/games', [GameController::class, 'createGame']);
