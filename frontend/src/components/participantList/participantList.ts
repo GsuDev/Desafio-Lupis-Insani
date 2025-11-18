@@ -1,6 +1,6 @@
 import './participantList.css'
 import type { Participant } from '../../models/Participant'
-import { participantController } from '../../controllers/participantController'
+import { participantController } from '../../controllers/ParticipantController'
 
 /**
  * Clase ParticipantList
