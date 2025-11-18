@@ -1,9 +1,7 @@
 // 1. Importar modelos y el *Controlador*
-import { createParticipantList } from '../participantList/participantList'
-import { participantController } from '../../controllers/participantController'
+import { ParticipantList } from '../participantList/participantList'
 import type { Game } from '../../interfaces/game.models'
 import { gameController } from '../../controllers/game-controller.ts'
-import { getGameParticipants } from '../../providers/game.provider.mock.ts'
 
 // 2. Importar el CSS
 import './waiting-room.css'
@@ -59,8 +57,9 @@ export const renderWaitingRoom = (
     main.className = 'wr-main'
 
     // 3. Crear columnas usando las funciones helpers
-    const [participantsColumn, updatePlayersView, disableStartButton] =
-        createParticipantList()
+    const participantList = new ParticipantList()
+    const participantsColumn = participantList.render()     
+    
     const chatColumn = createChatColumn()
 
     main.append(participantsColumn)
@@ -95,10 +94,10 @@ export const renderWaitingRoom = (
     }
 
     const renderGameDetails = (game: Game) => { 
-        // Llama al callback específico de la columna de jugadores
+        // Actualiza la lista de participantes con los datos del juego
         const participants = game.participants || []
-        updatePlayersView(participants)
-        // (Aquí se llamaría a 'updateChatView(game.messages)' en el futuro supongo)
+        participantList.updateParticipants(participants)
+        participantList.disableButton(false)
     }
 
     // 5. Conectar la Vista con el Controlador
@@ -106,7 +105,7 @@ export const renderWaitingRoom = (
         showLoading,
         showGlobalError,
         renderGameDetails,
-        disableStartButton
+        (isDisabled: boolean) => participantList.disableButton(isDisabled)
     )
 
     // 6. Añadir Listeners de la Vista

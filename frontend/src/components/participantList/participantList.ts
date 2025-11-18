@@ -1,61 +1,85 @@
 import './participantList.css';
-import type { Participant } from '../../models/Participant';
-import { participantController } from '../../controllers/participantController';
+import type { Participant } from '../../models/Participant'
+import { participantController } from '../../controllers/participantController'
 
 /**
- * Crea la columna de participantes (jugadores y bots)
- * Devuelve el elemento HTML y callbacks para actualizarlo
+ * Clase ParticipantList
+ * Maneja la lista de participantes (jugadores y bots) en la sala de espera
  */
-export const createParticipantList = (): [
-    HTMLElement,
-    (participants: Participant[]) => void,
-    (isDisabled: boolean) => void
-] => {
-    const container = document.createElement('div');
-    container.className = 'participant-list';
+export class ParticipantList {
+    private container: HTMLElement;
+    private header: HTMLElement;
+    private list: HTMLElement;
+    private footer: HTMLElement;
+    private btnIniciar: HTMLButtonElement
 
-    // Header (contador de jugadores)
-    const header = document.createElement('header');
-    header.className = 'participant-list-header';
-    header.id = 'participant-count-header';
-    header.textContent = 'Cargando...';
+    constructor() {
+        this.container = this.createContainer()
+        this.header = this.createHeader()
+        this.list = this.createList()
+        this.footer = document.createElement('footer')
+        this.btnIniciar = this.createButton()
+    }
 
-    // Lista scrolleable de participantes
-    const list = document.createElement('div');
-    list.className = 'participant-list-body';
-    list.id = 'participant-list-body';
+    private createContainer(): HTMLElement {
+        const container = document.createElement('div')
+        container.className = 'participant-list'
+        return container;
+    }
 
-    // Footer con botón Iniciar
-    const footer = document.createElement('footer');
-    footer.className = 'participant-list-footer';
+    private createHeader(): HTMLElement {
+        const header = document.createElement('header')
+        header.className = 'participant-list-header'
+        header.id = 'participant-count-header'
+        header.textContent = 'Cargando...'
+        return header;
+    }
 
-    const btnIniciar = document.createElement('button');
-    btnIniciar.className = 'btn-iniciar';
-    btnIniciar.id = 'start-game-button';
-    btnIniciar.textContent = 'Iniciar';
-    btnIniciar.disabled = true; // Deshabilitado hasta que cargue
+    private createList(): HTMLElement {
+        const list = document.createElement('div')
+        list.className = 'participant-list-body'
+        list.id = 'participant-list-body'
+        return list;
+    }
 
-    footer.appendChild(btnIniciar);
+    private createButton(): HTMLButtonElement {
+        this.footer.className = 'participant-list-footer'
 
-    container.appendChild(header);
-    container.appendChild(list);
-    container.appendChild(footer);
+        const btnIniciar = document.createElement('button')
+        btnIniciar.className = 'btn-iniciar'
+        btnIniciar.id = 'start-game-button'
+        btnIniciar.textContent = 'Iniciar'
+        btnIniciar.disabled = true;
 
-    // Callback para actualizar la lista de participantes
-    const updateParticipantList = (participants: Participant[]) => {
-        // Actualiza el header con el contador
-        header.textContent = `${participants.length}/15 Jugadores`;
+        this.footer.appendChild(btnIniciar)
 
-        // Usa el controller para renderizar los participantes
-        participantController.renderParticipantList(participants, list);
-    };
+        return btnIniciar
+    }
 
-    // Callback para habilitar/deshabilitar el botón
-    const disableStartButton = (isDisabled: boolean) => {
-        btnIniciar.disabled = isDisabled;
-        btnIniciar.textContent = isDisabled ? 'Cargando...' : 'Iniciar';
-    };
+    /**
+     * Actualiza la lista de participantes
+     */
+    updateParticipants(participants: Participant[]): void {
+        this.header.textContent = `${participants.length}/15 Jugadores`
+        participantController.renderParticipantList(participants, this.list)
+    }
 
-    // Devuelve el elemento HTML y las funciones para actualizarlo
-    return [container, updateParticipantList, disableStartButton];
-};
+    /**
+     * Habilita o deshabilita el botón de iniciar
+     */
+    disableButton(isDisabled: boolean): void {
+        this.btnIniciar.disabled = isDisabled;
+        this.btnIniciar.textContent = isDisabled ? 'Cargando...' : 'Iniciar'
+    }
+
+    /**
+     * Renderiza el componente y devuelve el elemento HTML
+     */
+     render(): HTMLElement {
+        // ✅ Orden correcto: header → list → footer
+        this.container.appendChild(this.header)
+        this.container.appendChild(this.list)
+        this.container.appendChild(this.footer)
+        return this.container
+    }
+}

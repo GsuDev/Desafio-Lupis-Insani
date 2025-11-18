@@ -6,7 +6,8 @@ const createInputGroup = (
     labelText: string,
     inputType: string,
     name: string,
-    required = true
+    required = true,
+    placeholder = ''
 ): HTMLDivElement => {
     const group = document.createElement('div')
     group.className = 'input-group'
@@ -20,6 +21,9 @@ const createInputGroup = (
     input.id = id
     input.name = name
     input.required = required
+    if (placeholder) {
+        input.placeholder = placeholder
+    }
     if (inputType === 'password') {
         input.autocomplete = 'new-password'
     } else if (inputType === 'email') {
@@ -119,7 +123,7 @@ export const renderUserForm = (appContainer: HTMLDivElement) => {
         })
     }
 
-    console.log('hola', profilePictureGroup)
+    
     profileContainer.append(profilePictureGroup)
 
     // Contenedor derecho (nickname, nombre, apellidos)
@@ -130,19 +134,23 @@ export const renderUserForm = (appContainer: HTMLDivElement) => {
         'nickname',
         'Nickname',
         'text',
-        'nickname'
+        'nickname',
+        true,
+        'Nombre o apodo del Héroe de castonegro'
     )
     rightSection.append(nicknameGroup)
 
     const rowNombre = document.createElement('div')
     rowNombre.className = 'row-group'
 
-    const nameGroup = createInputGroup('name', 'Nombre', 'text', 'name')
+    const nameGroup = createInputGroup('name', 'Nombre', 'text', 'name', true, 'Lupi')
     const lastnameGroup = createInputGroup(
         'lastname',
         'Apellidos',
         'text',
-        'lastname'
+        'lastname',
+        true,
+        'Insani'
     )
 
     rowNombre.append(nameGroup)
@@ -157,7 +165,9 @@ export const renderUserForm = (appContainer: HTMLDivElement) => {
         'email',
         'Correo Electrónico',
         'email',
-        'email'
+        'email',
+        true,
+        'ejemplo@correo.com'
     )
     form.append(emailGroup)
 
@@ -168,13 +178,17 @@ export const renderUserForm = (appContainer: HTMLDivElement) => {
         'password',
         'Contraseña',
         'password',
-        'password'
+        'password',
+        true,
+        'Mínimo 8 caracteres'
     )
     const passwordConfGroup = createInputGroup(
         'password_confirmation',
         'Repite Contraseña',
         'password',
-        'password_confirmation'
+        'password_confirmation',
+        true,
+        'Confirma tu contraseña'
     )
 
     rowPassword.append(passwordGroup)
@@ -186,7 +200,8 @@ export const renderUserForm = (appContainer: HTMLDivElement) => {
         'Fecha de Nacimiento',
         'date',
         'birthdate',
-        false
+        false,
+        'dd/mm/aaaa'
     )
     form.append(birthdayGroup)
 
