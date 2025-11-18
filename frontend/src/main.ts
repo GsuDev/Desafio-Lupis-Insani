@@ -32,6 +32,9 @@ const datosSlides: ISlideData[] = [
             'https://th.bing.com/th/id/R.0464bb17cbdbf68ba78b40d9752f7b75?rik=KJCJAOL1zVTMIg&riu=http%3a%2f%2fgetwallpapers.com%2fwallpaper%2ffull%2f2%2fe%2fb%2f1519627-cool-ezio-auditore-wallpaper-2560x1440-for-windows.jpg&ehk=zGwr85bZW30vVLwJ4vp5f5Vimq4jBOZLlVhAmXMN5Dw%3d&risl=&pid=ImgRaw&r=0',
     },
 ]
+//import { renderWaitingRoom } from './components/waitingRoom/waiting-room'
+// Nuevo: importar el formulario de usuario (ajusta la ruta si es distinta)
+// import { renderUserForm } from './components/userForm/userForm'
 
 /**
  * PUNTO DE ENTRADA DE LA APLICACIÓN
@@ -60,4 +63,6 @@ if (appContainer) {
     // Console.error(
     //     'Error Fatal: No se encontró el contenedor #app en el index.html'
     // )
+    //renderWaitingRoom(appContainer, '1') // ⬅️ Comentado para la prueba
+    //renderUserForm(appContainer) // ⬅️ Render del UserForm
 }
