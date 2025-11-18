@@ -69,6 +69,22 @@ class UserController {
         localStorage.removeItem('currentUser')
     }
 
+    async changePassword(oldPassword: string, password: string) {
+        if (oldPassword !== password) {
+            return {
+                success: false,
+                message: 'Las contraseñas no coinciden',
+                data: null,
+            }
+        }
+        const response = userProvider.changePassword(oldPassword, password)
+        return response
+    }
+
+    async restorePassword(email: string) {
+        const response = userProvider.restorePassword(email)
+        return response
+    }
     /**
      * Carga el perfil del usuario desde la API y actualiza la sesión
      * @returns Usuario actualizado
