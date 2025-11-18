@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 // Rutas públicas
 // --------------
 
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'publicLogin']);
 Route::post('/users', [UserController::class, 'store']);
 Route::post('/register', [RegisterController::class, 'register']);
 // Solicitar recuperación de contraseña

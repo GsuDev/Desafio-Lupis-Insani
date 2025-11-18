@@ -20,7 +20,17 @@ class AuthController extends Controller
 
         $user = User::where('email', $credentials['email'])->first();
 
-        return response()->json($this->login($user));
+        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Credenciales inválidas',
+                'data' => null,
+            ], 401);
+        }
+
+        return response()->json(
+            $this->login($user)
+        );
     }
 
     // Logout (revocar token actual)
@@ -33,10 +43,8 @@ class AuthController extends Controller
 
     public static function login($user)
     {
-
-        if (! $user || ! Hash::check($user['password'], $user->password)) {
-            return response()->json(['message' => 'Credenciales inválidas'], 401);
-        }
+        // En login NO se debe volver a checkear el hash
+        // porque ya se hizo en publicLogin()
 
         // Definir abilities según rol
         $abilities = [];
@@ -48,7 +56,6 @@ class AuthController extends Controller
                 'update-user',
                 'delete-user',
                 'assign-roles',
-
             ];
         } else {
             $abilities = [
@@ -61,8 +68,13 @@ class AuthController extends Controller
         $token = $user->createToken('auth-token', $abilities)->plainTextToken;
 
         return [
-            'user' => $user,
-            'token' => $token,
+            'success' => true,
+            'message' => 'Sesión iniciada correctamente',
+            'data' => [
+                'user' => $user,
+                'token' => $token,
+            ],
+
         ];
     }
 
