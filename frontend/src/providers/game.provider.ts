@@ -1,4 +1,5 @@
 import type { Game, Player, Message } from '../interfaces/game.models'
+import type { Participant } from '../models/Participant'
 
 /**
  * --- PROVEEDOR DE API REAL ---
@@ -62,6 +63,7 @@ export const getGame = async (gameId: string): Promise<Game> => {
         createdAt: gameData.createdAt,
         players: playersData, // Player[] esto de forma temporal, en realidad devuelve usuarios
         messages: messagesData, // La API devuelve Message[]
+        participants: [], //Por ahora array vacío, se cargará con getGameParticipants
     }
 
     return game
@@ -115,3 +117,17 @@ export const addPlayerToGame = async (
 }
 // --- (Aquí añadirías el RESTO de funciones del provider...) ---
 // createGame, getGames, updateGame, deleteGame...
+
+//HU7 apartado consumir api GameProvider //no se si esta bien // se puede cambiar
+/**
+ * Obtiene la lista FINAL de participantes de una partida
+ * (usuarios + bots + personajes asignados)
+ * Llama a: GET /api/games/{id}/participants
+ * Se usa DESPUÉS de pulsar "Iniciar" para obtener la lista definitiva
+ */
+export const getGameParticipants = async (
+    gameId: string
+): Promise<Participant[]> => {
+    const response = await fetch(`${apiUrl}/games/${gameId}/participants`)
+    return handleResponse<Participant[]>(response)
+}
