@@ -43,7 +43,7 @@ const createInputGroup = (
     return group
 }
 
-export const renderUserForm = (appContainer: HTMLDivElement) => {
+export const renderUserForm = (appContainer: HTMLElement) => {
     appContainer.innerHTML = ''
 
     const container = document.createElement('div')

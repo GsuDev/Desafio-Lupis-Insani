@@ -1,3 +1,5 @@
+import { userController } from '../../controllers/UserController'
+import { loadRegister } from '../userForm/registerView.mock'
 import './loginForm.css'
 
 export class LoginFormComponent {
@@ -13,9 +15,6 @@ export class LoginFormComponent {
      * Renderiza el formulario de login dentro del contenedor
      */
     render(): void {
-        // Limpiar el contenedor
-        this.container.innerHTML = ''
-
         // Contenedor principal
         const loginContainer = document.createElement('div')
         loginContainer.className = 'login-container'
@@ -156,7 +155,7 @@ export class LoginFormComponent {
     /**
      * Maneja el submit del formulario
      */
-    private handleSubmit(event: Event): void {
+    private async handleSubmit(event: Event): Promise<void> {
         event.preventDefault()
 
         const form = event.target as HTMLFormElement
@@ -198,8 +197,8 @@ export class LoginFormComponent {
 
         console.log('Login enviado:', { email, password })
 
-        // Aquí se conectaría con el controlador
-        // loginController.handleLogin({ email, password })
+        // Hacemos login con el userController
+        const user = await userController.login(email, password)
     }
 
     /**
@@ -210,7 +209,7 @@ export class LoginFormComponent {
         console.log('Redirigir a crear cuenta')
 
         // Aquí se llamaría al router o controlador
-        // router.navigateTo('/register')
+        loadRegister(document.getElementById('app'))
     }
 
     /**

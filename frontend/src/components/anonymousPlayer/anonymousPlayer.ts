@@ -1,3 +1,4 @@
+import { loadWaitingRoom } from '../waitingRoom/waitingRoomView.mock'
 import './anonymousPlayer.css'
 
 /**
@@ -83,9 +84,6 @@ export class AnonymousSelectorComponent {
      * - Registra los listeners de interacción
      */
     render(): void {
-        // 1) Limpiar el contenedor (idempotente)
-        this.container.innerHTML = ''
-
         // 2) Contenedor principal de la tarjeta
         const anonymousContainer = document.createElement('div')
         anonymousContainer.className = 'anonymous-container'
@@ -299,7 +297,7 @@ export class AnonymousSelectorComponent {
         })
 
         // Aquí se conectaría con el controlador
-        // gameController.createAnonymousRoom({ character: this.selectedCharacterId, nickname })
+        loadWaitingRoom()
     }
 
     /**

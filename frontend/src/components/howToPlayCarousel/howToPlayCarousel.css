@@ -1,14 +1,7 @@
 /*Para probar*/
 
-body {
-    background-color: #333;
-    display: grid;
-    place-items: center;
-    min-height: 100vh;
-    font-family: Arial, sans-serif;
-}
-
 .carousel-container {
+    font-family: 'Walter Turncoat';
     background: linear-gradient(135deg, #0c0a7d, #2b5ce2);
     color: white;
     padding: 24px;
