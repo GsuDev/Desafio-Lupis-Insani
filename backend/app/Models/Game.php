@@ -13,8 +13,7 @@ class Game extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'started',
-        'ended',
+        'state',
         'url',
     ];
 
