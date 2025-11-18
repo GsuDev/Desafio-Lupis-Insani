@@ -7,20 +7,24 @@
     --color-sangre: #9b2226;
     --color-luna: #fca311;
 
-    --font-titulo: 'Crimson Text', serif;
+    --font-titulo: 'Walter Turncoat';
     --font-cuerpo: 'Lato', sans-serif;
 }
 
 /* Fondo general tipo "noche" */
 body {
     background-color: var(--color-noche);
+    margin: 0;
+    padding: 0;
 }
 
 /* Contenedor principal */
 .login-container {
-    width: 100%;
-    margin: 4rem auto;
-    padding: 1rem;
+    width: 110%;
+    max-width: 380px;
+    margin: 0 auto;
+    padding: 4rem 1rem;
+    box-sizing: border-box;
 }
 
 /* Tarjeta del formulario */
@@ -28,9 +32,12 @@ body {
     background-color: var(--color-sombra);
     border-radius: 14px;
     width: 100%;
+    min-height: 520px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
 }
 
 /* Header */
@@ -41,32 +48,40 @@ body {
 }
 
 .login-header h2 {
-    color: var(--color-noche);
+    color: #ffffff;
     font-family: var(--font-titulo);
     font-size: 1.45rem;
     font-weight: 700;
     text-transform: uppercase;
     margin: 0;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Cuerpo */
 .login-body {
-    padding: 2rem 1.7rem;
+    padding: 1.2rem 1.7rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .login-description {
     text-align: center;
-    margin-bottom: 1.8rem;
-    color: var(--color-hueso);
+    margin-bottom: 1rem;
+    color: #a78bfa;
     font-size: 0.95rem;
     font-family: var(--font-cuerpo);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 /* Formulario */
 .login-form {
     display: flex;
     flex-direction: column;
-    gap: 1.4rem;
+    gap: 1rem;
 }
 
 /* Grupo input */
@@ -78,19 +93,30 @@ body {
 .login-input-group label {
     color: var(--color-hueso);
     font-family: var(--font-cuerpo);
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.5rem;
     font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .login-input-group input {
-    background-color: #ffffff;
-    padding: 0.75rem 0.9rem;
-    border: 2px solid #cfcfcf;
-    border-radius: 8px;
+    width: 100%;
+    background-color: #f3e8ff;
+    padding: 0.85rem 1rem;
+    border: 2px solid #d8b4fe;
+    border-radius: 10px;
     font-family: var(--font-cuerpo);
     font-size: 0.95rem;
     transition: border 0.2s ease;
-    color: #000;
+    color: #6b21a8;
+    font-weight: 600;
+    box-sizing: border-box;
+}
+
+.login-input-group input::placeholder {
+    color: #a78bfa;
+    opacity: 0.8;
 }
 
 .login-input-group input:focus {
@@ -109,24 +135,29 @@ body {
 
 /* Botón */
 .login-submit-button {
+    width: 100%;
     background: linear-gradient(135deg, #ef8354 0%, #fb923c 100%);
-    color: var(--color-noche);
+    color: #ffffff;
     border: none;
-    padding: 0.85rem;
-    border-radius: 8px;
+    padding: 0.95rem;
+    border-radius: 10px;
     font-family: var(--font-titulo);
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 1.05rem;
     text-transform: uppercase;
     cursor: pointer;
-    letter-spacing: 0.6px;
-    transition: 0.2s ease;
-    box-shadow: 0 3px 12px rgba(252, 163, 17, 0.3);
+    letter-spacing: 1px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(239, 131, 84, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
 }
 
 .login-submit-button:hover {
-    background-color: #e49510;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 131, 84, 0.5);
 }
 
 .login-submit-button:active {
@@ -134,30 +165,43 @@ body {
 }
 
 .login-submit-button:disabled {
-    background-color: #b8b8b8;
+    background: linear-gradient(135deg, #b8b8b8 0%, #9ca3af 100%);
     cursor: not-allowed;
+    box-shadow: none;
+}
+
+.login-submit-button::before {
+    content: '▶';
+    font-size: 0.8rem;
 }
 
 /* Footer */
 .login-footer {
     text-align: center;
     margin-top: 1.4rem;
-    color: #c8c8c8;
+    color: #a78bfa;
     font-family: var(--font-cuerpo);
+    font-size: 0.9rem;
 }
 
 .login-footer a {
     color: var(--color-luna);
     font-weight: 600;
     text-decoration: none;
+    transition: all 0.2s ease;
 }
 
 .login-footer a:hover {
     text-decoration: underline;
+    color: #ffb733;
 }
 
 /* Responsive */
 @media (max-width: 480px) {
+    .login-container {
+        padding: 2rem 1rem;
+    }
+
     .login-card {
         border-radius: 10px;
     }

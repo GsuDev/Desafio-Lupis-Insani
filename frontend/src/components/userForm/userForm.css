@@ -17,7 +17,6 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: var(--color-noche);
     font-family: var(--font-cuerpo);
     color: var(--color-hueso);
     padding: 1rem;
