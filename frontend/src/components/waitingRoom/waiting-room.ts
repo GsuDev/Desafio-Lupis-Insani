@@ -5,7 +5,7 @@ import { gameController } from '../../controllers/game-controller.ts'
 
 // 2. Importar el CSS
 import './waiting-room.css'
- 
+
 /**
  * Crea la columna derecha (Chat)
  */
@@ -58,8 +58,8 @@ export const renderWaitingRoom = (
 
     // 3. Crear columnas usando las funciones helpers
     const participantList = new ParticipantList()
-    const participantsColumn = participantList.render()     
-    
+    const participantsColumn = participantList.render()
+
     const chatColumn = createChatColumn()
 
     main.append(participantsColumn)
@@ -93,7 +93,7 @@ export const renderWaitingRoom = (
         }
     }
 
-    const renderGameDetails = (game: Game) => { 
+    const renderGameDetails = (game: Game) => {
         // Actualiza la lista de participantes con los datos del juego
         const participants = game.participants || []
         participantList.updateParticipants(participants)

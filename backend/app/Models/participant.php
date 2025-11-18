@@ -41,6 +41,4 @@ class participant extends Model
     {
         return $this->belongsTo(Character::class);
     }
-
-
 }
