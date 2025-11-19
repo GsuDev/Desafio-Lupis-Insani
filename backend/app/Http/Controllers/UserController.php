@@ -67,14 +67,9 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
             'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
-            'password' => 'sometimes|string|min:8',
             'birthdate' => 'required|date',
             'profile_image_url' => 'nullable|string',
         ]);
-
-        if (isset($validated['password'])) {
-            $validated['password'] = Hash::make($validated['password']);
-        }
 
         $user->update($validated);
 
@@ -104,5 +99,34 @@ class UserController extends Controller
         }
 
         return response()->json($user->load('roles'));
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $validated = $request->validate([
+            'oldPassword' => 'required|string|min:8',
+            'password' => 'required|string|min:8',
+        ]);
+
+        $user = $request->user();
+
+        // Comprobar contraseña antigua
+        if (! Hash::check($validated['oldPassword'], $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Contraseña incorrecta',
+                'data' => null,
+            ], 400);
+        }
+
+        // Hashear nueva contraseña
+        $user->password = Hash::make($validated['password']);
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'La contraseña ha sido cambiada correctamente',
+            'data' => null,
+        ], 200);
     }
 }

@@ -1,0 +1,260 @@
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;700&family=Lato:wght@400;700&display=swap');
+
+:root {
+    --color-noche: #1a1a2e;
+    --color-sombra: #2a2a4e;
+    --color-hueso: #e0e0e0;
+    --color-sangre: #9b2226;
+    --color-luna: #fca311;
+
+    --font-titulo: 'Walter Turncoat';
+    --font-cuerpo: 'Lato', sans-serif;
+}
+
+/* Fondo general tipo "noche" */
+body {
+    background-color: var(--color-noche);
+    margin: 0;
+    padding: 0;
+}
+
+/* Contenedor principal */
+.anonymous-container {
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+    padding: 4rem 1rem;
+    box-sizing: border-box;
+}
+
+/* Tarjeta del selector */
+.anonymous-card {
+    background-color: var(--color-sombra);
+    border-radius: 14px;
+    width: 100%;
+    min-height: 520px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.anonymous-header {
+    background: linear-gradient(135deg, #34d399 0%, #14b8a6 100%);
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.anonymous-header h2 {
+    color: #ffffff;
+    font-family: var(--font-titulo);
+    font-size: 1.45rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin: 0;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Cuerpo */
+.anonymous-body {
+    padding: 2rem 1.7rem;
+}
+
+.anonymous-description {
+    text-align: center;
+    margin-bottom: 1.8rem;
+    color: #a78bfa;
+    font-size: 0.95rem;
+    font-family: var(--font-cuerpo);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Grid de personajes */
+.character-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.8rem;
+    justify-items: center;
+}
+
+/* Círculo de personaje */
+.character-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.character-circle:hover {
+    transform: scale(1.1);
+    border-color: var(--color-luna);
+    box-shadow: 0 4px 12px rgba(252, 163, 17, 0.4);
+}
+
+.character-circle.selected {
+    border-color: var(--color-luna);
+    box-shadow: 0 0 0 3px rgba(252, 163, 17, 0.3);
+    transform: scale(1.05);
+}
+
+.character-circle.selected::after {
+    content: '✓';
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    background-color: var(--color-luna);
+    color: var(--color-noche);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    border: 2px solid var(--color-sombra);
+}
+
+/* Iconos de personaje por defecto */
+.character-circle.char-1 {
+    background-color: #ef8354;
+}
+
+.character-circle.char-2 {
+    background-color: #a78bfa;
+}
+
+.character-circle.char-3 {
+    background-color: #6b7280;
+}
+
+.character-circle.char-4 {
+    background-color: #ec4899;
+}
+
+.character-circle.char-5 {
+    background-color: #60a5fa;
+}
+
+.character-circle.char-6 {
+    background-color: #fb923c;
+}
+
+/* Input de nickname */
+.nickname-input-group {
+    margin-bottom: 1.4rem;
+}
+
+.nickname-input-group input {
+    width: 100%;
+    background-color: #f3e8ff;
+    padding: 0.85rem 1rem;
+    border: 2px solid #d8b4fe;
+    border-radius: 10px;
+    font-family: var(--font-cuerpo);
+    font-size: 0.95rem;
+    text-align: center;
+    transition: border 0.2s ease;
+    color: #6b21a8;
+    font-weight: 600;
+    box-sizing: border-box;
+}
+
+.nickname-input-group input::placeholder {
+    color: #a78bfa;
+    opacity: 0.8;
+}
+
+.nickname-input-group input:focus {
+    outline: none;
+    border-color: var(--color-luna);
+    color: #000;
+}
+
+/* Botón de crear sala */
+.create-room-button {
+    width: 100%;
+    background: linear-gradient(135deg, #ef8354 0%, #fb923c 100%);
+    color: #ffffff;
+    border: none;
+    padding: 0.95rem;
+    border-radius: 10px;
+    font-family: var(--font-titulo);
+    font-weight: 700;
+    font-size: 1.05rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(239, 131, 84, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.create-room-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 131, 84, 0.5);
+}
+
+.create-room-button:active {
+    transform: translateY(0);
+}
+
+.create-room-button:disabled {
+    background: linear-gradient(135deg, #b8b8b8 0%, #9ca3af 100%);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.create-room-button::before {
+    content: '▶';
+    font-size: 0.8rem;
+}
+
+/* Error */
+.anonymous-error-message {
+    color: var(--color-sangre);
+    font-size: 0.8rem;
+    font-family: var(--font-cuerpo);
+    margin-top: 0.5rem;
+    text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .anonymous-container {
+        padding: 2rem 1rem;
+    }
+
+    .anonymous-card {
+        border-radius: 10px;
+    }
+
+    .anonymous-body {
+        padding: 1.5rem 1.25rem;
+    }
+
+    .character-grid {
+        gap: 0.8rem;
+    }
+
+    .character-circle {
+        width: 55px;
+        height: 55px;
+    }
+}

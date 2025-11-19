@@ -49,11 +49,14 @@ class UserController {
      * @returns Usuario logueado
      * @throws Error si falla el login
      */
-    async login(email: string, password: string): Promise<User> {
+    async login(email: string, password: string): Promise<User | undefined> {
         const user = await userProvider.login(email, password)
+        if (user) {
+            this._currentUser = user
+            localStorage.setItem('currentUser', JSON.stringify(user))
 
-        this._currentUser = user
-        localStorage.setItem('currentUser', JSON.stringify(user))
+            console.log('Usuario guardado:', this._currentUser)
+        }
 
         return user
     }
@@ -69,6 +72,22 @@ class UserController {
         localStorage.removeItem('currentUser')
     }
 
+    async changePassword(oldPassword: string, password: string) {
+        if (oldPassword !== password) {
+            return {
+                success: false,
+                message: 'Las contraseñas no coinciden',
+                data: null,
+            }
+        }
+        const response = userProvider.changePassword(oldPassword, password)
+        return response
+    }
+
+    async restorePassword(email: string) {
+        const response = userProvider.restorePassword(email)
+        return response
+    }
     /**
      * Carga el perfil del usuario desde la API y actualiza la sesión
      * @returns Usuario actualizado
@@ -161,6 +180,7 @@ class UserController {
         try {
             // Llama al Provider (el Mensajero) y espera (await) la respuesta
             const authResponse = await registerUser(formData)
+            console.log('Usuario Registrado exitosamente: ', authResponse)
             this._currentUser = authResponse
             localStorage.setItem(
                 'currentUser',

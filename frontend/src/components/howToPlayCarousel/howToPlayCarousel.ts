@@ -11,7 +11,7 @@ import { Pagination } from './paginationCarousel'
 
 export class Carousel {
     //propiedades
-    private container: HTMLDivElement //-> donde se renderiza
+    private container: HTMLElement //-> donde se renderiza
     private slidesData: ISlideData[]
     private currentIndex: number
 
@@ -27,21 +27,19 @@ export class Carousel {
     private nextButton: HTMLButtonElement | null = null
 
     constructor(
-        containerID: string,
+        container: HTMLElement,
         slidesData: ISlideData[],
         initialIndex: number = 0
     ) {
-        const container = document.getElementById(containerID)
         if (!container) {
-            throw new Error(
-                `No se pudo encontrar el contenedor con el ID ${containerID}`
-            )
+            throw new Error(`No se pudo encontrar el contenedor`)
         }
-
-        this.container = container as HTMLDivElement
+        this.container = container
         this.slidesData = slidesData
         this.currentIndex = initialIndex
+    }
 
+    render() {
         //Crea la estrutura para el DOM
         this.initDOM()
         //Mete los listeners
@@ -55,8 +53,8 @@ export class Carousel {
      */
     private initDOM(): void {
         //primero limpiea el contenedor
-        this.container.innerHTML = ''
-        this.container.className = 'carousel-container'
+        const carouselContainer = document.createElement('div')
+        carouselContainer.className = 'carousel-container'
 
         //Titulo principal
         const mainTitle = document.createElement('h2')
@@ -89,14 +87,16 @@ export class Carousel {
             'carousel-pagination-container'
 
         //Añade todo al contenedor
-        this.container.appendChild(mainTitle)
+        carouselContainer.appendChild(mainTitle)
 
         slideAndControls.appendChild(this.prevButton)
         slideAndControls.appendChild(this.slideDisplayElement)
         slideAndControls.appendChild(this.nextButton)
 
-        this.container.appendChild(slideAndControls)
-        this.container.appendChild(this.paginationContainerElement)
+        carouselContainer.appendChild(slideAndControls)
+        carouselContainer.appendChild(this.paginationContainerElement)
+
+        this.container.appendChild(carouselContainer)
     }
 
     private attachEventListeners(): void {

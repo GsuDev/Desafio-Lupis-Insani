@@ -1,18 +1,23 @@
 import apiClient from '../services/apiClient'
 import type { User } from '../models/User'
+import type { ServerResponse } from '../interfaces/ServerResponse'
 
 export async function registerUser(formData: FormData): Promise<User> {
     const { data } = await apiClient.post<{
-        token?: string
-        user: User
+        success: boolean
+        message: string
+        data: {
+            user: User
+            token: string
+        }
     }>('/register', formData)
 
     // Guardar token si existe
-    if (data.token) {
-        localStorage.setItem('token', data.token)
+    if (data.data.token) {
+        localStorage.setItem('token', data.data.token)
     }
 
-    return data.user
+    return data.data.user
 }
 
 /**
@@ -22,18 +27,25 @@ export async function registerUser(formData: FormData): Promise<User> {
  * @returns Usuario logueado
  * @throws Error si falla el login
  */
-export async function login(email: string, password: string): Promise<User> {
+export async function login(
+    email: string,
+    password: string
+): Promise<User | undefined> {
     const { data } = await apiClient.post<{
-        token?: string
-        user: User
+        success: boolean
+        message: string
+        data: {
+            user?: User
+            token?: string
+        }
     }>('/login', { email, password })
 
     // Guardar token si existe
-    if (data.token) {
-        localStorage.setItem('token', data.token)
+    if (data.data.token) {
+        localStorage.setItem('token', data.data.token)
     }
 
-    return data.user
+    return data.data.user
 }
 
 /**
@@ -55,13 +67,34 @@ export async function getProfile(): Promise<User> {
     return data
 }
 
-/*
-
- */
-
 /**
  * Comprueba si hay un token de sesión válido
  */
 export function isLoggedIn(): boolean {
     return Boolean(localStorage.getItem('token'))
+}
+
+export async function changePassword(
+    oldPassword: string,
+    password: string
+): Promise<ServerResponse> {
+    const { data } = await apiClient.post<ServerResponse>('/change-password', {
+        oldPassword,
+        password,
+    })
+    return data
+}
+
+export async function restorePassword(email: string) {
+    const { data } = await apiClient.post<ServerResponse>('/restore-password', {
+        email,
+    })
+    return data
+}
+
+export async function resetPassword(password: string) {
+    const { data } = await apiClient.post<ServerResponse>('/reset-password', {
+        password,
+    })
+    return data
 }

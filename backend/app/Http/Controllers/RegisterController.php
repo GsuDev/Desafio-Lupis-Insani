@@ -95,6 +95,6 @@ class RegisterController extends Controller
             return response()->json(['message' => 'No hay roles para asignar'], 500);
         }
 
-        AuthController::publicLogin($user);
+        return Response()->json(AuthController::login($user));
     }
 }

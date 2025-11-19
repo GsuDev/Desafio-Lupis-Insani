@@ -1,40 +1,16 @@
-import type { ISlideData } from './interfaces/carousel'
-import { Carousel } from './components/howToPlayCarousel/howToPlayCarousel'
-
 import './style.css'
+//import type { ISlideData } from './interfaces/carousel'
+//import { Carousel } from './components/howToPlayCarousel/howToPlayCarousel'
+import AccessContainer from './components/accessContainer/AccessContainer'
 // Import typescriptLogo from './typescript.svg'
 // import viteLogo from '/vite.svg'
 // import { setupCounter } from './counter.ts'
 // import { renderWaitingRoom } from './components/waitingRoom/waiting-room.ts'
-// import { renderUserForm } from './components/userForm/userForm.ts'
 
-const datosSlides: ISlideData[] = [
-    {
-        stepNumber: 1,
-        tittle: 'LOBO',
-        description: 'LOBEA',
-        imageUrl:
-            'https://www.dadocritico.es/2534-medium_default/el-pacto-de-los-hombres-lobo-de-castronegro.jpg',
-    },
-    {
-        stepNumber: 2,
-        tittle: 'ALDEANO',
-        description: 'ALDEANEA',
-        imageUrl:
-            'https://tse3.mm.bing.net/th/id/OIP.9r7sXqg4h24URsL_UoHiBwAAAA?rs=1&pid=ImgDetMain&o=7&rm=3',
-    },
-    {
-        stepNumber: 3,
-        tittle: 'ASESINO',
-        description:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-        imageUrl:
-            'https://th.bing.com/th/id/R.0464bb17cbdbf68ba78b40d9752f7b75?rik=KJCJAOL1zVTMIg&riu=http%3a%2f%2fgetwallpapers.com%2fwallpaper%2ffull%2f2%2fe%2fb%2f1519627-cool-ezio-auditore-wallpaper-2560x1440-for-windows.jpg&ehk=zGwr85bZW30vVLwJ4vp5f5Vimq4jBOZLlVhAmXMN5Dw%3d&risl=&pid=ImgRaw&r=0',
-    },
-]
-import { renderWaitingRoom } from './components/waitingRoom/waiting-room'
+// import { renderUserForm } from './components/userForm/userForm.ts'
+//import { renderWaitingRoom } from './components/waitingRoom/waiting-room'
 // Nuevo: importar el formulario de usuario (ajusta la ruta si es distinta)
-import { renderUserForm } from './components/userForm/userForm'
+// import { renderUserForm } from './components/userForm/userForm'
 
 /**
  * PUNTO DE ENTRADA DE LA APLICACIÓN
@@ -43,7 +19,7 @@ import { renderUserForm } from './components/userForm/userForm'
 // Import  {renderUserForm} from './components/userForm/userForm.ts';
 
 // 1. Buscamos el "Escenario" (el <div id="app"> del index.html)
-const appContainer = document.querySelector('#app')!
+const appContainer = document.getElementById('app')!
 
 // 2. Comprobamos si el escenario existe
 if (appContainer) {
@@ -54,16 +30,16 @@ if (appContainer) {
     // (Lógica anterior de userForm)
     // renderUserForm(appContainer);
 
-    // try {
-    //     const mainCarousel = new Carousel('app', datosSlides, 0)
-    // } catch (error) {
-    //     console.error('Hubo un problema mu gordo', error)
-    // }
-    renderWaitingRoom(appContainer, '1') // ⬅️ Comentado para la prueba
-    // renderUserForm(appContainer) // ⬅️ Render del UserForm
+    try {
+        const accessContainer = new AccessContainer(appContainer)
+        accessContainer.render()
+    } catch (error) {
+        console.error('Hubo un problema mu gordo', error)
+    }
 } else {
     // Console.error(
     //     'Error Fatal: No se encontró el contenedor #app en el index.html'
     // )
-
+    //renderWaitingRoom(appContainer, '1') // ⬅️ Comentado para la prueba
+    //renderUserForm(appContainer) // ⬅️ Render del UserForm
 }
