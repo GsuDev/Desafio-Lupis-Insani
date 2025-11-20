@@ -16,6 +16,10 @@ use Illuminate\Support\Facades\Route;
 // Rutas públicas
 // --------------
 
+//Ruta temporal para probar la asignacion de bots
+//Debug
+Route::post('/games/{game}/bots', [GameController::class,'testAssignBots']);
+
 Route::post('/login', [AuthController::class, 'publicLogin']);
 Route::post('/users', [UserController::class, 'store']);
 Route::post('/register', [RegisterController::class, 'register']);
