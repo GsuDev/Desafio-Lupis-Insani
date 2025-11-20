@@ -13,7 +13,7 @@ export async function registerUser(formData: FormData): Promise<User> {
     }>('/register', formData)
 
     // Guardar token si existe
-    if (data.data.token) {
+    if (data && data.data && data.data.token) {
         localStorage.setItem('token', data.data.token)
     }
 
@@ -35,13 +35,13 @@ export async function login(
         success: boolean
         message: string
         data: {
-            user?: User
-            token?: string
+            user: User
+            token: string
         }
     }>('/login', { email, password })
 
     // Guardar token si existe
-    if (data.data.token) {
+    if (data && data.data && data.data.token) {
         localStorage.setItem('token', data.data.token)
     }
 
@@ -63,8 +63,14 @@ export async function logout(): Promise<void> {
  * @throws Error si falla la petición
  */
 export async function getProfile(): Promise<User> {
-    const { data } = await apiClient.get<User>('/user')
-    return data
+    const { data } = await apiClient.get<{
+        success: boolean
+        message: string
+        data: {
+            user: User
+        }
+    }>('/user')
+    return data.data.user
 }
 
 /**

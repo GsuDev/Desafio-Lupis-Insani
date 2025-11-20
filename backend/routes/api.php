@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GameController;
-use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,7 +21,7 @@ Route::post('/games/{game}/bots', [GameController::class, 'testAssignBots']);
 
 Route::post('/login', [AuthController::class, 'publicLogin']);
 Route::post('/users', [UserController::class, 'store']);
-Route::post('/register', [RegisterController::class, 'register']);
+Route::post('/register', [UserController::class, 'register']);
 // Solicitar recuperación de contraseña
 Route::post('/restore-password', [AuthController::class, 'restorePassword']);
 
@@ -31,9 +30,6 @@ Route::post('/restore-password', [AuthController::class, 'restorePassword']);
 // ----------------------------
 // Rutas protegidas de usuarios
 // ----------------------------
-
-// Ruta /user protegida: Obtener los datos de usuario con sesion iniciada
-Route::middleware('auth:sanctum')->get('/user', [UserController::class, 'showItself']);
 
 // Ruta /logout protegida: Cerrar la sesion
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
@@ -49,6 +45,10 @@ Route::middleware('auth:sanctum')->post('/reset-password', [AuthController::clas
 
 Route::middleware('auth:sanctum')->group(function () {
 
+    // ---------------------
+    // Solo para rol 'admin'
+    // ---------------------
+
     // Listado → solo tokens con ability 'list-users'
     Route::get('/users', [UserController::class, 'index'])
         ->middleware('list-users');
@@ -57,26 +57,46 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users/{id}', [UserController::class, 'show'])
         ->middleware('view-user');
 
+    // Asignar roles → 'assign-roles'
+    Route::post('/users/{id}/roles', [UserController::class, 'assignRoles'])
+        ->middleware('assign-roles');
+
     // Actualizar → 'update-user'
     Route::put('/users/{id}', [UserController::class, 'update'])
-        ->middleware('update-user');
-
-    // Actualizar contraseña → 'update-user'
-    Route::put('/users/{id}/change-password', [UserController::class, 'updatePassword'])
         ->middleware('update-user');
 
     // Eliminar → 'delete-user'
     Route::delete('/users/{id}', [UserController::class, 'destroy'])
         ->middleware('delete-user');
 
-    // Asignar roles → 'assign-roles'
-    Route::post('/users/{id}/roles', [UserController::class, 'assignRoles'])
-        ->middleware('assign-roles');
+    // --------------------------------
+    // Solo para roles 'user' y 'admin'
+    // --------------------------------
+
+    // Consultar usuario actual
+    Route::get('/user', [UserController::class, 'showItself'])
+        ->middleware('view-user');
+
+    // Actualizar al usuario actual → 'update-itself'
+    Route::put('/users', [UserController::class, 'updateItself'])
+        ->middleware('update-user');
+
+    // Actualizar contraseña → 'update-itself'
+    Route::put('/users/password', [UserController::class, 'updatePassword'])
+        ->middleware('update-user');
+
+    // Eliminar al usuario actual → 'delete-itself'
+    Route::delete('/users', [UserController::class, 'destroyItself'])
+        ->middleware('delete-user');
 });
 
 // Ruta si el user no tiene la sesion iniciada
 Route::get('/nologin', function () {
-    return response()->json(['success' => false, 'message' => 'Unauthorised', 'data' => null], 203);
+    return response()->json([
+        'success' => false,
+        'message' => 'No tienes permiso',
+        'data' => null,
+    ], 401);
 });
 
 // ------------------------------------------------------------------------

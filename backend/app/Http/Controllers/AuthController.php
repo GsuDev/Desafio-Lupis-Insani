@@ -28,9 +28,7 @@ class AuthController extends Controller
             ], 401);
         }
 
-        return response()->json(
-            $this->login($user)
-        );
+        return response()->json($this->login($user), 200);
     }
 
     // Logout (revocar token actual)
@@ -38,7 +36,11 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json(['message' => 'Sesión cerrada']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Sesión cerrada correctamente',
+            'data' => null,
+        ], 200);
     }
 
     public static function login($user)
