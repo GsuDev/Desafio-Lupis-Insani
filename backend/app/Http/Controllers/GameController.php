@@ -250,5 +250,16 @@ class GameController extends Controller
     }
 
    
-   
+    // Es un "puente" temporal para poder probar la lógica interna desde los tests.
+    public function testAssignBots($id) {
+        
+        $result = $this->assignBots($id);
+
+        if($result['success']) {
+             return response()->json($result, 200);
+        } else {
+             // Si falla, devolvemos un error 500 para que el test lo detecte
+             return response()->json($result, 500);
+        }
+    }
 }
