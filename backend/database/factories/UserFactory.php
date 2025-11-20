@@ -31,7 +31,7 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => Hash::make('password123'), // contraseña por defecto
             'birthdate' => $this->faker->date(),
-            'profile_image_url' => $this->faker->imageUrl(200, 200, 'people', true),
+            // 'profile_image_url' => $this->faker->imageUrl(200, 200, 'people', true),
             'remember_token' => Str::random(10),
         ];
     }

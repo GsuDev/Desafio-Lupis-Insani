@@ -38,7 +38,6 @@ class Game extends Model
             'user_id');
     }
 
-
     /**
      * El fin de esta función es:
      * Relación directa con la tabla 'participants'.
@@ -54,7 +53,6 @@ class Game extends Model
     {
         return $this->hasMany(participant::class);
     }
-
 
     // Sobre todo como admin o para debuggar, mostrar los mensajes en una partida
     public function getDetailedStatistics()

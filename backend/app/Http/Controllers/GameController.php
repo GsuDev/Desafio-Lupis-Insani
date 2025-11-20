@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Game;
+use App\Models\participant;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use App\Models\participant;
 
 class GameController extends Controller
 {
@@ -169,22 +169,21 @@ class GameController extends Controller
      * HU9: Garantiza mínimo de 15 jugadores y siempre +2bots
      * Hasta nu máximo de 30 participantes totales
      */
-
     public function assignBots($gameId)
     {
         try {
-            
-            //Recuperamos la partida con sus participantes (humanos y bots)
+
+            // Recuperamos la partida con sus participantes (humanos y bots)
             $game = Game::with('participants')->find($gameId);
 
-            if (!$game) {
+            if (! $game) {
                 return [
                     'success' => false,
                     'message' => 'Partida no encontrada',
-                    'data' => null
+                    'data' => null,
                 ];
             }
-            
+
             $currentCount = $game->participants->count();
             $minGamePlayers = 15;
             $maxGamePlayers = 30;
@@ -192,24 +191,24 @@ class GameController extends Controller
 
             // Se calcula el hueco que falta para llegar al mínimo de 15
             $gapToMin = $minGamePlayers - $currentCount;
-            $botsNeeded = max($gapToMin,$mandatoryBots);
+            $botsNeeded = max($gapToMin, $mandatoryBots);
 
-            //No puede haber más de 30 participantes en la partida
+            // No puede haber más de 30 participantes en la partida
             if ($currentCount + $botsNeeded > $maxGamePlayers) {
                 return [
                     'success' => false,
                     'message' => "Error de integridad: Hay $currentCount jugadores.",
-                    'data' => ['current' => $currentCount, 'needed' => $botsNeeded]
+                    'data' => ['current' => $currentCount, 'needed' => $botsNeeded],
 
                 ];
             }
 
-            //bots data seria el registro que iria en participants
+            // bots data seria el registro que iria en participants
             $botsData = [];
             $timestamp = now();
 
-            for($i = 0; $i < $botsNeeded; $i++){
-                $botName = 'Bot_'. Str::random(8);
+            for ($i = 0; $i < $botsNeeded; $i++) {
+                $botName = 'Bot_'.Str::random(8);
 
                 $botsData[] = [
                     'game_id' => $gameId,
@@ -230,36 +229,33 @@ class GameController extends Controller
             return [
                 'success' => true,
                 'message' => "Asignación completa de bots, se han asignado $botsNeeded bots ",
-                //la respuesta de la data está sujeta a cambios, porque no sabía exactamente que devolver concretamente
+                // la respuesta de la data está sujeta a cambios, porque no sabía exactamente que devolver concretamente
                 'data' => [
                     'added' => $botsNeeded,
-                    'total_participants' => $game->participants->count()
-                ]
+                    'total_participants' => $game->participants->count(),
+                ],
             ];
-
-
-            
 
         } catch (\Exception $e) {
             return [
                 'success' => false,
-                'message' => 'Erroren assignBots: ' . $e->getMessage(),
-                'data' => null
+                'message' => 'Fallo inesperado',
+                'data' => null,
             ];
         }
     }
 
-   
     // Es un "puente" temporal para poder probar la lógica interna desde los tests.
-    public function testAssignBots($id) {
-        
+    public function testAssignBots($id)
+    {
+
         $result = $this->assignBots($id);
 
-        if($result['success']) {
-             return response()->json($result, 200);
+        if ($result['success']) {
+            return response()->json($result, 200);
         } else {
-             // Si falla, devolvemos un error 500 para que el test lo detecte
-             return response()->json($result, 500);
+            // Si falla, devolvemos un error 500 para que el test lo detecte
+            return response()->json($result, 500);
         }
     }
 }
