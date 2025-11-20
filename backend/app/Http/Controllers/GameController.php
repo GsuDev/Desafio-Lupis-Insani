@@ -174,16 +174,19 @@ class GameController extends Controller
             if ($game->state != 'waiting') {
                 return response()->json(['success' => false, 'message' => 'No se puede unir a la partida, no está en estado waiting', 'data' => ''], 403);
             }
-            if ($game->users()->count() > 28)//cambiar al metodo realizado por sergio
+            $currentCount = $game->participants->count();
+            if ($currentCount > 28)//variable global
             {
                 return response()->json(['success' => false, 'message' => 'No se puede unir a la partida, esta completa o el usuario ya está en la partida', 'data' => ''], 403);
             }
             if ($game->users()->where('user_id', $user->id)->exists()) {
 
                 $game->load('users');
-                return response()->json(['success' => false,
-                'message' => 'No se puede unir a la partida, el usuario ya está en la partida',
-                'data' => $game], 200);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se puede unir a la partida, el usuario ya está en la partida',
+                    'data' => $game
+                ], 200);
             }
 
 
@@ -191,14 +194,15 @@ class GameController extends Controller
             $participantController = app(ParticipantController::class);
             $result = $participantController->store(
                 $gameId,
-                 $user->id,
-                  false,
-                   $game->users()->count() ==0); // cambiar al metodo de sergio
+                $user->id,
+                false,
+                $currentCount == 0
+            ); 
 
             // $game->users()->attach($user->id);
             //controlo que haya salido bien
             if (!$result['success']) {
-                return response()->json(["success" => false, "message" => $result['message'], "data" => $result['data']],422);
+                return response()->json(["success" => false, "message" => $result['message'], "data" => $result['data']], 422);
             }
             //recargo los datos de partida
             $game->load('users');
@@ -207,10 +211,10 @@ class GameController extends Controller
             //event(new UserJoinedGame($game, $user))
 
             return response()->json([
-                'success'=>true,
-                'message'=> 'Usuario añadido correctamente',
-                'data'=> $game
-            ],200);
+                'success' => true,
+                'message' => 'Usuario añadido correctamente',
+                'data' => $game
+            ], 200);
 
         } catch (ModelNotFoundException $e) {
 
@@ -234,7 +238,7 @@ class GameController extends Controller
             // Recuperamos la partida con sus participantes (humanos y bots)
             $game = Game::with('participants')->find($gameId);
 
-            if (! $game) {
+            if (!$game) {
                 return [
                     'success' => false,
                     'message' => 'Partida no encontrada',
@@ -266,7 +270,7 @@ class GameController extends Controller
             $timestamp = now();
 
             for ($i = 0; $i < $botsNeeded; $i++) {
-                $botName = 'Bot_'.Str::random(8);
+                $botName = 'Bot_' . Str::random(8);
 
                 $botsData[] = [
                     'game_id' => $gameId,
