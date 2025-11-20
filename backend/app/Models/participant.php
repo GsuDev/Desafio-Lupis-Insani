@@ -14,6 +14,7 @@ class participant extends Model
         'game_id',
         'user_id',
         'is_bot',
+        'is_host',
         'bot_name',
         'character_id',
     ];

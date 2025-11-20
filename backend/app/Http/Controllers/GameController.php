@@ -173,26 +173,47 @@ class GameController extends Controller
             if ($game->state != 'waiting') {
                 return response()->json(['success' => false, 'message' => 'No se puede unir a la partida, no está en estado waiting', 'data' => ''], 403);
             }
-            if ($game->users()->count() >= 28)// esto se podría hacer como variable global o en un archivo de configuración
+            if ($game->users()->count() > 28)//cambiar al metodo realizado por sergio
             {
                 return response()->json(['success' => false, 'message' => 'No se puede unir a la partida, esta completa o el usuario ya está en la partida', 'data' => ''], 403);
             }
             if ($game->users()->where('user_id', $user->id)->exists()) {
 
                 $game->load('users');
-
                 return response()->json(['success' => false,
                 'message' => 'No se puede unir a la partida, el usuario ya está en la partida',
                 'data' => $game], 200);
             }
 
-            $game->users()->attach($user->id);
 
+            //Llamo a ParticipantController Para asignar el usuario
+            $participantController = app(ParticipantController::class);
+            $result = $participantController->store(
+                $gameId,
+                 $user->id,
+                  false,
+                   $game->users()->count() ==0); // cambiar al metodo de sergio
 
-            return response()->json(['success' => true, 'message' => 'Usuario añadido correctamente', 'data' => $game], 200);
+            // $game->users()->attach($user->id);
+            //controlo que haya salido bien
+            if (!$result['success']) {
+                return response()->json(["success" => false, "message" => $result['message'], "data" => $result['data']],422);
+            }
+            //recargo los datos de partida
+            $game->load('users');
+
+            //trigger evento de nuevo usuario dentro lo dejo comentado mas o menos para tener una orientacion
+            //event(new UserJoinedGame($game, $user))
+
+            return response()->json([
+                'success'=>true,
+                'message'=> 'Usuario añadido correctamente',
+                'data'=> $game
+            ],200);
+
         } catch (ModelNotFoundException $e) {
 
-            return response()->json(['seccess' => false, 'message' => 'Partida no encontrada', 'data' => ''], 404);
+            return response()->json(['success' => false, 'message' => 'Partida no encontrada', 'data' => ''], 404);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => "Error al añadir usuario a la partida,{$e->getMessage()}", 'data' => ''], 500);
         }

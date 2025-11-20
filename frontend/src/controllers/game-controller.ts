@@ -5,8 +5,8 @@
  */
 
 import type { Game } from '../interfaces/game.models'
-//import { getGame } from '../providers/game.provider' // Importamos el provider REAL
-import { getGame } from '../providers/game.provider.mock' // MOCK con participants para probar
+import { getGame } from '../providers/game.provider' // Importamos el provider REAL
+//import { getGame } from '../providers/game.provider.mock' // MOCK con participants para probar
 
 class GameController {
     private static instance: GameController

@@ -43,12 +43,13 @@ class ParticipantController extends Controller
      * Este es un método interno.
      * Es llamado por otros controladores, no devuelve una Response.
      */
-    public function store(int $game_id, ?int $user_id, bool $is_bot)
+    public function store(int $game_id, ?int $user_id, bool $is_bot, bool $is_host)
     {
 
         $data = [
             'user_id' => $user_id,
             'is_bot' => $is_bot,
+            'is_host' => $is_host,
             'game_id' => $game_id,
             'bot_name' => null,
             // 'character_id' => null, // Por defecto, se asignará en otra HU
@@ -62,6 +63,7 @@ class ParticipantController extends Controller
                 Rule::unique('participants')->where('game_id', $game_id),
             ],
             'is_bot' => 'required|boolean',
+            'is_host' => 'required|boolean',
 
         ]);
 
@@ -109,6 +111,7 @@ class ParticipantController extends Controller
             'game_id' => $game_id,
             'user_id' => $data['user_id'],
             'is_bot' => $data['is_bot'],
+            'is_host' => $data['is_host'],
             'bot_name' => $data['bot_name'],
             // 'character_id' => $data['character_id'],
 
