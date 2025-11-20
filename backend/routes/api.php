@@ -129,7 +129,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
             // GET /api/games/{game}/players
             // (Necesitarás crear este método 'getPlayersByGame' en tu GameController)
-            // Route::get('/players', [GameController::class, 'getPlayersByGame']);-> para introducir los jugadores en la sala pero esto pertenece a otra HU
+            Route::get('/players', [GameController::class, 'getPlayersByGame']);//-> para introducir los jugadores en la sala pero esto pertenece a otra HU
             //
         }
     );

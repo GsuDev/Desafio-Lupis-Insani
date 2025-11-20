@@ -1,7 +1,7 @@
 // 1. Importar modelos y el *Controlador*
 import { ParticipantList } from '../participantList/participantList'
 import type { Game } from '../../interfaces/game.models'
-import { gameController } from '../../controllers/game-controller.ts'
+import { gameController } from '../../controllers/GameController.ts'
 
 // 2. Importar el CSS
 import './waiting-room.css'

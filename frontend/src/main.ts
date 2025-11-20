@@ -2,6 +2,9 @@ import './style.css'
 //import type { ISlideData } from './interfaces/carousel'
 //import { Carousel } from './components/howToPlayCarousel/howToPlayCarousel'
 import AccessContainer from './components/accessContainer/AccessContainer'
+
+import {JoinGameModal} from './components/joinGameModal/JoinGameModal'
+
 // Import typescriptLogo from './typescript.svg'
 // import viteLogo from '/vite.svg'
 // import { setupCounter } from './counter.ts'
@@ -31,8 +34,14 @@ if (appContainer) {
     // renderUserForm(appContainer);
 
     try {
-        const accessContainer = new AccessContainer(appContainer)
-        accessContainer.render()
+        const modal = new JoinGameModal(appContainer, () => {
+            console.log('El usuario canceló o cerró el modal'); 
+            // Aquí podrías recargar el menú principal si fuera necesario
+        });
+        modal.render();
+        
+        // const accessContainer = new AccessContainer(appContainer)
+        // accessContainer.render()
     } catch (error) {
         console.error('Hubo un problema mu gordo', error)
     }

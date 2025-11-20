@@ -183,7 +183,7 @@ class GameController extends Controller
 
                 $game->load('users');
                 return response()->json([
-                    'success' => false,
+                    'success' => true,
                     'message' => 'No se puede unir a la partida, el usuario ya está en la partida',
                     'data' => $game
                 ], 200);
@@ -197,7 +197,7 @@ class GameController extends Controller
                 $user->id,
                 false,
                 $currentCount == 0
-            ); 
+            );
 
             // $game->users()->attach($user->id);
             //controlo que haya salido bien
