@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use App\Models\participant;
 
 class GameController extends Controller
 {
@@ -162,4 +163,92 @@ class GameController extends Controller
             return response()->json(['mensaje' => 'Error al añadir mensaje', 'error' => $e->getMessage()], 500);
         }
     }
+
+    /**
+     * Método interno para rellenar la partida de bots
+     * HU9: Garantiza mínimo de 15 jugadores y siempre +2bots
+     * Hasta nu máximo de 30 participantes totales
+     */
+
+    public function assignBots($gameId)
+    {
+        try {
+            
+            //Recuperamos la partida con sus participantes (humanos y bots)
+            $game = Game::with('participants')->find($gameId);
+
+            if (!$game) {
+                return [
+                    'success' => false,
+                    'message' => 'Partida no encontrada',
+                    'data' => null
+                ];
+            }
+            
+            $currentCount = $game->participants->count();
+            $minGamePlayers = 15;
+            $maxGamePlayers = 30;
+            $mandatoryBots = 2;
+
+            // Se calcula el hueco que falta para llegar al mínimo de 15
+            $gapToMin = $minGamePlayers - $currentCount;
+            $botsNeeded = max($gapToMin,$mandatoryBots);
+
+            //No puede haber más de 30 participantes en la partida
+            if ($currentCount + $botsNeeded > $maxGamePlayers) {
+                return [
+                    'success' => false,
+                    'message' => "Error de integridad: Hay $currentCount jugadores.",
+                    'data' => ['current' => $currentCount, 'needed' => $botsNeeded]
+
+                ];
+            }
+
+            //bots data seria el registro que iria en participants
+            $botsData = [];
+            $timestamp = now();
+
+            for($i = 0; $i < $botsNeeded; $i++){
+                $botName = 'Bot_'. Str::random(8);
+
+                $botsData[] = [
+                    'game_id' => $gameId,
+                    'user_id' => null,
+                    'is_bot' => true,
+                    'bot_name' => $botName,
+                    'character_id' => null,
+                    'created_at' => $timestamp,
+                    'updated_at' => $timestamp,
+                ];
+            }
+
+            // Se insertan todos los bots de golpe
+            participant::insert($botsData);
+            // Usamos 'load' para forzar una nueva consulta y traer los datos actualizados
+            $game->load('participants');
+
+            return [
+                'success' => true,
+                'message' => "Asignación completa de bots, se han asignado $botsNeeded bots ",
+                //la respuesta de la data está sujeta a cambios, porque no sabía exactamente que devolver concretamente
+                'data' => [
+                    'added' => $botsNeeded,
+                    'total_participants' => $game->participants->count()
+                ]
+            ];
+
+
+            
+
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Erroren assignBots: ' . $e->getMessage(),
+                'data' => null
+            ];
+        }
+    }
+
+   
+   
 }
