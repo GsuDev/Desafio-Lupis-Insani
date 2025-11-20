@@ -1,5 +1,4 @@
-import type { Game } from "../interfaces/game.models";
-
+import type { Game } from '../interfaces/game.models'
 
 export type IJoinGameResponse = {
     success: boolean

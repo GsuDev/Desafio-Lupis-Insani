@@ -85,11 +85,11 @@ Route::get('/nologin', function () {
 */
 Route::middleware('auth:sanctum')->group(function () {
 
-// ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
-// ----------------------------
-// Rutas protegidas de partidas
-// ----------------------------
+    // ----------------------------
+    // Rutas protegidas de partidas
+    // ----------------------------
 
     // POST /api/games -> GameController@createGame
     Route::post('/games', [GameController::class, 'createGame']);
@@ -110,7 +110,7 @@ Route::middleware('auth:sanctum')->group(function () {
             // PUT /api/games/{game} -> GameController@updateGame
             Route::put('/', [GameController::class, 'updateGame']);
 
-            //POST /api/games/{game}/join -> GameController@joinGame
+            // POST /api/games/{game}/join -> GameController@joinGame
             Route::post('/join', [GameController::class, 'joinGame']);
 
             // DELETE /api/games/{game} -> GameController@deleteGame
@@ -129,12 +129,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
             // GET /api/games/{game}/players
             // (Necesitarás crear este método 'getPlayersByGame' en tu GameController)
-            Route::get('/players', [GameController::class, 'getPlayersByGame']);//-> para introducir los jugadores en la sala pero esto pertenece a otra HU
+            Route::get('/players', [GameController::class, 'getPlayersByGame']); // -> para introducir los jugadores en la sala pero esto pertenece a otra HU
             //
         }
     );
 
-
-
 });
-

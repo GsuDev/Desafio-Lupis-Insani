@@ -14,8 +14,6 @@ class GameController {
     //tengo que guardar el estado de la partida
     private _currentGame: Game | null = null
 
-
-
     // 1. Almacenamiento de Callbacks de la Vista
     private _showLoading: (isLoading: boolean) => void = () => {}
     private _showGlobalError: (message: string) => void = () => {}
@@ -48,10 +46,10 @@ class GameController {
         this._disableStartButton = disableStartButtonCallback
     }
 
-    public setGameData(game:Game): void {
+    public setGameData(game: Game): void {
         this._currentGame = game
         //si ya estamos en la vista renderizar
-        if(this._renderGameDetails){
+        if (this._renderGameDetails) {
             this._renderGameDetails(game)
         }
     }
@@ -70,20 +68,22 @@ class GameController {
         this._disableStartButton(true)
 
         try {
-            //Como ahora guardo en memoria 
-            if (this._currentGame && this._currentGame.id.toString() === gameId) {
+            //Como ahora guardo en memoria
+            if (
+                this._currentGame &&
+                this._currentGame.id.toString() === gameId
+            ) {
                 //console.log('Cargando datos desde memoria caché del Controller')
                 this._renderGameDetails(this._currentGame)
             } else {
                 // Si no, llamamos a la API
                 //console.log('Fetching datos desde API...')
                 const game = await getGame(gameId)
-                
+
                 // Guardamos en memoria
-                this._currentGame = game 
+                this._currentGame = game
                 this._renderGameDetails(game)
             }
-
 
             // // 2. Llamar al Provider (la API real)
             // //llama al mock //TOCADO

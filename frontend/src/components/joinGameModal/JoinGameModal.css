@@ -19,13 +19,13 @@
 .join-game-modal-box {
     background-color: #fff;
     padding: 20px 30px;
-    border-radius: 15px; 
+    border-radius: 15px;
     width: 90%;
     max-width: 400px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     text-align: center;
     border: 2px solid #333; /* Estilo tipo 'sketch' o cómic si lo deseas */
-    font-family: sans-serif; 
+    font-family: sans-serif;
 }
 
 /* Header */
@@ -87,12 +87,12 @@
 
 /* Botón Cancelar (Rosado/Rojo pastel) */
 .btn-cancel {
-    background-color: #ffb6b6; 
+    background-color: #ffb6b6;
     color: #333;
 }
 
 /* Botón Unirse (Verde pastel) */
 .btn-join {
-    background-color: #98e898; 
+    background-color: #98e898;
     color: #333;
 }

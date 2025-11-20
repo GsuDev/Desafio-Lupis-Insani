@@ -1,20 +1,18 @@
 import './JoinGameModal.css'
-import {joinGameRequest} from '../../providers/joinGame.provider'
+import { joinGameRequest } from '../../providers/joinGame.provider'
 import { gameController } from '../../controllers/GameController'
 import { renderWaitingRoom } from '../waitingRoom/waiting-room'
 
-
 export class JoinGameModal {
-    private container:HTMLElement
-    private onClose:()=>void //Callback para controlar si se ha cerrado/cancelado y no se ha buscado partida
+    private container: HTMLElement
+    private onClose: () => void //Callback para controlar si se ha cerrado/cancelado y no se ha buscado partida
 
-
-    constructor(container:HTMLElement, onClose:()=>void){
+    constructor(container: HTMLElement, onClose: () => void) {
         this.container = container
         this.onClose = onClose
     }
 
-    render():void{
+    render(): void {
         const container = this.container
 
         //Para crear el overlay translucido
@@ -35,7 +33,6 @@ export class JoinGameModal {
         title.textContent = 'Unirse a sala'
         header.appendChild(title)
 
-
         //contenido
         const content = document.createElement('section')
         content.className = 'modal-content'
@@ -48,18 +45,17 @@ export class JoinGameModal {
         input.className = 'modal-input'
         input.id = 'game-id-input'
 
-        
         //area del feedback de errores
         const errorMsg = document.createElement('p')
         errorMsg.className = 'error-msg'
         errorMsg.style.display = 'none'
-        errorMsg.id= 'join-error-msg'
+        errorMsg.id = 'join-error-msg'
 
         content.appendChild(input)
         content.appendChild(errorMsg)
-        
+
         //footer (los botones)
-        const actions= document.createElement('div')
+        const actions = document.createElement('div')
         actions.className = 'modal-actions'
 
         //boton de cancelar
@@ -84,41 +80,44 @@ export class JoinGameModal {
 
         root.appendChild(modalBox)
         container.appendChild(root)
-    
     }
-    
 
-    //Logica interna 
-    private handleCancel(rootElement:HTMLElement):void{
+    //Logica interna
+    private handleCancel(rootElement: HTMLElement): void {
         //Opcion 1
         rootElement.remove() //Destruir el modal del DOM
         //Opcion 2
         //this.onClose()//ejecutar callback
     }
 
-    private async handleJoin(gameId:string, errorElement:HTMLElement, rootElement:HTMLElement): Promise<void>{
-        if(!gameId.trim()){
+    private async handleJoin(
+        gameId: string,
+        errorElement: HTMLElement,
+        rootElement: HTMLElement
+    ): Promise<void> {
+        if (!gameId.trim()) {
             this.showError(errorElement, 'Por favor ingresa un código')
             return
         }
 
-        try{
+        try {
             //limpiar si hay algun error previo
             errorElement.style.display = 'none'
 
             //aqui llamo al provider
             const response = await joinGameRequest(gameId)
 
-    
-            if(!response.success){
-                throw new Error( response.message||'Error al unirse a la partida.')
+            if (!response.success) {
+                throw new Error(
+                    response.message || 'Error al unirse a la partida.'
+                )
             }
 
             //testing
-            console.log('Unido exitosamente: ',response)
+            console.log('Unido exitosamente: ', response)
 
-            //aqui debería de guardar en memoria 
-            if(response.data){
+            //aqui debería de guardar en memoria
+            if (response.data) {
                 gameController.setGameData(response.data)
             }
 
@@ -127,22 +126,19 @@ export class JoinGameModal {
             renderWaitingRoom(app, gameId)
             //y cerrar el modal
             this.handleCancel(rootElement)
-        } catch(error:any){
+        } catch (error: any) {
             this.showError(errorElement, error.message)
         }
     }
 
-    private showError(errorElement:HTMLElement, message:string):void{
+    private showError(errorElement: HTMLElement, message: string): void {
         errorElement.textContent = message
         errorElement.style.display = 'block'
-        errorElement.style.color = 'red';
-        
+        errorElement.style.color = 'red'
     }
-
 }
 
-export default JoinGameModal;
-
+export default JoinGameModal
 
 /* EJEMPLO A CARGAR 
 
