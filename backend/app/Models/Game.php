@@ -38,6 +38,22 @@ class Game extends Model
             'user_id');
     }
 
+    /**
+     * El fin de esta función es:
+     * Relación directa con la tabla 'participants'.
+     *
+     * CRÍTICO PARA LA LÓGICA DE BOTS (HU9):
+     * La relación existente 'users()' (belongsToMany) depende de que exista un 'user_id' válido.
+     * Dado que los bots se registran con 'user_id = null', son invisibles para esa relación.
+     *
+     * Si usamos 'users()->count()', el sistema ignorará a los bots y romperá el límite de 30 jugadores.
+     * esta relación 'participants()' es para obtener el conteo real (Humanos + Bots).
+     */
+    public function participants()
+    {
+        return $this->hasMany(participant::class);
+    }
+
     // Sobre todo como admin o para debuggar, mostrar los mensajes en una partida
     public function getDetailedStatistics()
     {
