@@ -10,12 +10,14 @@ class AbilityUpdateUser
     public function handle(Request $request, Closure $next)
     {
         $user = $request->user();
-        $id = (int) $request->route('id'); // casteamos a int
-        $isItself = $user && $user->id == $id;
 
         // Si no hay usuario autenticado
         if (! $user) {
-            return response()->json(['message' => 'No autenticado'], 401);
+            return response()->json([
+                'success' => false,
+                'message' => 'No tienes permiso',
+                'data' => null,
+            ], 401);
         }
 
         // Si puede ver todos los usuarios (admin)
@@ -24,11 +26,15 @@ class AbilityUpdateUser
         }
 
         // Si puede verse a sí mismo y está viendo su propio perfil
-        if ($user->tokenCan('update-itself') && $isItself) {
+        if ($user->tokenCan('update-itself')) {
             return $next($request);
         }
 
-        // En cualquier otro caso → 403
-        return response()->json(['message' => 'No tienes permiso'], 403);
+        // En cualquier otro caso → 401
+        return response()->json([
+            'success' => false,
+            'message' => 'No tienes permiso',
+            'data' => null,
+        ], 401);
     }
 }

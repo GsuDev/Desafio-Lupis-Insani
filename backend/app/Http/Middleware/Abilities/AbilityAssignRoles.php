@@ -10,7 +10,11 @@ class AbilityAssignRoles
     public function handle(Request $request, Closure $next)
     {
         if (! $request->user() || ! $request->user()->tokenCan('assign-roles')) {
-            return response()->json(['message' => 'No tienes permiso'], 403);
+            return response()->json([
+                'success' => false,
+                'message' => 'No tienes permiso',
+                'data' => null,
+            ], 401);
         }
 
         return $next($request);
