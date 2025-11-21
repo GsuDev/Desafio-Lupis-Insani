@@ -105,13 +105,13 @@ export class JoinGameModal {
             errorElement.style.display = 'none'
 
             //aqui llamo al provider
-            const gameData= await gameController.handleJoin(gameId)
+            const gameData = await gameController.handleJoin(gameId)
 
             //aqui debería de guardar en memoria
             if (gameData) {
                 gameController.setGameData(gameData)
             }
-           
+
             //aqui cambiar el componente a waiting-room
             const app = document.getElementById('app')
             renderWaitingRoom(app, gameId)

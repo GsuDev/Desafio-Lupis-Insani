@@ -4,7 +4,6 @@ import type { Game } from '../../interfaces/game.models'
 import { gameController } from '../../controllers/GameController.ts'
 import { participantController } from '../../controllers/ParticipantController'
 
-
 // 2. Importar el CSS
 import './waiting-room.css'
 
@@ -107,7 +106,8 @@ export const renderWaitingRoom = (
         showLoading,
         showGlobalError,
         renderGameDetails,
-        (_isDisabled: boolean) => participantList.disableButton(!participantController.isHost())
+        (_isDisabled: boolean) =>
+            participantList.disableButton(!participantController.isHost())
     )
 
     // 6. Añadir Listeners de la Vista

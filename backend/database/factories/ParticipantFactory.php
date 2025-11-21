@@ -17,7 +17,8 @@ class ParticipantFactory extends Factory
      */
     public function definition(): array
     {
-         $user = User::factory()->create();
+        $user = User::factory()->create();
+
         return [
             // Por defecto, crea un jugador real (no un bot)
             'game_id' => GameFactory::factory(),

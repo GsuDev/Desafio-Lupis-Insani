@@ -24,7 +24,6 @@ class participant extends Model
         'updated_at',
     ];
 
-
     /**
      * Define la relación: Un participante pertenece a un juego (Game).
      */

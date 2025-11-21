@@ -50,7 +50,7 @@ export class ParticipantList {
         btnIniciar.id = 'start-game-button'
         btnIniciar.textContent = 'Iniciar'
         // btnIniciar.style.display = 'none'
-        btnIniciar.disabled = true;
+        btnIniciar.disabled = true
 
         this.footer.appendChild(btnIniciar)
 
@@ -70,7 +70,6 @@ export class ParticipantList {
      */
     disableButton(isDisabled: boolean): void {
         this.btnIniciar.disabled = isDisabled
-       
     }
 
     /**

@@ -43,7 +43,7 @@ class ParticipantController extends Controller
      * Este es un método interno.
      * Es llamado por otros controladores, no devuelve una Response.
      */
-    public function store(int $game_id, ?int $user_id, bool $is_bot, bool $is_host,string $name)
+    public function store(int $game_id, ?int $user_id, bool $is_bot, bool $is_host, string $name)
     {
 
         $data = [
