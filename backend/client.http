@@ -1,66 +1,139 @@
-### Crear usuario (registro público)
-POST http://localhost:8000/api/register
-Content-Type: application/json
+### Variables
+@baseUrl = http://localhost:8000/api
+@contentType = application/json
 
-{
-  "nickname": "ramon3g",
-  "name": "Jesús",
-  "lastname": "González",
-  "email": "pedroo0@example.com",
-  "password": "12345678",
-  "birthdate": "2003-05-12",
-  "profile_image_url": null
-}
-
-### Login para obtener token
-POST http://localhost:8000/api/login
-Content-Type: application/json
+### ==================== AUTH ====================
+### Login para obtener token admin
+POST {{baseUrl}}/login
+Content-Type: {{contentType}}
 
 {
   "email": "admin@example.com",
   "password": "password"
 }
 
-### Logout (necesita token)
-POST http://localhost:8000/api/logout
-Authorization: Bearer 1|QhUo6PyGuvM6wgWoz8M0IUvBRwkILnYEYKFzGAh3a7a4e2fc
-### Guardar token que devuelve el login (copia lo que te devuelva)
-# token: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsInR...
+### Guardar como @adminToken (respuesta del login)
+### @adminToken = <token_aqui>
 
-### Listar usuarios (solo admin)
-GET http://localhost:8000/api/users
-Authorization: Bearer 2|qa9PnlQrujyfLd3NsqkSbpAXPWyWP5PVnlhgAsZa7b7c52c1
-
-### Consultar un usuario
-GET http://localhost:8000/api/users/1
-Authorization: Bearer 5|j2WrsroEvHKyomERjLDU33rHybb89OnOjC2RyvEy57c9e6e4
-
-### Actualizar usuario
-PUT http://localhost:8000/api/users/2
-Authorization: Bearer 2|qa9PnlQrujyfLd3NsqkSbpAXPWyWP5PVnlhgAsZa7b7c52c1
-Content-Type: application/json
+### Login para obtener token usuario normal
+POST {{baseUrl}}/login
+Content-Type: {{contentType}}
 
 {
-  "nickname": "jesus3g",
-  "name": "Jesús",
-  "lastname": "González",
-  "email": "jesus@example.com",
-  "password": "12345678",
-  "birthdate": "2003-05-12",
-  "profile_image_url": null
+  "email": "user@example.com",
+  "password": "password123"
 }
 
-### Eliminar usuario
-DELETE http://localhost:8000/api/users/1
-Authorization: Bearer 2|qa9PnlQrujyfLd3NsqkSbpAXPWyWP5PVnlhgAsZa7b7c52c1
+### Guardar como @userToken (respuesta del login)
+### @userToken = <token_aqui>
 
-### Asignar roles a un usuario (solo admin)
-POST http://localhost:8000/api/users/1/roles
-Authorization: Bearer 1|1ZQQo9lob3qVNJ8lCD6UR9iZLcVlO0xuaKpJ1iP6c417d5e6
-Content-Type: application/json
+### ==================== REGISTRO Y CREACIÓN ====================
+
+### 1. Registrar nuevo usuario (público)
+POST {{baseUrl}}/register
+Content-Type: {{contentType}}
 
 {
-  "roles": 3
+  "nickname": "newuser123",
+  "name": "Juan",
+  "lastname": "Pérez",
+  "email": "juan@example.com",
+  "password": "password123",
+  "password_confirmation": "password123",
+  "birthdate": "1990-05-15"
 }
 
+### 2. Crear usuario (público - sin protección)
+POST {{baseUrl}}/users
+Content-Type: {{contentType}}
 
+{
+  "nickname": "testuser",
+  "name": "Test",
+  "lastname": "User",
+  "email": "test@example.com",
+  "password": "password123",
+  "birthdate": "1995-03-20",
+  "profile_url": null
+}
+
+### ==================== LISTADOS Y CONSULTAS ====================
+
+### 3. Obtener todos los usuarios (requiere admin + ability list-users)
+GET {{baseUrl}}/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+### 4. Obtener usuario por ID (requiere admin + ability view-user)
+GET {{baseUrl}}/users/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+### 5. Obtener usuario actual (requiere autenticación + ability show-itself)
+GET {{baseUrl}}/user
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+### ==================== ACTUALIZACIONES ====================
+
+### 6. Actualizar usuario por ID (requiere admin + ability update-user)
+PUT {{baseUrl}}/users/2
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: {{contentType}}
+
+{
+  "nickname": "userupdated",
+  "name": "Nombre Actualizado",
+  "lastname": "Apellido Actualizado",
+  "email": "updated@example.com",
+  "password": "newpassword123",
+  "password_confirmation": "newpassword123",
+  "birthdate": "1992-07-10"
+}
+
+### 7. Actualizar usuario actual (requiere autenticación + ability update-itself)
+PUT {{baseUrl}}/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: {{contentType}}
+
+{
+  "nickname": "myupdateduser",
+  "name": "Mi Nombre",
+  "lastname": "Mi Apellido",
+  "email": "myemail@example.com",
+  "birthdate": "1993-11-25"
+}
+
+### 8. Actualizar contraseña (requiere autenticación + ability update-itself)
+PUT {{baseUrl}}/users/password
+Authorization: Bearer 1|GtPVf32jG9aAdrowq0t0wqEDbno2VwSAbtzjvLNC7e83eb38
+Content-Type: {{contentType}}
+
+{
+  "oldPassword": "password",
+  "password": "newpassword456"
+}
+
+### ==================== GESTIÓN DE ROLES ====================
+
+### 9. Asignar rol a usuario (requiere admin + ability assign-roles)
+POST {{baseUrl}}/users/3/roles
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: {{contentType}}
+
+{
+  "roles": 2
+}
+
+### ==================== ELIMINACIONES ====================
+
+### 10. Eliminar usuario por ID (requiere admin + ability delete-user)
+DELETE {{baseUrl}}/users/4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+### 11. Eliminar usuario actual (requiere autenticación + ability delete-itself)
+DELETE {{baseUrl}}/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+### ==================== LOGOUT ====================
+
+### 12. Logout (requiere autenticación)
+POST {{baseUrl}}/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...

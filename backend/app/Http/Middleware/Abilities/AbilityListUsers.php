@@ -10,7 +10,11 @@ class AbilityListUsers
     public function handle(Request $request, Closure $next)
     {
         if (! $request->user() || ! $request->user()->tokenCan('list-users')) {
-            return response()->json(['message' => 'No tienes permiso'], 403);
+            return response()->json([
+                'success' => false,
+                'message' => 'No tienes permiso',
+                'data' => null,
+            ], 401);
         }
 
         return $next($request);
