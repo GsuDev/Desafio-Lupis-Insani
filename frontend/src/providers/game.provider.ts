@@ -9,7 +9,7 @@ import type { Participant } from '../models/Participant'
 
 // Define la URL base de tu API de Laravel
 // (Con 'php artisan serve' normalmente es 8000)
-const apiUrl = 'http://localhost:8000/api'
+const apiUrl = '/api'
 
 /**
  * Función auxiliar para manejar errores de 'fetch'
