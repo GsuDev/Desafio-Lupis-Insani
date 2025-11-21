@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,13 +17,15 @@ class ParticipantFactory extends Factory
      */
     public function definition(): array
     {
+         $user = User::factory()->create();
         return [
             // Por defecto, crea un jugador real (no un bot)
             'game_id' => GameFactory::factory(),
-            'user_id' => UserFactory::factory(),
+            'user_id' => $user->id,
             'is_bot' => false,
-            'bot_name' => null,
+            'nickname' => $user->nickname, // Asigna el nickname del usuario creado
             'character_id' => CharacterFactory::factory(),
         ];
+
     }
 }

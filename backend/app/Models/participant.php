@@ -15,9 +15,15 @@ class participant extends Model
         'user_id',
         'is_bot',
         'is_host',
-        'bot_name',
+        'nickname',
         'character_id',
     ];
+
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
+
 
     /**
      * Define la relación: Un participante pertenece a un juego (Game).

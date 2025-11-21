@@ -5,7 +5,9 @@
  */
 
 import type { Game } from '../interfaces/game.models'
-import { getGame } from '../providers/game.provider' // Importamos el provider REAL
+import { getGame } from '../providers/game.provider'
+import { joinGameRequest } from '../providers/joinGame.provider'
+// Importamos el provider REAL
 //import { getGame } from '../providers/game.provider.mock' // MOCK con participants para probar
 
 class GameController {
@@ -15,12 +17,12 @@ class GameController {
     private _currentGame: Game | null = null
 
     // 1. Almacenamiento de Callbacks de la Vista
-    private _showLoading: (isLoading: boolean) => void = () => {}
-    private _showGlobalError: (message: string) => void = () => {}
-    private _renderGameDetails: (game: Game) => void = () => {}
-    private _disableStartButton: (isDisabled: boolean) => void = () => {}
+    private _showLoading: (isLoading: boolean) => void = () => { }
+    private _showGlobalError: (message: string) => void = () => { }
+    private _renderGameDetails: (game: Game) => void = () => { }
+    private _disableStartButton: (isDisabled: boolean) => void = () => { }
 
-    private constructor() {}
+    private constructor() { }
 
     //Este es lo que sería el getGame, si jesus quiere cambiarlo a getGame
     public static getInstance(): GameController {
@@ -109,16 +111,29 @@ class GameController {
      * La Vista llama a este método cuando se pulsa "Iniciar"
      */
     public handleStartGame(): void {
-        this._disableStartButton(true)
+        
         this._showLoading(true) // O mostrar un mensaje "Iniciando..."
 
         // ej: await updateGame() y actualizar en servidor el boolean de comenzada
 
         // Simulamos que tarda 1 segundo
         setTimeout(() => {
-            this._disableStartButton(false)
+            
             this._showLoading(false)
         }, 1000)
+    }
+
+    public async handleJoin(gameId: string): Promise<Game> {
+        const response = await joinGameRequest(gameId)
+        if (!response.success) {
+            throw new Error(
+                response.message || 'Error al unirse a la partida.'
+            )
+        } 
+        localStorage.setItem('currentGame', JSON.stringify(response.data.game))
+
+        return response.data.game
+        
     }
 }
 
