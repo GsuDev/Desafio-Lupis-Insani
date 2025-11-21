@@ -19,7 +19,7 @@ class GameController extends Controller
         try {
             // Metodo 1 url con id
             // $game = new Game();
-            // $game->ended = false;
+            // $game->state = 'waiting';
             // $game->save();
             // $game->url = $game->id;
             // $game->save();
@@ -27,27 +27,30 @@ class GameController extends Controller
             // Metodo 2 url con uuid
             $uniqueUrl = (string) Str::uuid();
             $game = Game::create([
-                'started' => false,
-                'ended' => false,
+                'state' => 'waiting',
                 'url' => $uniqueUrl,
             ]);
 
-            return response()->json($game, 201);
+            return response()->json(['success' => true, 'message' => 'Partida creada', 'data' => $game], 201);
         } catch (\Exception $e) {
-            return response()->json(['mensaje' => 'Error al crear partida', 'error' => $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => "Error al crear partida, {$e->getMessage()}", 'data' => ''], 500);
         }
     }
     // Get Partida
 
-    public function getGameById($id)
+    public function getGameById($gameId)
     {
         // no aplico ningun validator porque el id se puede controllar desde el propio endpoint
         try {
-            $game = Game::findOrFail($id);
+            $game = Game::findOrFail($gameId);
 
-            return response()->json($game, 200);
+            return response()->json(['success' => true, 'message' => 'Partida obtenida', 'data' => $game], 200);
+
+        } catch (ModelNotFoundException $e) {
+
+            return response()->json(['seccess' => false, 'message' => 'Partida no encontrada', 'data' => ''], 404);
         } catch (\Exception $e) {
-            return response()->json(['mensaje' => 'Error al obtener partida', 'error' => $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => "Error al obtener partida, {$e->getMessage()}", 'data' => ''], 500);
         }
     }
 
@@ -60,9 +63,9 @@ class GameController extends Controller
             return response()->json($game, 200);
         } catch (ModelNotFoundException $e) {
 
-            return response()->json(['mensaje' => 'Partida no encontrada'], 404);
+            return response()->json(['seccess' => false, 'message' => 'Partida no encontrada', 'data' => ''], 404);
         } catch (\Exception $e) {
-            return response()->json(['mensaje' => 'Error al obtener partida', 'error' => $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => "Error al obtener partida {$e->getMessage()}", 'data' => ''], 500);
         }
     }
 
@@ -72,25 +75,23 @@ class GameController extends Controller
         try {
             $games = Game::all();
 
-            return response()->json($games, 200);
+            return response()->json(['success' => true, 'message' => 'Partidas obtenidas', 'data' => $games], 200);
         } catch (\Exception $e) {
-            return response()->json(['mensaje' => 'Error al obtener partidas', 'error' => $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => "Error al obtener partidas, {$e->getMessage()}", 'data' => ''], 500);
         }
+
     }
 
     // updatePartida
-    public function updateGame(Request $req, $id)
+    public function updateGame(Request $req, $gameId)
     {
         $messages = [
-            'started.required' => 'El campo "started" es requerido.',
-            'started.boolean' => 'El campo "started" debe ser un valor booleano.',
-            'ended.required' => 'El campo "ended" es requerido.',
-            'ended.boolean' => 'El campo "ended" debe ser un valor booleano.',
+            'state.required' => 'El campo "state" es requerido.',
+            'state.in' => 'El campo "state" debe ser valido, opciones: waiting, on_course, finished',
         ];
 
         $rules = [
-            'started' => 'required|boolean',
-            'ended' => 'required|boolean',
+            'state' => 'required|string|in:waiting,on_course,finished',
         ];
 
         $validator = Validator::make($req->all(), $rules, $messages);
@@ -98,43 +99,44 @@ class GameController extends Controller
             return response()->json($validator->getErrors(), 422);
         }
         try {
-            $game = Game::findOrFail($id);
-            $game->ended = $req->input('ended');
+            $game = Game::findOrFail($gameId);
+            $game->state = $req->input('state');
             $game->save();
 
-            return response()->json($game, 200);
+            return response()->json(['success' => true, 'message' => 'Partida actualizada', 'data' => $game], 200);
         } catch (\Exception $e) {
-            return response()->json(['mensaje' => 'Error al actualizar partida', 'error' => $e->getMessage()], 500);
+            // Success| message | data
+            return response()->json(['success' => false, 'message' => "Error al actualizar partida, {$e->getMessage()}", 'data' => ''], 500);
         }
     }
 
     // deletePartida
-    public function deleteGame($id)
+    public function deleteGame($gameId)
     {// al usar soft delete, se sobre escribe el delete
         try {
-            $game = Game::findOrFail($id);
+            $game = Game::findOrFail($gameId);
             $game->delete();
 
-            return response()->json(['mensaje' => 'Partida eliminada'], 200);
+            return response()->json(['success' => true, 'message' => 'Partida eliminada', 'data' => ''], 200);
         } catch (\Exception $e) {
-            return response()->json(['mensaje' => 'Error al eliminar partida', 'error' => $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => "Error al eliminar partida, {$e->getMessage()}", 'data' => ''], 500);
         }
     }
 
     // getMensajesByPartida
-    public function getMessagesByGame($id)
+    public function getMessagesByGame($gameId)
     {
         try {
-            $game = Game::findOrFail($id);
+            $game = Game::findOrFail($gameId);
 
-            return response()->json($game->getStructuredMessages(), 200);
+            return response()->json(['success' => true, 'message' => 'Mensajes obtenidos', 'data' => $game->getStructuredMessages()], 200);
         } catch (\Exception $e) {
-            return response()->json(['mensaje' => 'Error al obtener mensajes', 'error' => $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => "Error al obtener mensajes, {$e->getMessage()}", 'data' => ''], 500);
         }
     }
 
     // addMensajeByPartida
-    public function addMessageByGame(Request $req, $id)
+    public function addMessageByGame(Request $req, $gameId)
     {
         $messages = [
             'type.required' => 'El campo "type" es requerido.',
@@ -154,14 +156,75 @@ class GameController extends Controller
         }
 
         try {
-            $game = Game::findOrFail($id);
+            $game = Game::findOrFail($gameId);
             // ¡Pasa el user_id, no el user!
             $game->addMessage($req->type, $req->user_id, $req->message);
 
-            return response()->json(['mensaje' => 'Mensaje añadido correctamente'], 200);
+            return response()->json(['success' => true, 'message' => 'Mensaje añadido correctamente', 'data' => ''], 200);
         } catch (\Exception $e) {
-            return response()->json(['mensaje' => 'Error al añadir mensaje', 'error' => $e->getMessage()], 500);
+            return response()->json(['success' => false, 'message' => "Error al añadir mensaje,{$e->getMessage()}", 'data' => ''], 500);
         }
+    }
+
+    public function joinGame(Request $req, $gameId)
+    {
+        try {
+            $game = Game::findOrFail($gameId);
+            $user = $req->user();
+
+            if ($game->state != 'waiting') {
+                return response()->json(['success' => false, 'message' => 'No se puede unir a la partida, no está en estado waiting', 'data' => ''], 403);
+            }
+            $currentCount = $game->participants->count();
+            if ($currentCount > 28) {// variable global
+                return response()->json(['success' => false, 'message' => 'No se puede unir a la partida, esta completa o el usuario ya está en la partida', 'data' => ''], 403);
+            }
+            if ($game->users()->where('user_id', $user->id)->exists()) {
+
+                $game->load('users');
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'No se puede unir a la partida, el usuario ya está en la partida',
+                    'data' => ['game' => $game],
+                ], 200);
+            }
+
+            // Llamo a ParticipantController Para asignar el usuario
+            $participantController = app(ParticipantController::class);
+            $result = $participantController->store(
+                $gameId,
+                $user->id,
+                false,
+                $currentCount == 0,
+                $user->nickname
+
+            );
+
+            // $game->users()->attach($user->id);
+            // controlo que haya salido bien
+            if (! $result['success']) {
+                return response()->json(['success' => false, 'message' => $result['message'], 'data' => $result['data']], 422);
+            }
+            // recargo los datos de partida
+            $game->load('users');
+
+            // trigger evento de nuevo usuario dentro lo dejo comentado mas o menos para tener una orientacion
+            // event(new UserJoinedGame($game, $user))
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Usuario añadido correctamente',
+                'data' => ['game' => $game],
+            ], 200);
+
+        } catch (ModelNotFoundException $e) {
+
+            return response()->json(['success' => false, 'message' => 'Partida no encontrada', 'data' => ''], 404);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => "Error al añadir usuario a la partida,{$e->getMessage()}", 'data' => ''], 500);
+        }
+
     }
 
     /**
@@ -214,7 +277,7 @@ class GameController extends Controller
                     'game_id' => $gameId,
                     'user_id' => null,
                     'is_bot' => true,
-                    'bot_name' => $botName,
+                    'nickname' => $botName,
                     'character_id' => null,
                     'created_at' => $timestamp,
                     'updated_at' => $timestamp,

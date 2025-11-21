@@ -43,14 +43,15 @@ class ParticipantController extends Controller
      * Este es un método interno.
      * Es llamado por otros controladores, no devuelve una Response.
      */
-    public function store(int $game_id, ?int $user_id, bool $is_bot)
+    public function store(int $game_id, ?int $user_id, bool $is_bot, bool $is_host, string $name)
     {
 
         $data = [
             'user_id' => $user_id,
             'is_bot' => $is_bot,
+            'is_host' => $is_host,
             'game_id' => $game_id,
-            'bot_name' => null,
+            'nickname' => $name,
             // 'character_id' => null, // Por defecto, se asignará en otra HU
 
         ];
@@ -62,6 +63,7 @@ class ParticipantController extends Controller
                 Rule::unique('participants')->where('game_id', $game_id),
             ],
             'is_bot' => 'required|boolean',
+            'is_host' => 'required|boolean',
 
         ]);
 
@@ -77,29 +79,29 @@ class ParticipantController extends Controller
 
             // Se podría cambiar mas adelante por fake o por otra forma
             $botNames = ['Alpha Wolf', 'Shadow Fox', 'Night Raven', 'Steel Fang', 'Lone Coyote', 'Lupi Insani'];
-            $data['bot_name'] = $botNames[array_rand($botNames)].' #'.Str::random(4);
+            $data['nickname'] = $botNames[array_rand($botNames)].' #'.Str::random(4);
             $data['user_id'] = null;
-            // un bot debe tener 'bot_name' pero no 'user_id'.
+            // un bot debe tener 'nickname' pero no 'user_id'.
             // La regla se rompe si:
             //  (!empty($data['user_id'])) -> nos han pasado un user_id para un bot -> error
-            //  (empty($data['bot_name']))  -> no nos han pasado un bot_name para un bot -> error
-            if (! empty($data['user_id']) || empty($data['bot_name'])) {
+            //  (empty($data['nickname']))  -> no nos han pasado un nickname para un bot -> error
+            if (! empty($data['user_id']) || empty($data['nickname'])) {
 
                 return [
                     'success' => false,
-                    'message' => ' user_id debe ser nulo y bot_name obligatorio.',
+                    'message' => ' user_id debe ser nulo y nickname obligatorio.',
                     'data' => null,
                 ];
             }
         } else {
-            $data['bot_name'] = null;
+            $data['nickname'] = null;
             // La regla se rompe si:
             //  (empty($data['user_id']))   -> no nos han pasado un user_id para un jugador-> error
-            //  (!empty($data['bot_name'])) -> nos han pasado un bot_name para un jugador -> error
-            if (empty($data['user_id']) || ! empty($data['bot_name'])) {
+            //  (!empty($data['nickname'])) -> nos han pasado un nickname para un jugador -> error
+            if (empty($data['user_id']) || ! empty($data['nickname'])) {
                 return [
                     'success' => false,
-                    'message' => 'user_id es obligatorio y bot_name debe ser nulo.',
+                    'message' => 'user_id es obligatorio y nickname debe ser nulo.',
                     'data' => null,
                 ];
             }
@@ -109,7 +111,8 @@ class ParticipantController extends Controller
             'game_id' => $game_id,
             'user_id' => $data['user_id'],
             'is_bot' => $data['is_bot'],
-            'bot_name' => $data['bot_name'],
+            'is_host' => $data['is_host'],
+            'nickname' => $data['nickname'],
             // 'character_id' => $data['character_id'],
 
         ]);

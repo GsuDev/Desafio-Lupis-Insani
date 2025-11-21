@@ -1,7 +1,8 @@
 // 1. Importar modelos y el *Controlador*
 import { ParticipantList } from '../participantList/participantList'
 import type { Game } from '../../interfaces/game.models'
-import { gameController } from '../../controllers/game-controller.ts'
+import { gameController } from '../../controllers/GameController.ts'
+import { participantController } from '../../controllers/ParticipantController'
 
 // 2. Importar el CSS
 import './waiting-room.css'
@@ -97,7 +98,7 @@ export const renderWaitingRoom = (
         // Actualiza la lista de participantes con los datos del juego
         const participants = game.participants || []
         participantList.updateParticipants(participants)
-        participantList.disableButton(false)
+        participantList.disableButton(!participantController.isHost())
     }
 
     // 5. Conectar la Vista con el Controlador
@@ -105,7 +106,8 @@ export const renderWaitingRoom = (
         showLoading,
         showGlobalError,
         renderGameDetails,
-        (isDisabled: boolean) => participantList.disableButton(isDisabled)
+        (_isDisabled: boolean) =>
+            participantList.disableButton(!participantController.isHost())
     )
 
     // 6. Añadir Listeners de la Vista

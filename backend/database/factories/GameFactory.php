@@ -22,8 +22,7 @@ class GameFactory extends Factory
         $uniqueUrl = (string) Str::uuid();
 
         return [
-            'started' => false,
-            'ended' => false,
+            'state' => 'waiting',
             'url' => $uniqueUrl,
         ];
     }

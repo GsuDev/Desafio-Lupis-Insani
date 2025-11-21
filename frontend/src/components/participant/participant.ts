@@ -15,7 +15,7 @@ export class ParticipantComponent {
         // Avatar circular
         const avatar = document.createElement('div')
         avatar.className = 'participant-avatar'
-        avatar.textContent = this.participant.name.charAt(0).toUpperCase()
+        avatar.textContent = this.participant.nickname.charAt(0).toUpperCase()
 
         // Nombre del participante
         const nameWrapper = document.createElement('div')
@@ -23,7 +23,7 @@ export class ParticipantComponent {
 
         const name = document.createElement('span')
         name.className = 'participant-name'
-        name.textContent = this.participant.name
+        name.textContent = this.participant.nickname
 
         // Indicador de bot (opcional)
         // A esto hay que darle una vuelta mas adelante

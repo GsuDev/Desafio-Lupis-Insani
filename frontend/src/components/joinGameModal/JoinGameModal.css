@@ -1,0 +1,98 @@
+/* CAMBIAR A FUTURO ESTILO HECHO CON IA PARA VERLO */
+
+/* El fondo oscuro/transparente que cubre toda la pantalla */
+.join-game-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5); /* Transparencia */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(2px); /* Opcional: efecto borroso de fondo */
+}
+
+/* La caja blanca del modal */
+.join-game-modal-box {
+    background-color: #fff;
+    padding: 20px 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    border: 2px solid #333; /* Estilo tipo 'sketch' o cómic si lo deseas */
+    font-family: sans-serif;
+}
+
+/* Header */
+.modal-header h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Input */
+.modal-input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #333;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+.modal-input:focus {
+    outline: none;
+    border-color: #666;
+}
+
+/* Mensaje de error */
+.error-msg {
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+/* Botones Container */
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* Estilos comunes botones */
+.btn {
+    flex: 1;
+    padding: 10px 0;
+    border: 2px solid #333;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: transform 0.1s ease;
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+/* Botón Cancelar (Rosado/Rojo pastel) */
+.btn-cancel {
+    background-color: #ffb6b6;
+    color: #333;
+}
+
+/* Botón Unirse (Verde pastel) */
+.btn-join {
+    background-color: #98e898;
+    color: #333;
+}

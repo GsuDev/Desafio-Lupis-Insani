@@ -14,8 +14,14 @@ class participant extends Model
         'game_id',
         'user_id',
         'is_bot',
-        'bot_name',
+        'is_host',
+        'nickname',
         'character_id',
+    ];
+
+    protected $hidden = [
+        'created_at',
+        'updated_at',
     ];
 
     /**

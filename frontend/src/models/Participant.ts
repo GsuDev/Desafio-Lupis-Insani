@@ -1,6 +1,6 @@
 export type Participant = {
     id: number
-    name: string
+    nickname: string
     isBot: boolean
     isHost: boolean
     characterId: number | null

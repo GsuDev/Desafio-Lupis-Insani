@@ -60,7 +60,7 @@ class GameBotsAssignmentTest extends TestCase
                 'game_id' => $game->id,
                 'user_id' => $user->id,
                 'is_bot' => false,
-                'bot_name' => null,
+                'nickname' => null,
             ]);
         }
 
