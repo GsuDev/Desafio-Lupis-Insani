@@ -1,5 +1,6 @@
 import './userProfile.css'
 import { userController } from '../../controllers/UserController'
+import type { User } from '../../models/User'
 
 /**
  * Componente que muestra la tarjeta del perfil del usuario
@@ -9,15 +10,16 @@ export class UserProfileComponent {
     
     private container: HTMLElement
     // aqui guardamos todos los datos
-    private userData: any
+    private userData: User
 
     constructor(container: HTMLElement) {
         this.container = container
         
         // si hay usuario logueado lo cogemos  si no  ponemos uno por defecto 
+        //lo mismo que en la otra, no se va a dar el caso pero TS me da error si no lo pongo asi
         this.userData = userController.currentUser || {
             nickname: 'Invitado',
-            avatar: null
+            profile_url: undefined
         }
     }
 
@@ -47,7 +49,7 @@ export class UserProfileComponent {
         // nombre del usuario
         const nickTitle = document.createElement('h2')
         nickTitle.className = 'user-nickname'
-        nickTitle.textContent = this.userData.nickname
+        nickTitle.textContent = this.userData.nickname || 'Invitado'
 
         // Boton pequeño para config
         const configBtn = document.createElement('button')
