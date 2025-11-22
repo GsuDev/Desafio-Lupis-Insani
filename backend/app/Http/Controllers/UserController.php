@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -182,7 +183,6 @@ class UserController extends Controller
             'data' => ['user' => $user],
         ], 200);
     }
-
     public function update(Request $request, $id)
     {
         try {
@@ -238,10 +238,10 @@ class UserController extends Controller
             'data' => ['user' => $user],
         ], 200);
     }
-
     public function updateItself(Request $request)
     {
         $user = $request->user();
+        
         if (! $user) {
             return response()->json([
                 'success' => false,
@@ -259,15 +259,27 @@ class UserController extends Controller
             'profile_picture.image' => 'El archivo debe ser una imagen.',
             'profile_picture.max' => 'La imagen no puede pesar más de 2MB.',
         ];
+          
 
         $validated = Validator::make($request->all(), [
-            'nickname' => 'required|string|max:255|unique:users',
+            'nickname' => [
+                'required', 
+                'string', 
+                'max:255', 
+                
+            ],
             'name' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => [
+                'required', 
+                'string', 
+                'email', 
+                'max:255',  
+            ],
             'birthdate' => 'nullable|date',
-            // 'profile_picture' => 'nullable|file|image|max:2048',
+            'profile_picture' => 'nullable|image|max:2048',
         ], $messages);
+
 
         if ($validated->fails()) {
 
@@ -278,7 +290,25 @@ class UserController extends Controller
             ], 422);
         }
 
-        $user->update($validated->validated());
+         //CAMBIADO
+        $dataToUpdate = $validated->validated();
+
+        // Si hay fichero 'profile_picture', lo subimos
+        if ($request->hasFile('profile_picture')) {
+            
+            $imageUrl = CloudController::handleImageUpload($request);
+            
+            if ($imageUrl) {
+                
+                $dataToUpdate['profile_url'] = $imageUrl;
+            }
+        }
+
+
+
+        $user->update($dataToUpdate);
+
+        
 
         return response()->json([
             'success' => true,
