@@ -62,25 +62,7 @@ export async function logout(): Promise<void> {
  * @returns Usuario
  * @throws Error si falla la petición
  */
-// export async function getProfile(): Promise<User> {
-//     const { data } = await apiClient.get<{
-//         success: boolean
-//         message: string
-//         data: {
-//             user: User
-//         }
-//     }>('/user')
-//     return data.data.user
-// }
-/**
- * Obtener perfil del usuario
- * El endpoint /user devuelve el objeto User directamente sin envoltorio 'data'.
- */
-/*export async function getProfile(): Promise<User> {
-    const { data } = await apiClient.get<User>('/user')
-    
-    return data
-}*/
+
 export async function getProfile(): Promise<User> {
     // Tipamos la respuesta esperada
     const { data } = await apiClient.get<{
@@ -99,17 +81,6 @@ export function isLoggedIn(): boolean {
     return Boolean(localStorage.getItem('token'))
 }
 
-//CAMBIO
-// export async function changePassword(
-//     oldPassword: string,
-//     password: string
-// ): Promise<ServerResponse> {
-//     const { data } = await apiClient.post<ServerResponse>('/change-password', {
-//         oldPassword,
-//         password,
-//     })
-//     return data
-// }
 export async function changePassword(
     current_password: string,
     password: string,
@@ -138,9 +109,6 @@ export async function resetPassword(password: string) {
 }
 
 /**
- * actualizar datos de perfil
- * Aunque para leer usamos 'GET /user' (por token), el Backend no implementa 'PUT /user'.
- * Estamos obligados a usar 'PUT /users/{id}' pasando el ID explícitamente.
  *
  * * NOTA SOBRE FORMDATA:
  * Si enviamos ficheros (FormData), Laravel no procesa bien multipart/form-data en PUT.

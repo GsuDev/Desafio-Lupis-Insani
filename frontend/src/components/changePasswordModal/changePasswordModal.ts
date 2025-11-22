@@ -11,7 +11,7 @@ export class ChangePasswordModal {
     render(): void {
         this.container.innerHTML = ''
 
-        // 1. Overlay
+        //  Overlay
         const overlay = document.createElement('div')
         overlay.className = 'password-overlay'
         // Cierra al clicar fuera
@@ -19,7 +19,7 @@ export class ChangePasswordModal {
             if (e.target === overlay) this.closeModal()
         })
 
-        // 2. Tarjeta Estilo Cómic
+        // Tarjeta Estilo Cómic
         const card = document.createElement('div')
         card.className = 'password-card'
 
@@ -79,7 +79,7 @@ export class ChangePasswordModal {
         this.container.appendChild(overlay)
     }
 
-    // helper modificado con el ojo para ver la contraseña
+    // helper  con el ojo para ver la contraseña
     private createInputRow(
         labelText: string,
         name: string,

@@ -19,18 +19,18 @@ export class UserSettingsComponent {
     }
 
     render(): void {
-        // 1. Overlay
+        // Overlay
         const overlay = document.createElement('div')
         overlay.className = 'modal-overlay'
         overlay.addEventListener('click', (e) => {
             if (e.target === overlay) this.closeModal()
         })
 
-        // 2. Tarjeta
+        // Tarjeta
         const card = document.createElement('div')
         card.className = 'user-settings-card'
 
-        // --- HEADER ---
+        // header
         const header = document.createElement('header')
         header.className = 'settings-header'
 
@@ -48,7 +48,7 @@ export class UserSettingsComponent {
 
         header.append(backBtn, title, spacer)
 
-        // --- FORMULARIO ---
+        // formulario
         const form = document.createElement('form')
         form.className = 'settings-form'
         form.onsubmit = (e) => this.handleSubmit(e)
@@ -133,12 +133,10 @@ export class UserSettingsComponent {
         changePassBtn.type = 'button'
         changePassBtn.className = 'btn-change-pass'
         changePassBtn.textContent = '🔒 Cambiar contraseña'
-        // Aquí conectarás con tu HU de contraseña
         changePassBtn.onclick = () => console.log('Abrir modal contraseña')
 
         form.append(topSection, emailGroup, birthGroup, changePassBtn)
 
-        // --- FOOTER ---
         const footer = document.createElement('footer')
         footer.className = 'settings-footer'
 
@@ -151,7 +149,6 @@ export class UserSettingsComponent {
         const saveBtn = document.createElement('button')
         saveBtn.className = 'btn-save'
         saveBtn.textContent = 'Actualizar datos'
-        // Truco: el click del botón dispara el submit del form aunque esté fuera
         saveBtn.onclick = () => form.requestSubmit()
 
         footer.append(cancelBtn, saveBtn)
