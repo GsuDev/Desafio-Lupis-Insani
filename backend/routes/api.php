@@ -82,7 +82,7 @@ Route::middleware('auth:sanctum')->group(function () {
         ->middleware('update-user');
 
     // Actualizar contraseña → 'update-itself'
-    Route::put('/users/password', [UserController::class, 'updatePassword'])
+    Route::put('/profile/password', [UserController::class, 'updatePassword'])
         ->middleware('update-user');
 
     // Eliminar al usuario actual → 'delete-itself'
