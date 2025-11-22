@@ -81,8 +81,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/users', [UserController::class, 'updateItself'])
         ->middleware('update-user');
 
+    // he tenido que cambiar la ruta a profile/password porque si ponia users/password 
+    //laravel se confundia con la ruta de users/{id} que esta mas arriba y se creia
+    // que password era un id, y como no podia mover esta ruta arriba del todo
+    // por el tema de ordenar los permisos pues le he cambiado el nombre 
+    //y asi ya no chocan
+    //si no para que funcionase con el nombre de antes
+    //habria que poner un where indicando que el id es un numero
+    //en todas las rutas de arriba
+    //sujeto a cambios pero si se deja tal cual estaba no funciona
     // Actualizar contraseña → 'update-itself'
-    Route::put('/users/password', [UserController::class, 'updatePassword'])
+    Route::put('/profile/password', [UserController::class, 'updatePassword'])
         ->middleware('update-user');
 
     // Eliminar al usuario actual → 'delete-itself'
