@@ -1,0 +1,122 @@
+:root {
+    --primary-dark: #0f0c29;
+    --primary-purple: #302b63;
+    --primary-blue: #24243e;
+    --text-light: #ffffff;
+    --card-bg: rgba(255, 255, 255, 0.1);
+    --accent-green: #00b894;
+}
+
+/*  asegura que el fondo cubra toda la pantalla detras del contenedor */
+#app {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(
+        circle at center,
+        #2b32b2,
+        #141e30
+    ); /* Un degradado circular chulo de azul a oscuro */
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* parano salgan barras de scroll */
+}
+
+/* el contenedor principal dashboard */
+.user-profile-container {
+    display: flex; /*  para organizar header y contenido verticalmente */
+    flex-direction: column; /* para que los hijos se pilen uno debajo otro */
+
+    width: 85%;
+    height: 85%;
+    max-width: 1400px;
+
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(
+        10px
+    ); /* con esto difumina lo que hay detras y hace un efecto cristal muy chulo */
+
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    color: var(--text-light);
+    overflow: hidden; /* si algo se sale se corta para que no se lie */
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* header dentro del contenedor */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 3rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dashboard-title {
+    margin: 0;
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: bold;
+
+    background: -webkit-linear-gradient(#eee, #aaa);
+    -webkit-background-clip: text; /* con esto el fondo se pone solo en el texto */
+    -webkit-text-fill-color: transparent; /* y con esto hacemos el texto transparente para ver el fondo */
+}
+
+.logout-btn {
+    padding: 0.6rem 1.5rem;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s;
+}
+
+.logout-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(231, 76, 60, 0.6);
+}
+
+/*  grid para los huecos de derecha   */
+.dashboard-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /*dos columnas iguales*/
+    gap: 2rem;
+    padding: 2rem;
+    flex-grow: 1;
+    align-items: center;
+}
+
+/* Estilo para los huecos vacíos izquierda (temporal) */
+.dashboard-section {
+    height: 400px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px dashed rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .dashboard-layout {
+        grid-template-columns: 1fr; /* una sola columna en tablets/moviles */
+        overflow-y: auto; /* Permitir scroll si no cabe */
+    }
+
+    .user-profile-container {
+        width: 95%;
+        height: 95%;
+    }
+}

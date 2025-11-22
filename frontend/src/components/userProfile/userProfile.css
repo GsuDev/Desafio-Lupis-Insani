@@ -1,0 +1,87 @@
+.user-profile-card {
+    display: flex;
+    flex-direction: column; /* asi los ponemos uno debajo del otro modo columna */
+    align-items: center; /* lo centramos en horizongtal*/
+    justify-content: center; /* lo centramos en vertical */
+    width: 100%;
+    height: 100%;
+    color: white;
+    text-align: center;
+    gap: 1.5rem; /* ponemos este espacio entre foto nombre botones */
+}
+
+/* el avatar o foto */
+.avatar-img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%; /* para que sea un circulo completo a modo foto pefil */
+    border: 4px solid #00b894;
+    box-shadow: 0 0 20px rgba(0, 184, 148, 0.4);
+    object-fit: cover; /* esto es para llenar el circulo sin que la imagen se deforme */
+    background: rgba(
+        0,
+        0,
+        0,
+        0.2
+    ); /* esto es por si no hay foto para que tenga un fondo trans */
+}
+
+.user-nickname {
+    font-size: 2rem;
+    margin: 0.5rem 0;
+    font-weight: bold;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* para que se lea mejor le damos una sombra en texto */
+}
+
+.config-btn-mini {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ccc;
+    padding: 5px 10px;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.3s; /* animacion suave  para el hover */
+}
+.config-btn-mini:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+/* botones grandes */
+.actions-section {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    width: 100%;
+    justify-content: center;
+}
+
+.btn-action {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: transform 0.2s;
+    width: 45%; /* asi ocupan casi la mitad cada uno */
+}
+
+.btn-action:hover {
+    transform: translateY(-3px); /* efecto de elevacion al pasar el raton */
+}
+
+.primary {
+    background-color: #00b894;
+    color: #0f0c29;
+}
+
+.secondary {
+    background-color: transparent;
+    border: 2px solid #00b894;
+    color: #00b894;
+}
+.secondary:hover {
+    background-color: rgba(0, 184, 148, 0.1);
+}

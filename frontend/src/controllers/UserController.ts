@@ -72,16 +72,31 @@ class UserController {
         localStorage.removeItem('currentUser')
     }
 
-    async changePassword(oldPassword: string, password: string) {
-        if (oldPassword !== password) {
+    async changePassword(
+        currentPass: string,
+        newPass: string,
+        repeatPass: string
+    ) {
+        try {
+            console.log('🔐 Iniciando cambio de password...')
+
+            const response = await userProvider.changePassword(
+                currentPass,
+                newPass,
+                repeatPass
+            )
+
+            return response
+        } catch (error: any) {
+            console.error('Error cambiando contraseña:', error)
             return {
                 success: false,
-                message: 'Las contraseñas no coinciden',
+                message:
+                    error.response?.data?.message ||
+                    'Error al conectar con el servidor',
                 data: null,
             }
         }
-        const response = userProvider.changePassword(oldPassword, password)
-        return response
     }
 
     async restorePassword(email: string) {
@@ -98,8 +113,18 @@ class UserController {
 
         this._currentUser = user
         localStorage.setItem('currentUser', JSON.stringify(user))
+        
 
         return user
+    }
+
+    async updateProfile(data: Partial<User>): Promise<User> {
+        const updatedUser = await userProvider.updateProfile(data)
+
+        this._currentUser = updatedUser
+        localStorage.setItem('currentUser', JSON.stringify(updatedUser))
+
+        return updatedUser
     }
 
     /** Restaura la sesión desde localStorage si existe */

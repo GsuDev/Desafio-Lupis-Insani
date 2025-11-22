@@ -242,6 +242,7 @@ class UserController extends Controller
     public function updateItself(Request $request)
     {
         $user = $request->user();
+
         if (! $user) {
             return response()->json([
                 'success' => false,
@@ -261,12 +262,22 @@ class UserController extends Controller
         ];
 
         $validated = Validator::make($request->all(), [
-            'nickname' => 'required|string|max:255|unique:users',
+            'nickname' => [
+                'required',
+                'string',
+                'max:255',
+
+            ],
             'name' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+            ],
             'birthdate' => 'nullable|date',
-            // 'profile_picture' => 'nullable|file|image|max:2048',
+            'profile_picture' => 'nullable|image|max:2048',
         ], $messages);
 
         if ($validated->fails()) {
@@ -278,7 +289,21 @@ class UserController extends Controller
             ], 422);
         }
 
-        $user->update($validated->validated());
+        
+        $dataToUpdate = $validated->validated();
+
+        
+        if ($request->hasFile('profile_picture')) {
+
+            $imageUrl = CloudController::handleImageUpload($request);
+
+            if ($imageUrl) {
+
+                $dataToUpdate['profile_url'] = $imageUrl;
+            }
+        }
+
+        $user->update($dataToUpdate);
 
         return response()->json([
             'success' => true,
