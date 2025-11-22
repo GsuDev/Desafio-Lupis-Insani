@@ -4,6 +4,7 @@ import './style.css'
 import AccessContainer from './components/accessContainer/AccessContainer'
 
 import { JoinGameModal } from './components/joinGameModal/JoinGameModal'
+import { login } from './providers/userProvider'
 
 // Import typescriptLogo from './typescript.svg'
 // import viteLogo from '/vite.svg'
@@ -34,6 +35,7 @@ if (appContainer) {
     // renderUserForm(appContainer);
 
     try {
+        login('user@example.com', 'password')
         const modal = new JoinGameModal(appContainer, () => {
             console.log('El usuario canceló o cerró el modal')
             // Aquí podrías recargar el menú principal si fuera necesario
