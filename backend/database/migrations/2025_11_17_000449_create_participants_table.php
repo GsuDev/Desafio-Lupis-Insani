@@ -24,7 +24,7 @@ return new class extends Migration
                 ->onDelete('cascade');
 
             $table->boolean('is_bot')->default(false);
-            $table->string('nickname')->nullable();
+            $table->string('bot_name')->nullable();
 
             $table->foreignId('character_id')
                 ->nullable()
