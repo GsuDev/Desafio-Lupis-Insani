@@ -113,7 +113,6 @@ class UserController {
 
         this._currentUser = user
         localStorage.setItem('currentUser', JSON.stringify(user))
-        
 
         return user
     }

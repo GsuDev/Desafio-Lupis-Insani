@@ -289,10 +289,8 @@ class UserController extends Controller
             ], 422);
         }
 
-        
         $dataToUpdate = $validated->validated();
 
-        
         if ($request->hasFile('profile_picture')) {
 
             $imageUrl = CloudController::handleImageUpload($request);
