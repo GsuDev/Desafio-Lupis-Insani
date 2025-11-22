@@ -61,17 +61,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     const appContainer = document.querySelector<HTMLDivElement>('#app')
 
     if (appContainer) {
-        console.log('🔌 Iniciando prueba de integración...');
+        console.log('🔌 Iniciando prueba de integración...')
 
         try {
-            
-            
             // meto esto aqui para no tener que cargar el componente de login.y poder probar si tiene permisos
             //con el token y eso
-            await userController.login('sergio@sergio.com', 'aaaaaaaa'); 
+            await userController.login('sergio@sergio.com', 'aaaaaaaa')
 
             // 2. CARGAR DATOS REALES
-            await userController.loadProfile();
+            await userController.loadProfile()
 
             // 3. RENDERIZAR EL COMPONENTE
             //const settings = new UserSettingsComponent(appContainer);
@@ -81,11 +79,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             //dashboard.render();
 
             const changePassword = new ChangePasswordModal(appContainer)
-            changePassword.render();
-
+            changePassword.render()
         } catch (error) {
-            console.error('Falló la prueba:', error);
-            appContainer.innerHTML = `<h2 style="color:white">Error: No se pudo conectar. Revisa la consola.</h2>`;
+            console.error('Falló la prueba:', error)
+            appContainer.innerHTML = `<h2 style="color:white">Error: No se pudo conectar. Revisa la consola.</h2>`
         }
     }
 })

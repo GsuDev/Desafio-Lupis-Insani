@@ -34,9 +34,21 @@ export class ChangePasswordModal {
         form.onsubmit = (e) => this.handleSubmit(e)
 
         // Inputs con etiquetas descriptivas como en el wireframe
-        const currentPass = this.createInputRow('Introduce tu contraseña actual:', 'current_password', 'Contraseña Actual')
-        const newPass = this.createInputRow('Introduce tu contraseña nueva:', 'new_password', 'Contraseña Nueva')
-        const repeatPass = this.createInputRow('Repite tu contraseña nueva:', 'repeat_password', 'Contraseña Nueva Rep.')
+        const currentPass = this.createInputRow(
+            'Introduce tu contraseña actual:',
+            'current_password',
+            'Contraseña Actual'
+        )
+        const newPass = this.createInputRow(
+            'Introduce tu contraseña nueva:',
+            'new_password',
+            'Contraseña Nueva'
+        )
+        const repeatPass = this.createInputRow(
+            'Repite tu contraseña nueva:',
+            'repeat_password',
+            'Contraseña Nueva Rep.'
+        )
 
         // Contenedor de errores
         const errorMsg = document.createElement('div')
@@ -68,14 +80,18 @@ export class ChangePasswordModal {
     }
 
     // helper modificado con el ojo para ver la contraseña
-    private createInputRow(labelText: string, name: string, placeholder: string): HTMLDivElement {
+    private createInputRow(
+        labelText: string,
+        name: string,
+        placeholder: string
+    ): HTMLDivElement {
         const row = document.createElement('div')
         row.className = 'input-row'
-        
+
         const label = document.createElement('label')
         label.textContent = labelText
         label.className = 'row-label'
-        
+
         // contenedor wrapper (necesario para posicionar el ojo)
         const wrapper = document.createElement('div')
         wrapper.className = 'password-input-wrapper'
@@ -85,8 +101,7 @@ export class ChangePasswordModal {
         input.name = name
         input.placeholder = placeholder
         input.required = true
-        
-        
+
         // el boton del ojo
         const toggleBtn = document.createElement('button')
         toggleBtn.type = 'button' // para no enviar el form
@@ -107,7 +122,7 @@ export class ChangePasswordModal {
 
         wrapper.append(input, toggleBtn)
         row.append(label, wrapper)
-        
+
         return row
     }
 
@@ -117,7 +132,9 @@ export class ChangePasswordModal {
     }
 
     private showError(message: string): void {
-        const msgDiv = this.container.querySelector('#password-error-msg') as HTMLElement
+        const msgDiv = this.container.querySelector(
+            '#password-error-msg'
+        ) as HTMLElement
         if (msgDiv) {
             msgDiv.textContent = message
             msgDiv.style.display = 'block'
@@ -144,14 +161,20 @@ export class ChangePasswordModal {
         }
 
         console.log('🔒 Cambiando contraseña...')
-        
-        const response = await userController.changePassword(current, newP, repeatP)
-        
+
+        const response = await userController.changePassword(
+            current,
+            newP,
+            repeatP
+        )
+
         if (response && response.success) {
             alert('¡Contraseña cambiada correctamente!')
             this.closeModal()
         } else {
-            this.showError(response?.message || 'Error al cambiar la contraseña')
+            this.showError(
+                response?.message || 'Error al cambiar la contraseña'
+            )
         }
     }
 }

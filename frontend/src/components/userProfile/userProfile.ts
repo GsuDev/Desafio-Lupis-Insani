@@ -7,19 +7,18 @@ import type { User } from '../../models/User'
  * pinta la foto de perfil el nombre y los botones
  */
 export class UserProfileComponent {
-    
     private container: HTMLElement
     // aqui guardamos todos los datos
     private userData: User
 
     constructor(container: HTMLElement) {
         this.container = container
-        
-        // si hay usuario logueado lo cogemos  si no  ponemos uno por defecto 
+
+        // si hay usuario logueado lo cogemos  si no  ponemos uno por defecto
         //lo mismo que en la otra, no se va a dar el caso pero TS me da error si no lo pongo asi
         this.userData = userController.currentUser || {
             nickname: 'Invitado',
-            profile_url: undefined
+            profile_url: undefined,
         }
     }
 
@@ -40,12 +39,14 @@ export class UserProfileComponent {
         const avatarImg = document.createElement('img')
         avatarImg.className = 'avatar-img'
         // Si tiene foto la usamos  si no generamos un robot aleatorio con su nombre
-        avatarImg.src = this.userData.profile_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${this.userData.nickname}`
+        avatarImg.src =
+            this.userData.profile_url ||
+            `https://api.dicebear.com/7.x/bottts/svg?seed=${this.userData.nickname}`
 
         // info y configuracion
         // Un div para agrupar el nombre y el boton de configuracion
         const infoDiv = document.createElement('div')
-        
+
         // nombre del usuario
         const nickTitle = document.createElement('h2')
         nickTitle.className = 'user-nickname'
@@ -65,12 +66,12 @@ export class UserProfileComponent {
         // div para los botones de jugar crear o unirse
         const actionsDiv = document.createElement('div')
         actionsDiv.className = 'actions-section'
-        
+
         // boton para crear la partida
         const createBtn = document.createElement('button')
         createBtn.className = 'btn-action primary'
         createBtn.textContent = 'Crear Sala'
-        
+
         // boton para unirse a la partida
         const joinBtn = document.createElement('button')
         joinBtn.className = 'btn-action secondary'
@@ -80,9 +81,9 @@ export class UserProfileComponent {
         actionsDiv.append(createBtn, joinBtn)
 
         // se junta todo en la tarjeta
-        
+
         card.append(avatarImg, infoDiv, actionsDiv)
-        
+
         // se mete en el padre
         this.container.appendChild(card)
     }

@@ -1,46 +1,46 @@
 /* el fondo oscuo */
 .modal-overlay {
     position: fixed; /* se queda fijo en la pantalla aunque hagas scroll */
-    top: 0; 
-    left: 0; 
-    width: 100vw; 
-    height: 100vh; 
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     background-color: rgba(0, 0, 0, 0.85); /* fondo negro casi opaco */
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    z-index: 10; /* se pone por encima de todo lo demas */ 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10; /* se pone por encima de todo lo demas */
     backdrop-filter: blur(5px); /* difumina lo que hay detras */
-    padding: 10px; 
+    padding: 10px;
 }
 
 /* la tarjeta */
 .user-settings-card {
-    background-color: #1e1e2f; 
-    width: 550px; 
-    max-width: 100%; 
-    max-height: 95vh; 
-    border-radius: 20px; 
-    border: 1px solid rgba(255, 255, 255, 0.1); 
-    padding: 1.5rem; 
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5); 
-    display: flex; 
-    flex-direction: column; 
-    gap: 1rem; 
+    background-color: #1e1e2f;
+    width: 550px;
+    max-width: 100%;
+    max-height: 95vh;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
     position: relative; /* para posicionar cosas dentro si hace falta */
-    color: white; 
-    font-family: 'Segoe UI', sans-serif; 
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
     overflow-y: auto; /* scroll para moviles */
 }
 
 /* header */
 .settings-header {
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
-    padding-bottom: 1rem; 
-    margin-bottom: 0.5rem; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 1rem;
+    margin-bottom: 0.5rem;
     flex-shrink: 0; /* el header no se aplasta al hacer scroll */
 }
 
@@ -55,187 +55,186 @@
     transition: all 0.3s; /* animacion suave al cambiar estado */
 }
 .back-btn:hover {
-    background: rgba(255, 255, 255, 0.2); 
+    background: rgba(255, 255, 255, 0.2);
     transform: translateX(-3px); /* se mueve un pelin a la izquierda */
 }
 
 .settings-title {
-    text-transform: uppercase; 
-    margin: 0; 
-    font-size: 1.5rem; 
-    color: #00b894; 
-    letter-spacing: 1px; 
-    text-align: center; 
+    text-transform: uppercase;
+    margin: 0;
+    font-size: 1.5rem;
+    color: #00b894;
+    letter-spacing: 1px;
+    text-align: center;
 }
 
-
 .settings-form {
-    display: flex; 
-    flex-direction: column; 
-    gap: 1.2rem; 
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
 }
 
 /* seccion superior */
 .top-section {
-    display: flex; 
-    gap: 1.5rem; 
-    align-items: center; 
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
 }
 
 .avatar-col {
-    display: flex; 
+    display: flex;
     flex-direction: column; /* columna por si metemos mas cosas */
-    align-items: center; 
+    align-items: center;
     position: relative; /* para posicionamiento relativo */
     flex-shrink: 0; /* evita que se encoja si falta espacio */
 }
 
 .avatar-circle {
-    width: 110px; 
-    height: 110px; 
-    border-radius: 50%; 
-    border: 3px solid #00b894; 
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    border: 3px solid #00b894;
     object-fit: cover; /* la imagen cubre todo sin deformarse */
-    cursor: pointer; 
-    box-shadow: 0 0 15px rgba(0, 184, 148, 0.3); 
-    transition: transform 0.2s; 
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(0, 184, 148, 0.3);
+    transition: transform 0.2s;
 }
 .avatar-circle:hover {
-    transform: scale(1.05); 
+    transform: scale(1.05);
 }
 
 .info-col {
     flex: 1; /* ocupa todo el espacio restante */
-    display: flex; 
-    flex-direction: column; 
-    gap: 1rem; 
-    width: 100%; 
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
 }
 
 .name-row {
-    display: flex; 
-    gap: 1rem; 
+    display: flex;
+    gap: 1rem;
 }
 
 /* inputs oscuros */
 .input-box {
     flex: 1; /* se reparten el espacio equitativamente */
-    display: flex; 
-    flex-direction: column; 
-    gap: 5px; 
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
 .input-field {
-    width: 100%; 
-    background: rgba(0, 0, 0, 0.3); 
-    border: 1px solid rgba(255, 255, 255, 0.1); 
-    border-radius: 8px; 
-    padding: 10px 12px; 
+    width: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px 12px;
     font-family: inherit; /* hereda la fuente del padre */
-    font-size: 0.95rem; 
-    color: #fff; 
-    transition: border 0.3s; 
-    box-sizing: border-box; 
+    font-size: 0.95rem;
+    color: #fff;
+    transition: border 0.3s;
+    box-sizing: border-box;
 }
-.input-field::placeholder { color: rgba(255, 255, 255, 0.4); } /* color del texto de ayuda */
+.input-field::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+} /* color del texto de ayuda */
 .input-field:focus {
-    outline: none; 
-    border-color: #00b894; 
-    background: rgba(0, 0, 0, 0.5); 
+    outline: none;
+    border-color: #00b894;
+    background: rgba(0, 0, 0, 0.5);
 }
 
 /* boton password */
 .btn-change-pass {
     align-self: center; /* se centra a si mismo */
-    background: transparent; 
-    border: 1px dashed #e74c3c; 
-    color: #e74c3c; 
-    border-radius: 8px; 
-    padding: 10px 20px; 
-    cursor: pointer; 
-    font-weight: bold; 
-    font-size: 0.9rem; 
-    margin-top: 0.5rem; 
-    transition: all 0.3s; 
-    width: 100%; 
-    max-width: 300px; 
+    background: transparent;
+    border: 1px dashed #e74c3c;
+    color: #e74c3c;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    transition: all 0.3s;
+    width: 100%;
+    max-width: 300px;
 }
 .btn-change-pass:hover {
-    background: rgba(231, 76, 60, 0.1); 
-    box-shadow: 0 0 10px rgba(231, 76, 60, 0.2); 
+    background: rgba(231, 76, 60, 0.1);
+    box-shadow: 0 0 10px rgba(231, 76, 60, 0.2);
 }
 
 /* footer */
 .settings-footer {
-    display: flex; 
-    justify-content: space-between; 
-    margin-top: 1rem; 
-    padding-top: 1rem; 
-    border-top: 1px solid rgba(255, 255, 255, 0.1); 
-    gap: 1rem; 
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    gap: 1rem;
     flex-shrink: 0; /* no se encoge */
 }
 
 .btn-cancel {
-    flex: 1; 
-    background-color: #e74c3c ; 
-    border: 1px solid #aaa; 
-    color: #0f0c29; 
-    border-radius: 8px; 
-    padding: 12px; 
-    font-weight: bold; 
-    font-size: 1rem; 
-    cursor: pointer; 
-    transition: all 0.3s; 
+    flex: 1;
+    background-color: #e74c3c;
+    border: 1px solid #aaa;
+    color: #0f0c29;
+    border-radius: 8px;
+    padding: 12px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
 }
 .btn-cancel:hover {
     border-color: #fff;
-    color: #fff; 
-    background: rgba(255, 255, 255, 0.05); 
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .btn-save {
     flex: 1; /* ocupa la otra mitad */
-    background-color: #00b894; 
-    border: none; 
-    border-radius: 8px; 
-    padding: 12px; 
-    font-weight: bold; 
-    font-size: 1rem; 
-    color: #0f0c29; 
-    cursor: pointer; 
-    transition: transform 0.2s; 
+    background-color: #00b894;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-weight: bold;
+    font-size: 1rem;
+    color: #0f0c29;
+    cursor: pointer;
+    transition: transform 0.2s;
 }
 .btn-save:hover {
-    filter: brightness(1.1); 
-    transform: translateY(-2px); 
-    box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3); 
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
 }
 
-
-  
 @media (max-width: 600px) {
     .user-settings-card {
-        padding: 1rem; 
-        height: 100%; 
-        max-height: 100vh; 
-        border-radius: 0; 
+        padding: 1rem;
+        height: 100%;
+        max-height: 100vh;
+        border-radius: 0;
     }
 
     /* apilar avatar arriba y datos abajo */
     .top-section {
-        flex-direction: column; 
-        gap: 1rem; 
+        flex-direction: column;
+        gap: 1rem;
     }
 
     /* apilar nombre y apellido */
     .name-row {
-        flex-direction: column; 
-        gap: 1rem; 
+        flex-direction: column;
+        gap: 1rem;
     }
 
     .settings-title {
-        font-size: 1.2rem; 
+        font-size: 1.2rem;
     }
 
     /* ajustar botones */

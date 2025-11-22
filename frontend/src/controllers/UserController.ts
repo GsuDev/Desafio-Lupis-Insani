@@ -84,25 +84,32 @@ class UserController {
     //     const response = userProvider.changePassword(oldPassword, password)
     //     return response
     // }
-    async changePassword(currentPass: string, newPass: string, repeatPass: string) {
+    async changePassword(
+        currentPass: string,
+        newPass: string,
+        repeatPass: string
+    ) {
         try {
-            console.log('🔐 Iniciando cambio de password...');
+            console.log('🔐 Iniciando cambio de password...')
 
-            
-            const response = await userProvider.changePassword(currentPass, newPass, repeatPass);
-            
-            return response;
+            const response = await userProvider.changePassword(
+                currentPass,
+                newPass,
+                repeatPass
+            )
 
+            return response
         } catch (error: any) {
-            console.error('Error cambiando contraseña:', error);
-            return { 
-                success: false, 
-                message: error.response?.data?.message || 'Error al conectar con el servidor',
-                data: null 
-            };
+            console.error('Error cambiando contraseña:', error)
+            return {
+                success: false,
+                message:
+                    error.response?.data?.message ||
+                    'Error al conectar con el servidor',
+                data: null,
+            }
         }
     }
-
 
     async restorePassword(email: string) {
         const response = userProvider.restorePassword(email)
@@ -130,7 +137,7 @@ class UserController {
      */
     async updateProfile(data: Partial<User>): Promise<User> {
         try {
-            console.log('🔄 Enviando actualización de perfil...');
+            console.log('🔄 Enviando actualización de perfil...')
 
             // Llamamos al provider SIN ID
             const updatedUser = await userProvider.updateProfile(data)
@@ -140,7 +147,6 @@ class UserController {
 
             console.log('✅ Usuario actualizado:', updatedUser)
             return updatedUser
-
         } catch (error) {
             console.error('❌ Error en controlador:', error)
             throw error

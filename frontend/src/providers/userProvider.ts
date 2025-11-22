@@ -84,14 +84,13 @@ export async function logout(): Promise<void> {
 export async function getProfile(): Promise<User> {
     // Tipamos la respuesta esperada
     const { data } = await apiClient.get<{
-        success: boolean;
-        message: string;
-        data: { user: User };
-    }>('/user');
+        success: boolean
+        message: string
+        data: { user: User }
+    }>('/user')
 
-    return data.data.user;
+    return data.data.user
 }
-
 
 /**
  * Comprueba si hay un token de sesión válido
@@ -112,20 +111,17 @@ export function isLoggedIn(): boolean {
 //     return data
 // }
 export async function changePassword(
-    current_password: string, 
+    current_password: string,
     password: string,
     password_confirmation: string
 ): Promise<ServerResponse> {
-    
     const { data } = await apiClient.put<ServerResponse>('/profile/password', {
         oldPassword: current_password, //  Backend espera 'oldPassword'
         password,
-        password_confirmation // Se envía por si acaso, aunque el back solo valida 'password'
+        password_confirmation, // Se envía por si acaso, aunque el back solo valida 'password'
     })
     return data
 }
-
-
 
 export async function restorePassword(email: string) {
     const { data } = await apiClient.post<ServerResponse>('/restore-password', {
@@ -145,32 +141,41 @@ export async function resetPassword(password: string) {
  * actualizar datos de perfil
  * Aunque para leer usamos 'GET /user' (por token), el Backend no implementa 'PUT /user'.
  * Estamos obligados a usar 'PUT /users/{id}' pasando el ID explícitamente.
- * 
+ *
  * * NOTA SOBRE FORMDATA:
  * Si enviamos ficheros (FormData), Laravel no procesa bien multipart/form-data en PUT.
  * El truco es enviar POST con el campo _method="PUT".
  */
 /**
- * 
+ *
  *  Si es FormData, usamos POST con _method="PUT". Si es JSON, usamos PUT.
  */
-export async function updateProfile(userData: Partial<User> | FormData): Promise<User> {
+export async function updateProfile(
+    userData: Partial<User> | FormData
+): Promise<User> {
     // Definimos el tipo de respuesta del backend
-    type UpdateResponse = { success: boolean; message: string; data: { user: User } };
+    type UpdateResponse = {
+        success: boolean
+        message: string
+        data: { user: User }
+    }
 
     // CAMINO A: FormData (Archivos) -> POST simulando PUT
     if (userData instanceof FormData) {
-        userData.append('_method', 'PUT'); 
-        const { data } = await apiClient.post<UpdateResponse>('/users', userData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
-        });
-        return data.data.user; 
-    } 
-    
+        userData.append('_method', 'PUT')
+        const { data } = await apiClient.post<UpdateResponse>(
+            '/users',
+            userData,
+            {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            }
+        )
+        return data.data.user
+    }
+
     // CAMINO B: JSON normal -> PUT directo
     else {
-        const { data } = await apiClient.put<UpdateResponse>('/users', userData);
-        return data.data.user;
+        const { data } = await apiClient.put<UpdateResponse>('/users', userData)
+        return data.data.user
     }
 }
-

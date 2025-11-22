@@ -14,7 +14,7 @@ export class UserSettingsComponent {
             lastname: '',
             email: '',
             birthdate: '',
-            profile_url: undefined
+            profile_url: undefined,
         }
     }
 
@@ -61,16 +61,18 @@ export class UserSettingsComponent {
         const avatarCol = document.createElement('div')
         avatarCol.className = 'avatar-col'
         const avatarImg = document.createElement('img')
-        avatarImg.src = this.userData.profile_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${this.userData.nickname}`
+        avatarImg.src =
+            this.userData.profile_url ||
+            `https://api.dicebear.com/7.x/bottts/svg?seed=${this.userData.nickname}`
         avatarImg.className = 'avatar-circle'
-        
+
         const fileInput = document.createElement('input')
         fileInput.type = 'file'
         fileInput.name = 'profile_picture'
         fileInput.accept = 'image/*'
         fileInput.hidden = true
         fileInput.onchange = (e) => this.handleAvatarChange(e, avatarImg)
-        
+
         // Click en la imagen abre el selector
         avatarImg.onclick = () => fileInput.click()
         avatarCol.append(avatarImg, fileInput)
@@ -78,31 +80,61 @@ export class UserSettingsComponent {
         // Columna Info
         const infoCol = document.createElement('div')
         infoCol.className = 'info-col'
-        
-        const nickGroup = this.createInput(null, 'nickname', 'text', this.userData.nickname || '', 'Nickname')
-        
+
+        const nickGroup = this.createInput(
+            null,
+            'nickname',
+            'text',
+            this.userData.nickname || '',
+            'Nickname'
+        )
+
         const nameRow = document.createElement('div')
         nameRow.className = 'name-row'
-        const nameGroup = this.createInput(null, 'name', 'text', this.userData.name || '', 'Nombre')
-        const lastnameGroup = this.createInput(null, 'lastname', 'text', this.userData.lastname || '', 'Apellidos')
+        const nameGroup = this.createInput(
+            null,
+            'name',
+            'text',
+            this.userData.name || '',
+            'Nombre'
+        )
+        const lastnameGroup = this.createInput(
+            null,
+            'lastname',
+            'text',
+            this.userData.lastname || '',
+            'Apellidos'
+        )
         nameRow.append(nameGroup, lastnameGroup)
 
         infoCol.append(nickGroup, nameRow)
         topSection.append(avatarCol, infoCol)
 
         // Sección Inferior
-        const emailGroup = this.createInput(null, 'email', 'email', this.userData.email || '', 'Correo Electrónico')
-        
-        const rawDate = this.userData.birthdate || '';
-        const cleanDate = rawDate.split('T')[0];
-        const birthGroup = this.createInput(null, 'birthdate', 'date', cleanDate, 'Fecha Nacimiento')
+        const emailGroup = this.createInput(
+            null,
+            'email',
+            'email',
+            this.userData.email || '',
+            'Correo Electrónico'
+        )
+
+        const rawDate = this.userData.birthdate || ''
+        const cleanDate = rawDate.split('T')[0]
+        const birthGroup = this.createInput(
+            null,
+            'birthdate',
+            'date',
+            cleanDate,
+            'Fecha Nacimiento'
+        )
 
         const changePassBtn = document.createElement('button')
         changePassBtn.type = 'button'
         changePassBtn.className = 'btn-change-pass'
         changePassBtn.textContent = '🔒 Cambiar contraseña'
         // Aquí conectarás con tu HU de contraseña
-        changePassBtn.onclick = () => console.log('Abrir modal contraseña') 
+        changePassBtn.onclick = () => console.log('Abrir modal contraseña')
 
         form.append(topSection, emailGroup, birthGroup, changePassBtn)
 
@@ -120,7 +152,7 @@ export class UserSettingsComponent {
         saveBtn.className = 'btn-save'
         saveBtn.textContent = 'Actualizar datos'
         // Truco: el click del botón dispara el submit del form aunque esté fuera
-        saveBtn.onclick = () => form.requestSubmit() 
+        saveBtn.onclick = () => form.requestSubmit()
 
         footer.append(cancelBtn, saveBtn)
 
@@ -130,7 +162,13 @@ export class UserSettingsComponent {
         this.container.appendChild(overlay)
     }
 
-    private createInput(label: string | null, name: string, type: string, value: string, placeholder: string): HTMLDivElement {
+    private createInput(
+        label: string | null,
+        name: string,
+        type: string,
+        value: string,
+        placeholder: string
+    ): HTMLDivElement {
         const group = document.createElement('div')
         group.className = 'input-box'
         const input = document.createElement('input')
@@ -143,11 +181,16 @@ export class UserSettingsComponent {
         return group
     }
 
-    private handleAvatarChange(event: Event, imgPreview: HTMLImageElement): void {
+    private handleAvatarChange(
+        event: Event,
+        imgPreview: HTMLImageElement
+    ): void {
         const input = event.target as HTMLInputElement
         if (input.files && input.files[0]) {
             const reader = new FileReader()
-            reader.onload = (e) => { imgPreview.src = e.target?.result as string }
+            reader.onload = (e) => {
+                imgPreview.src = e.target?.result as string
+            }
             reader.readAsDataURL(input.files[0])
         }
     }
@@ -161,8 +204,6 @@ export class UserSettingsComponent {
         e.preventDefault()
         const form = e.target as HTMLFormElement
         const formData = new FormData(form)
-        
-        
 
         try {
             console.log('📤 Actualizando...', formData)
