@@ -72,17 +72,37 @@ class UserController {
         localStorage.removeItem('currentUser')
     }
 
-    async changePassword(oldPassword: string, password: string) {
-        if (oldPassword !== password) {
-            return {
-                success: false,
-                message: 'Las contraseñas no coinciden',
-                data: null,
-            }
+    //CAMBIO
+    // async changePassword(oldPassword: string, password: string) {
+    //     if (oldPassword !== password) {
+    //         return {
+    //             success: false,
+    //             message: 'Las contraseñas no coinciden',
+    //             data: null,
+    //         }
+    //     }
+    //     const response = userProvider.changePassword(oldPassword, password)
+    //     return response
+    // }
+    async changePassword(currentPass: string, newPass: string, repeatPass: string) {
+        try {
+            console.log('🔐 Iniciando cambio de password...');
+
+            
+            const response = await userProvider.changePassword(currentPass, newPass, repeatPass);
+            
+            return response;
+
+        } catch (error: any) {
+            console.error('Error cambiando contraseña:', error);
+            return { 
+                success: false, 
+                message: error.response?.data?.message || 'Error al conectar con el servidor',
+                data: null 
+            };
         }
-        const response = userProvider.changePassword(oldPassword, password)
-        return response
     }
+
 
     async restorePassword(email: string) {
         const response = userProvider.restorePassword(email)
@@ -98,8 +118,33 @@ class UserController {
 
         this._currentUser = user
         localStorage.setItem('currentUser', JSON.stringify(user))
+        console.log('✅ Perfil cargado desde BD:', user.nickname)
 
         return user
+    }
+
+    //NUEVO
+    /**
+     * Actualiza los datos del usuario.
+     * Inyecta el id automáticamente para cumplir con la ruta PUT /users/{id}
+     */
+    async updateProfile(data: Partial<User>): Promise<User> {
+        try {
+            console.log('🔄 Enviando actualización de perfil...');
+
+            // Llamamos al provider SIN ID
+            const updatedUser = await userProvider.updateProfile(data)
+
+            this._currentUser = updatedUser
+            localStorage.setItem('currentUser', JSON.stringify(updatedUser))
+
+            console.log('✅ Usuario actualizado:', updatedUser)
+            return updatedUser
+
+        } catch (error) {
+            console.error('❌ Error en controlador:', error)
+            throw error
+        }
     }
 
     /** Restaura la sesión desde localStorage si existe */
