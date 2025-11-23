@@ -6,6 +6,9 @@ services:
     container_name: laravel-app
     expose:
       - "8000"
+    ports:       
+      - "8000:8000"  # Para ver la web (Laravel)
+      - "8080:8080"  # Para los WebSockets (Reverb)
     volumes:
       - ./backend:/var/www/html
     depends_on:
