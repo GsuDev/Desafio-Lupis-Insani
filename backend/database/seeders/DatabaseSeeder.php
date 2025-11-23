@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleSeeder::class,
             UserSeeder::class,
+            CharacterSeeder::class,
         ]);
 
         $users = User::all();
@@ -30,5 +31,6 @@ class DatabaseSeeder extends Seeder
                     })
             )
             ->create();
+
     }
 }

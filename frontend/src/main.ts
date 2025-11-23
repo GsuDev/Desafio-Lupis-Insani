@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             // meto esto aqui para no tener que cargar el componente de login.y poder probar si tiene permisos
             //con el token y eso
-            await userController.login('sergio@sergio.com', 'aaaaaaaa')
+            await userController.login('user@example.com', 'password')
 
             // 2. CARGAR DATOS REALES
             await userController.loadProfile()
