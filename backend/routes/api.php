@@ -153,7 +153,7 @@ Route::middleware('auth:sanctum')->group(function () {
             //
 
             //--RUTAS DE CANALES---
-            Route::post('wolves/message', [WolvesChannelController::class, 'send']);
+            Route::post('/wolves/message', [WolvesChannelController::class, 'send']);
         }
     );
 
