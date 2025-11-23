@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\WolvesChannelController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\UserController;
@@ -151,6 +151,9 @@ Route::middleware('auth:sanctum')->group(function () {
             // (Necesitarás crear este método 'getPlayersByGame' en tu GameController)
             Route::get('/players', [GameController::class, 'getPlayersByGame']); // -> para introducir los jugadores en la sala pero esto pertenece a otra HU
             //
+
+            //--RUTAS DE CANALES---
+            Route::post('wolves/message', [WolvesChannelController::class, 'send']);
         }
     );
 
