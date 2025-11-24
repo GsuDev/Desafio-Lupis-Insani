@@ -4,6 +4,7 @@ import type { Game } from '../../interfaces/game.models'
 import { gameController } from '../../controllers/GameController.ts'
 import { participantController } from '../../controllers/ParticipantController'
 import { WaitingRoomChat } from '../waitingRoomChat/waitingRoomChat.ts'
+import type { IMessageData } from '../../interfaces/game.models'
 
 // 2. Importar el CSS
 import './waiting-room.css'
@@ -101,6 +102,7 @@ export const renderWaitingRoom = (
         if (game.messages && game.messages.length > 0) {
             // chatComponent es la instancia que creamos antes
             // Ojo: Tendrás que exponer un método setMessages o iterar con addMessage
+
             game.messages.forEach((msg) => chatComponent.addMessage(msg))
         }
     }

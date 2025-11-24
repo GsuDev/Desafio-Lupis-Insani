@@ -165,30 +165,7 @@ html {
 
 /* Columna Derecha */
 .wr-chat-area {
-    width: 66.66%;
     display: flex;
-    flex-direction: column;
-    background-color: var(--color-bg-card-light);
-    border: 1px solid var(--color-border-separator);
-    border-radius: 0.5rem;
-}
-
-.wr-chat-header {
-    padding: 0.5rem;
-    border-bottom: 1px solid var(--color-border-separator);
-    font-weight: bold;
-}
-
-.wr-chat-placeholder {
-    flex-grow: 1;
-    padding: 1rem;
-    border-radius: 0 0 0.5rem 0.5rem;
-    /* Usamos un tono marrón muy claro (Marrón Rústico con 5% opacidad) */
-    background-color: rgba(93, 64, 55, 0.05);
-    /* Borde discontinuo con el Marrón Rústico */
-    border: 2px dashed var(--color-secondary-brown);
-    margin: 0.5rem;
-    color: var(--color-text-muted);
 }
 
 /* --- Estados Globales (Loading/Error) --- */

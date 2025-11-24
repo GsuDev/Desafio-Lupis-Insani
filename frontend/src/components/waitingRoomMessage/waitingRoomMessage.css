@@ -74,7 +74,8 @@
 
 .chat-content {
     display: flex;
-    flex-direction: column; /* Nombre arriba, mensaje abajo */
+    /* flex-direction: column; */
+    /* Nombre arriba, mensaje abajo */
     /* O si prefieres en linea: */
     /* display: inline; */
 }

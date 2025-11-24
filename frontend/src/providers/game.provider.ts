@@ -1,28 +1,16 @@
-import type { Game, Player, IMessageData } from '../interfaces/game.models'
+import type {
+    Game,
+    Player,
+    IMessageData,
+    RawMessageData,
+} from '../interfaces/game.models'
 import type { Participant } from '../models/Participant'
 import apiClient from '../services/apiClient'
 
 /**
- * --- PROVEEDOR DE API REAL ---
- * * Este provider reemplaza al MOCK.
- * Hace llamadas 'fetch' reales a tu API de Laravel.
+ * --- PROVEEDOR DE API ---
+
  */
-
-// Define la URL base de tu API de Laravel
-// (Con 'php artisan serve' normalmente es 8000)
-const apiUrl = '/api'
-
-/**
- * Función auxiliar para manejar errores de 'fetch'
- */
-const handleResponse = async <T>(response: Response): Promise<T> => {
-    if (!response.ok) {
-        const errorData = (await response.json()) as { message?: string }
-        throw new Error(errorData.message ?? `Error ${response.status}`)
-    }
-
-    return response.json() as Promise<T>
-}
 
 /**
  * Llama a: GameController@getGame, getPlayersByGame, getMessagesByGame
@@ -56,12 +44,36 @@ export const getGame = async (gameId: string): Promise<Game> => {
     ])
 
     // 3. Extraemos la data de cada respuesta de Axios
-    const gameData = gameResponse.data
+
+    const gameData = gameResponse.data.data
+
+    /*
+        let gameData = ''
+    // 3. Extraemos la data de cada respuesta de Axios
+    if(gameResponse && gameResponse.data && gameResponse.data.data){
+        gameData = gameResponse.data.data
+    }
+    */
     // const playersData = playersResponse.data
-    const participantsData = participantsResponse.data
-    const messagesData = messagesResponse.data
+    const participantsData = participantsResponse.data.data
+    const messagesData: RawMessageData[] = messagesResponse.data.data
+
+    let messagesMapped: IMessageData[] = []
 
     // 4. Mapeamos al objeto final
+
+    messagesData.forEach((messageData) => {
+        const modifiedMsg: IMessageData = {
+            id: Number(messageData.id),
+            message: messageData.message,
+            createdAt: messageData.time,
+            gameId: Number(gameId),
+            playerName: messageData.user,
+            imageUrl: 'none', // sustituir por el enlace del player
+        }
+        messagesMapped.push(modifiedMsg)
+    })
+
     // Nota: Si gameData ya trae todo lo necesario, podrías hacer spread (...gameData),
     // pero mantenemos tu asignación manual por seguridad.
     const game: Game = {
@@ -73,7 +85,7 @@ export const getGame = async (gameId: string): Promise<Game> => {
 
         // Asignamos los arrays obtenidos de las otras llamadas
         // players: playersData,
-        messages: messagesData,
+        messages: messagesMapped,
 
         participants: participantsData, // Tu valor por defecto
     }

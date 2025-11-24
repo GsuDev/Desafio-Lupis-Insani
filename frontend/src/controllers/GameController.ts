@@ -81,7 +81,7 @@ class GameController {
                 // Si no, llamamos a la API
                 //console.log('Fetching datos desde API...')
                 const game = await getGame(gameId)
-
+                localStorage.setItem('currentGame', JSON.stringify(game))
                 // Guardamos en memoria
                 this._currentGame = game
                 this._renderGameDetails(game)

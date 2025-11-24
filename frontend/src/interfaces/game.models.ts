@@ -17,6 +17,12 @@ export type IMessageData = {
     playerName: string
     imageUrl: string
 }
+export interface RawMessageData {
+    id: string
+    message: string
+    time: string
+    user: string
+}
 
 export type Game = {
     id: number
