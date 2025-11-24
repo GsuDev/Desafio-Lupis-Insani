@@ -2,9 +2,7 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -15,7 +13,9 @@ class WolvesEvent implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public string $event;
+
     public array $data;
+
     public int $gameId;
 
     public function __construct(string $event, array $data, int $gameId)
@@ -32,14 +32,15 @@ class WolvesEvent implements ShouldBroadcast
      */
     public function broadcastOn(): array
     {
-        //direccion de envio a donde
+        // direccion de envio a donde
         return [
-            new PrivateChannel('wolves.' . $this->gameId),
+            new PrivateChannel('wolves.'.$this->gameId),
         ];
     }
 
     // el que se entrega - contenido
-    public function broadcastAs(): string{
+    public function broadcastAs(): string
+    {
         return $this->event;
     }
 }

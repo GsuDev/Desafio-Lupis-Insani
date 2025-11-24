@@ -89,7 +89,8 @@ import UserProfileContainer from './components/userProfileContainer/userProfileC
 // importamos la clase que acabamos de crear
 // 1. **ajusta la ruta de importacion** del controlador de usuario
 
-import { WolvesChannel, type WolfEventData } from './channels/WolvesChannel';
+//descomentar si se quiere probar el canal de lobos
+/*import { WolvesChannel, type WolfEventData } from './channels/WolvesChannel';
 
 // la funcion que se ejecutara cuando el lobo reciba un evento
 const handleWolfEvent = (eventName: string, data: WolfEventData) => {
@@ -120,3 +121,4 @@ async function authenticateAndConnect() {
 }
 
 authenticateAndConnect();
+*/
