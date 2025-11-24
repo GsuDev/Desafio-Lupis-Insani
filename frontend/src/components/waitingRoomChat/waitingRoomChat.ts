@@ -2,18 +2,15 @@ import './watitingRoomChat.css'
 import type { IMessageData } from '../../interfaces/game.models'
 import { WaitingRoomMessage } from '../waitingRoomMessage/waitingRoomMessage'
 
-
 export class WaitingRoomChat {
-
     //las propiedades
     private container: HTMLElement
     private messages: IMessageData[]
 
-    //elementos del dom 
+    //elementos del dom
     private chatListElement!: HTMLElement
     private inputElement!: HTMLInputElement
     private sendButton!: HTMLButtonElement
-
 
     //callback para cuando un usuario envia el mensaje, esto tiene que hacer conexion a back
     private onSendMessage?: (message: string) => void
@@ -23,7 +20,8 @@ export class WaitingRoomChat {
         initialMessages: IMessageData[] = [],
         onSendMessage?: (message: string) => void
     ) {
-        if (!container) { // para controlar que se ha pasado correctamente
+        if (!container) {
+            // para controlar que se ha pasado correctamente
             throw new Error(`No se pudo encontrar el contenedor`)
         }
         this.container = container
@@ -37,9 +35,7 @@ export class WaitingRoomChat {
         this.updateView()
     }
 
-
     private initDOM(): void {
-
         //limpio el contenedor vacio que le he pasado
         this.container.innerHTML = ''
 
@@ -82,7 +78,6 @@ export class WaitingRoomChat {
     }
 
     private attachEventListeners(): void {
-
         //controlo que pulsen boton
         this.sendButton.addEventListener('click', () => this.handleSend())
 
@@ -94,21 +89,19 @@ export class WaitingRoomChat {
         })
     }
 
-
     private handleSend(): void {
         const message = this.inputElement.value.trim()
 
         if (message) {
             //con esto envia el callback al controllador de que hay un mensaje
             if (this.onSendMessage) {
-                //const messageData = new IMessageData.... 
+                //const messageData = new IMessageData....
                 //this.onSendMessage(messageData)
-                this.onSendMessage(message)//creo que esto lo tengo que cambiar para enviar los datos de la persona
+                this.onSendMessage(message) //creo que esto lo tengo que cambiar para enviar los datos de la persona
             }
             this.inputElement.value = ''
         }
     }
-
 
     private updateView(): void {
         //actualiza la vista iterando los datos, donde controlo que la vista baje automaticamente
@@ -117,13 +110,14 @@ export class WaitingRoomChat {
         if (this.messages.length > 0) {
             this.messages.forEach((message) => {
                 const messageComponent = new WaitingRoomMessage(message)
-                const messageElement = messageComponent.getElement()//el render
+                const messageElement = messageComponent.getElement() //el render
                 this.chatListElement.appendChild(messageElement)
             })
             //hago el auto scroll
             this.scrollToBottom()
-        }else{
-            this.chatListElement.innerHTML ='<div class="empty-chat">Aún no hay mensajes</div>' 
+        } else {
+            this.chatListElement.innerHTML =
+                '<div class="empty-chat">Aún no hay mensajes</div>'
         }
     }
 
@@ -136,6 +130,4 @@ export class WaitingRoomChat {
         this.messages.push(message)
         this.updateView()
     }
-
-
 }

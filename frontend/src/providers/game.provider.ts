@@ -2,7 +2,6 @@ import type { Game, Player, IMessageData } from '../interfaces/game.models'
 import type { Participant } from '../models/Participant'
 import apiClient from '../services/apiClient'
 
-
 /**
  * --- PROVEEDOR DE API REAL ---
  * * Este provider reemplaza al MOCK.
@@ -34,21 +33,26 @@ const handleResponse = async <T>(response: Response): Promise<T> => {
  * 4. Combina todo en un solo objeto 'Game' para el frontend.
  */
 export const getGame = async (gameId: string): Promise<Game> => {
-    
     // 1. Lanzamos las 3 peticiones en paralelo con Axios
     const requestGame = apiClient.get<Game>(`/games/${gameId}`)
     //const requestPlayers = apiClient.get<Player[]>(`/games/${gameId}/players`)
-    const requestParticipants =  await apiClient.get<Participant[]>(
+    const requestParticipants = await apiClient.get<Participant[]>(
         `/games/${gameId}/participants`
     )
-    const requestMessages = apiClient.get<IMessageData[]>(`/games/${gameId}/messages`)
+    const requestMessages = apiClient.get<IMessageData[]>(
+        `/games/${gameId}/messages`
+    )
 
     // 2. Esperamos a que terminen todas
-    const [gameResponse, /*playersResponse,*/ participantsResponse,messagesResponse] = await Promise.all([
+    const [
+        gameResponse,
+        /*playersResponse,*/ participantsResponse,
+        messagesResponse,
+    ] = await Promise.all([
         requestGame,
         // requestPlayers,
         requestParticipants,
-        requestMessages
+        requestMessages,
     ])
 
     // 3. Extraemos la data de cada respuesta de Axios
@@ -66,12 +70,12 @@ export const getGame = async (gameId: string): Promise<Game> => {
         ended: gameData.ended,
         url: gameData.url,
         createdAt: gameData.createdAt,
-        
+
         // Asignamos los arrays obtenidos de las otras llamadas
-        // players: playersData, 
-        messages: messagesData, 
-        
-        participants: participantsData// Tu valor por defecto
+        // players: playersData,
+        messages: messagesData,
+
+        participants: participantsData, // Tu valor por defecto
     }
 
     return game
@@ -85,7 +89,6 @@ export const addMessage = async (
     messageContent: string,
     userId: number | undefined
 ): Promise<IMessageData> => {
-    
     // Construimos el objeto (Payload)
     // Axios se encargará de convertirlo a JSON automáticamente
     const payload = {
@@ -97,7 +100,7 @@ export const addMessage = async (
     // Realizamos la petición POST
     // <IMessageData> indica a TypeScript qué tipo de dato nos devuelve el servidor en 'response.data'
     const response = await apiClient.post<IMessageData>(
-        `/games/${gameId}/messages`, 
+        `/games/${gameId}/messages`,
         payload
     )
 
@@ -108,14 +111,13 @@ export const addPlayerToGame = async (
     gameId: string,
     playerName: string
 ): Promise<Player> => {
-    
     // 1. Preparamos el payload (el cuerpo de la petición)
     const payload = { name: playerName }
 
     // 2. Hacemos el POST usando el cliente de Axios
     // apiClient.post<TipoRespuesta>(url, datos)
     const response = await apiClient.post<Player>(
-        `/games/${gameId}/players`, 
+        `/games/${gameId}/players`,
         payload
     )
 
@@ -135,7 +137,6 @@ export const addPlayerToGame = async (
 export const getGameParticipants = async (
     gameId: string
 ): Promise<Participant[]> => {
-    
     // Realizamos la petición GET usando apiClient
     // <Participant[]> le dice a TS que esperamos recibir un array de participantes
     const response = await apiClient.get<Participant[]>(

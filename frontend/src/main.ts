@@ -82,7 +82,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             // changePassword.render()
             const gameId = '1'
             renderWaitingRoom(appContainer, gameId)
-
         } catch (error) {
             console.error('Falló la prueba:', error)
             appContainer.innerHTML = `<h2 style="color:white">Error: No se pudo conectar. Revisa la consola.</h2>`

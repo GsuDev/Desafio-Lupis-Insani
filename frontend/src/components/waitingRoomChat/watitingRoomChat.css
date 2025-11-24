@@ -13,7 +13,7 @@
     background-color: #1a1a1d; /* Fondo oscuro base */
     border-radius: 12px;
     overflow: hidden; /* Para que los hijos no salgan del borde redondeado */
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     border: 1px solid #333;
 }
 
@@ -34,7 +34,7 @@
     flex: 1; /* Esto hace que OCUPE todo el espacio disponible */
     overflow-y: auto; /* Scroll vertical */
     padding: 15px;
-    
+
     /* Diseño de la barra de scroll (Webkit) */
     scrollbar-width: thin;
     scrollbar-color: #444 #222;

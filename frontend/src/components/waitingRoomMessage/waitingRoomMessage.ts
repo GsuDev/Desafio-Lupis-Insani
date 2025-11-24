@@ -1,14 +1,12 @@
 import './waitingRoomMessage.css'
 import type { IMessageData } from '../../interfaces/game.models'
 
-
 export class WaitingRoomMessage {
     private data: IMessageData
 
     constructor(data: IMessageData) {
         this.data = data
     }
-
 
     //Devuelve el elemento del mensaje montado
 
@@ -25,6 +23,4 @@ export class WaitingRoomMessage {
         `
         return messageEl
     }
-
-
 }

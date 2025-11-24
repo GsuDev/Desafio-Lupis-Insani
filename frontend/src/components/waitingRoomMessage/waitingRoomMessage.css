@@ -17,7 +17,12 @@
     align-items: flex-start; /* Alinea arriba por si el texto es largo */
     padding: 8px 12px;
     margin-bottom: 8px;
-    background-color: rgba(255, 255, 255, 0.05); /* Fondo sutil semitransparente */
+    background-color: rgba(
+        255,
+        255,
+        255,
+        0.05
+    ); /* Fondo sutil semitransparente */
     border-radius: 8px;
     animation: msg-slide-in 0.3s ease-out forwards;
     transition: background-color 0.2s;
@@ -71,5 +76,5 @@
     display: flex;
     flex-direction: column; /* Nombre arriba, mensaje abajo */
     /* O si prefieres en linea: */
-    /* display: inline; */ 
+    /* display: inline; */
 }

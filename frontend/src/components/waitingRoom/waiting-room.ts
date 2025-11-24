@@ -12,7 +12,6 @@ import './waiting-room.css'
  * Crea la columna derecha (Chat)
  */
 
-
 // --------------------------------------------------
 // Función principal de Renderizado
 // --------------------------------------------------
@@ -54,7 +53,7 @@ export const renderWaitingRoom = (
         [],
         (message) => {
             //callback de un usuario escribiendo
-            console.log("Usuario quiere enviar esto: ",message)
+            console.log('Usuario quiere enviar esto: ', message)
             //aqui deberia de llamar a gameController para enviar el mensaje
             //lo dejo asi para ir solucionando fallos
         }
@@ -100,10 +99,10 @@ export const renderWaitingRoom = (
         participantList.disableButton(!participantController.isHost())
 
         if (game.messages && game.messages.length > 0) {
-        // chatComponent es la instancia que creamos antes
-        // Ojo: Tendrás que exponer un método setMessages o iterar con addMessage
-        game.messages.forEach(msg => chatComponent.addMessage(msg));
-    }
+            // chatComponent es la instancia que creamos antes
+            // Ojo: Tendrás que exponer un método setMessages o iterar con addMessage
+            game.messages.forEach((msg) => chatComponent.addMessage(msg))
+        }
     }
 
     // 5. Conectar la Vista con el Controlador
