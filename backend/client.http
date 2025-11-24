@@ -1,6 +1,5 @@
 ### Variables
-@baseUrl = http://localhost/api
-@wsBaseUrl = http://localhost/app
+@baseUrl = http://localhost:8000/api
 @contentType = application/json
 
 ### ==================== AUTH ====================
@@ -138,17 +137,3 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ### 12. Logout (requiere autenticación)
 POST {{baseUrl}}/logout
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-
-### ==================== CANALES DE WEBSOCKETS ====================
-
-### 13. Enviar evento a canal de juego (requiere autenticación + estar en el juego)
-POST {{baseUrl}}/games/1/events
-Content-Type: {{contentType}}
-
-{
-    "event": "hola.hola",
-    "data": {
-        "message": "¡Hola desde el canal de juego!"
-    },
-    "gameId": 1
-}

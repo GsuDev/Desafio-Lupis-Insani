@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\GameChannelController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -154,14 +153,5 @@ Route::middleware('auth:sanctum')->group(function () {
             //
         }
     );
-});
 
-/*
-|--------------------------------------------------------------------------
-| Rutas de los canales game
-|--------------------------------------------------------------------------
-*/
-// Route::middleware(['auth:sanctum', 'UserInGame'])->group(function () {
-//     Route::post('/games/{gameId}/events', [GameChannelController::class, 'send']);
-// });
-Route::post('/games/{gameId}/events', [GameChannelController::class, 'sendBridge']);
+});
