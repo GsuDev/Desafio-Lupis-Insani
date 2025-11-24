@@ -57,7 +57,7 @@ import UserProfileContainer from './components/userProfileContainer/userProfileC
     //renderUserForm(appContainer) // ⬅️ Render del UserForm
     
 }*/
-document.addEventListener('DOMContentLoaded', async () => {
+/*document.addEventListener('DOMContentLoaded', async () => {
     const appContainer = document.querySelector<HTMLDivElement>('#app')
 
     if (appContainer) {
@@ -85,4 +85,40 @@ document.addEventListener('DOMContentLoaded', async () => {
             appContainer.innerHTML = `<h2 style="color:white">Error: No se pudo conectar. Revisa la consola.</h2>`
         }
     }
-})
+})*/
+// importamos la clase que acabamos de crear
+// 1. **ajusta la ruta de importacion** del controlador de usuario
+
+//descomentar si se quiere probar el canal de lobos
+/*import { WolvesChannel, type WolfEventData } from './channels/WolvesChannel';
+
+// la funcion que se ejecutara cuando el lobo reciba un evento
+const handleWolfEvent = (eventName: string, data: WolfEventData) => {
+    console.log(`🦊 [evento wolf recibido] - asunto: ${eventName}`, data);
+};
+
+async function authenticateAndConnect() {
+    console.log('1. usando usercontroller.login para autenticar...');
+
+    try {
+        // usamos la funcion de tu proyecto para hacer login
+        // la funcion debe devolver una promesa y manejar el token/cookie
+        const success = await userController.login('lobo@test.com', 'password');
+
+        if (success) {
+            console.log('✅ 2. login exitoso. sesion establecida.');
+            
+            // si el login funciona, intentamos conectar al canal privado
+            console.log('3. intentando conectar al canal privado (partida 1)...');
+            new WolvesChannel(1, handleWolfEvent); 
+        } else {
+            console.error('❌ 2. error: credenciales incorrectas o servidor caido.');
+        }
+
+    } catch (error) {
+        console.error('❌ error de red o servidor durante el login:', error);
+    }
+}
+
+authenticateAndConnect();
+*/
