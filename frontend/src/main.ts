@@ -1,14 +1,14 @@
 import './style.css'
 //import type { ISlideData } from './interfaces/carousel'
 //import { Carousel } from './components/howToPlayCarousel/howToPlayCarousel'
-import AccessContainer from './components/accessContainer/AccessContainer'
+// import AccessContainer from './components/accessContainer/AccessContainer'
 
-import { JoinGameModal } from './components/joinGameModal/JoinGameModal'
+// import { JoinGameModal } from './components/joinGameModal/JoinGameModal'
 import { userController } from './controllers/UserController'
 import ChangePasswordModal from './components/changePasswordModal/changePasswordModal'
-import { renderUserForm } from './components/userForm/userForm'
-import UserSettingsComponent from './components/userSettings/userSettings'
-import UserProfileContainer from './components/userProfileContainer/userProfileContainer'
+// import { renderUserForm } from './components/userForm/userForm'
+// import UserSettingsComponent from './components/userSettings/userSettings'
+// import UserProfileContainer from './components/userProfileContainer/userProfileContainer'
 
 // Import typescriptLogo from './typescript.svg'
 // import viteLogo from '/vite.svg'
@@ -16,7 +16,7 @@ import UserProfileContainer from './components/userProfileContainer/userProfileC
 // import { renderWaitingRoom } from './components/waitingRoom/waiting-room.ts'
 
 // import { renderUserForm } from './components/userForm/userForm.ts'
-//import { renderWaitingRoom } from './components/waitingRoom/waiting-room'
+import { renderWaitingRoom } from './components/waitingRoom/waiting-room'
 // Nuevo: importar el formulario de usuario (ajusta la ruta si es distinta)
 // import { renderUserForm } from './components/userForm/userForm'
 
@@ -64,22 +64,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log('🔌 Iniciando prueba de integración...')
 
         try {
-            // meto esto aqui para no tener que cargar el componente de login.y poder probar si tiene permisos
-            //con el token y eso
-            await userController.login('sergio@sergio.com', 'aaaaaaaa')
+            // // meto esto aqui para no tener que cargar el componente de login.y poder probar si tiene permisos
+            // //con el token y eso
+            //await userController.login('admin@example.com', 'password')
 
-            // 2. CARGAR DATOS REALES
-            await userController.loadProfile()
+            // // 2. CARGAR DATOS REALES
+            // await userController.loadProfile()
 
-            // 3. RENDERIZAR EL COMPONENTE
-            //const settings = new UserSettingsComponent(appContainer);
-            //settings.render();
+            // // 3. RENDERIZAR EL COMPONENTE
+            // //const settings = new UserSettingsComponent(appContainer);
+            // //settings.render();
 
-            //const dashboard = new UserProfileContainer(appContainer);
-            //dashboard.render();
+            // //const dashboard = new UserProfileContainer(appContainer);
+            // //dashboard.render();
 
-            const changePassword = new ChangePasswordModal(appContainer)
-            changePassword.render()
+            // const changePassword = new ChangePasswordModal(appContainer)
+            // changePassword.render()
+            const gameId = '1'
+            renderWaitingRoom(appContainer, gameId)
+
         } catch (error) {
             console.error('Falló la prueba:', error)
             appContainer.innerHTML = `<h2 style="color:white">Error: No se pudo conectar. Revisa la consola.</h2>`

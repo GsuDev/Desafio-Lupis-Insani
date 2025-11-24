@@ -1,5 +1,7 @@
-import type { Game, Player, Message } from '../interfaces/game.models'
+import type { Game, Player, IMessageData } from '../interfaces/game.models'
 import type { Participant } from '../models/Participant'
+import apiClient from '../services/apiClient'
+
 
 /**
  * --- PROVEEDOR DE API REAL ---
@@ -32,38 +34,44 @@ const handleResponse = async <T>(response: Response): Promise<T> => {
  * 4. Combina todo en un solo objeto 'Game' para el frontend.
  */
 export const getGame = async (gameId: string): Promise<Game> => {
-    // Funciones auxiliares
-    const fetchGame = async (gameId: string): Promise<Game> => {
-        const response = await fetch(`${apiUrl}/games/${gameId}`)
-        return handleResponse<Game>(response)
-    }
+    
+    // 1. Lanzamos las 3 peticiones en paralelo con Axios
+    const requestGame = apiClient.get<Game>(`/games/${gameId}`)
+    //const requestPlayers = apiClient.get<Player[]>(`/games/${gameId}/players`)
+    const requestParticipants =  await apiClient.get<Participant[]>(
+        `/games/${gameId}/participants`
+    )
+    const requestMessages = apiClient.get<IMessageData[]>(`/games/${gameId}/messages`)
 
-    const fetchPlayers = async (gameId: string): Promise<Player[]> => {
-        const response = await fetch(`${apiUrl}/games/${gameId}/players`)
-        return handleResponse<Player[]>(response)
-    }
-
-    const fetchMessages = async (gameId: string): Promise<Message[]> => {
-        const response = await fetch(`${apiUrl}/games/${gameId}/messages`)
-        return handleResponse<Message[]>(response)
-    }
-
-    const [gameData, playersData, messagesData] = await Promise.all([
-        fetchGame(gameId),
-        fetchPlayers(gameId),
-        fetchMessages(gameId),
+    // 2. Esperamos a que terminen todas
+    const [gameResponse, /*playersResponse,*/ participantsResponse,messagesResponse] = await Promise.all([
+        requestGame,
+        // requestPlayers,
+        requestParticipants,
+        requestMessages
     ])
 
-    // Combina los resultados en el objeto Game del frontend
+    // 3. Extraemos la data de cada respuesta de Axios
+    const gameData = gameResponse.data
+    // const playersData = playersResponse.data
+    const participantsData = participantsResponse.data
+    const messagesData = messagesResponse.data
+
+    // 4. Mapeamos al objeto final
+    // Nota: Si gameData ya trae todo lo necesario, podrías hacer spread (...gameData),
+    // pero mantenemos tu asignación manual por seguridad.
     const game: Game = {
         id: gameData.id,
         started: gameData.started,
         ended: gameData.ended,
         url: gameData.url,
         createdAt: gameData.createdAt,
-        players: playersData, // Player[] esto de forma temporal, en realidad devuelve usuarios
-        messages: messagesData, // La API devuelve Message[]
-        participants: [], //Por ahora array vacío, se cargará con getGameParticipants
+        
+        // Asignamos los arrays obtenidos de las otras llamadas
+        // players: playersData, 
+        messages: messagesData, 
+        
+        participants: participantsData// Tu valor por defecto
     }
 
     return game
@@ -76,44 +84,43 @@ export const addMessage = async (
     gameId: string,
     messageContent: string,
     userId: number | undefined
-): Promise<Message> => {
-    // Console.log(`PROVIDER REAL: Añadiendo mensaje a la partida ${gameId}...`)
-
-    // ¡IMPORTANTE! El backend espera 'user_id', 'type', 'message'
-    // (Ajustar esto a lo que tu componente vaya a enviar)
+): Promise<IMessageData> => {
+    
+    // Construimos el objeto (Payload)
+    // Axios se encargará de convertirlo a JSON automáticamente
     const payload = {
         userId,
-        type: 'MESSAGE', // O el tipo que sea
+        type: 'MESSAGE',
         message: messageContent,
     }
 
-    const response = await fetch(`${apiUrl}/games/${gameId}/messages`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            accept: 'application/json',
-        },
-        body: JSON.stringify(payload),
-    })
+    // Realizamos la petición POST
+    // <IMessageData> indica a TypeScript qué tipo de dato nos devuelve el servidor en 'response.data'
+    const response = await apiClient.post<IMessageData>(
+        `/games/${gameId}/messages`, 
+        payload
+    )
 
-    return handleResponse(response)
+    return response.data
 }
 
 export const addPlayerToGame = async (
     gameId: string,
     playerName: string
 ): Promise<Player> => {
-    // Console.log(`PROVIDER REAL: Añadiendo jugador a la partida ${gameId}...`)
-    const response = await fetch(`${apiUrl}/games/${gameId}/players`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            accept: 'application/json',
-        },
-        body: JSON.stringify({ name: playerName }),
-    })
+    
+    // 1. Preparamos el payload (el cuerpo de la petición)
+    const payload = { name: playerName }
 
-    return handleResponse(response)
+    // 2. Hacemos el POST usando el cliente de Axios
+    // apiClient.post<TipoRespuesta>(url, datos)
+    const response = await apiClient.post<Player>(
+        `/games/${gameId}/players`, 
+        payload
+    )
+
+    // 3. Devolvemos los datos limpios
+    return response.data
 }
 // --- (Aquí añadirías el RESTO de funciones del provider...) ---
 // createGame, getGames, updateGame, deleteGame...
@@ -128,6 +135,13 @@ export const addPlayerToGame = async (
 export const getGameParticipants = async (
     gameId: string
 ): Promise<Participant[]> => {
-    const response = await fetch(`${apiUrl}/games/${gameId}/participants`)
-    return handleResponse<Participant[]>(response)
+    
+    // Realizamos la petición GET usando apiClient
+    // <Participant[]> le dice a TS que esperamos recibir un array de participantes
+    const response = await apiClient.get<Participant[]>(
+        `/games/${gameId}/participants`
+    )
+
+    // Devolvemos directamente los datos (Axios ya parseó el JSON)
+    return response.data
 }

@@ -9,12 +9,13 @@ export type Player = {
     name: string
 } // De forma temporal ya que necesito crear uno vacio
 
-export type Message = {
+export type IMessageData = {
     id: number
     message: string
     createdAt: string
     gameId: number
     playerName: string
+    imageUrl: string
 }
 
 export type Game = {
@@ -22,8 +23,8 @@ export type Game = {
     started: boolean
     ended: boolean
     url: string
-    players: Player[]
-    messages: Message[]
+    // players: Player[]
+    messages: IMessageData[]
     participants: Participant[] //TOCADO
     createdAt: string
 }

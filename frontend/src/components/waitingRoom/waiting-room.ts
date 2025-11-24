@@ -3,6 +3,7 @@ import { ParticipantList } from '../participantList/participantList'
 import type { Game } from '../../interfaces/game.models'
 import { gameController } from '../../controllers/GameController.ts'
 import { participantController } from '../../controllers/ParticipantController'
+import { WaitingRoomChat } from '../waitingRoomChat/waitingRoomChat.ts'
 
 // 2. Importar el CSS
 import './waiting-room.css'
@@ -10,23 +11,7 @@ import './waiting-room.css'
 /**
  * Crea la columna derecha (Chat)
  */
-const createChatColumn = (): HTMLElement => {
-    const section = document.createElement('section')
-    section.className = 'wr-chat-area'
 
-    const header = document.createElement('header')
-    header.className = 'wr-chat-header'
-    header.textContent = 'General prepartida'
-
-    const placeholder = document.createElement('div')
-    placeholder.className = 'wr-chat-placeholder'
-    placeholder.id = 'chat-placeholder'
-    placeholder.innerHTML = `<p>Chat (No implementado)</p><i>Aquí se cargarían los mensajes...</i>`
-
-    section.append(header)
-    section.append(placeholder)
-    return section
-}
 
 // --------------------------------------------------
 // Función principal de Renderizado
@@ -61,10 +46,24 @@ export const renderWaitingRoom = (
     const participantList = new ParticipantList()
     const participantsColumn = participantList.render()
 
-    const chatColumn = createChatColumn()
+    const chatContainerColumn = document.createElement('div')
+    chatContainerColumn.className = 'wr-chat-column-container'
+
+    const chatComponent = new WaitingRoomChat(
+        chatContainerColumn,
+        [],
+        (message) => {
+            //callback de un usuario escribiendo
+            console.log("Usuario quiere enviar esto: ",message)
+            //aqui deberia de llamar a gameController para enviar el mensaje
+            //lo dejo asi para ir solucionando fallos
+        }
+    )
+
+    chatComponent.render()
 
     main.append(participantsColumn)
-    main.append(chatColumn)
+    main.append(chatContainerColumn)
 
     roomContainer.append(header)
     roomContainer.append(globalMessage)
@@ -99,6 +98,12 @@ export const renderWaitingRoom = (
         const participants = game.participants || []
         participantList.updateParticipants(participants)
         participantList.disableButton(!participantController.isHost())
+
+        if (game.messages && game.messages.length > 0) {
+        // chatComponent es la instancia que creamos antes
+        // Ojo: Tendrás que exponer un método setMessages o iterar con addMessage
+        game.messages.forEach(msg => chatComponent.addMessage(msg));
+    }
     }
 
     // 5. Conectar la Vista con el Controlador
