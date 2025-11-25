@@ -1,0 +1,101 @@
+/* El contenedor principal de la columna de chat */
+.wr-chat-column-container {
+    height: 100%; /* Ocupa toda la altura disponible */
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    min-height: 500px; /* Altura mínima por seguridad */
+}
+
+.wr-chat-area {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: #1a1a1d; /* Fondo oscuro base */
+    border-radius: 12px;
+    overflow: hidden; /* Para que los hijos no salgan del borde redondeado */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    border: 1px solid #333;
+}
+
+/* --- Header --- */
+.wr-chat-header {
+    background-color: #25252b;
+    padding: 15px;
+    color: #fff;
+    font-weight: bold;
+    border-bottom: 1px solid #333;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+}
+
+/* --- Lista de Mensajes (Zona central) --- */
+.wr-chat-messages-list {
+    flex: 1; /* Esto hace que OCUPE todo el espacio disponible */
+    overflow-y: auto; /* Scroll vertical */
+    padding: 15px;
+
+    /* Diseño de la barra de scroll (Webkit) */
+    scrollbar-width: thin;
+    scrollbar-color: #444 #222;
+}
+
+/* Scrollbar personalizada para Chrome/Safari */
+.wr-chat-messages-list::-webkit-scrollbar {
+    width: 8px;
+}
+.wr-chat-messages-list::-webkit-scrollbar-track {
+    background: #222;
+}
+.wr-chat-messages-list::-webkit-scrollbar-thumb {
+    background-color: #444;
+    border-radius: 4px;
+}
+
+/* --- Footer (Input Area) --- */
+.wr-chat-input-area {
+    background-color: #25252b;
+    padding: 15px;
+    border-top: 1px solid #333;
+    display: flex;
+    gap: 10px;
+}
+
+.wr-chat-input {
+    flex: 1; /* El input ocupa el espacio restante */
+    padding: 10px 15px;
+    border-radius: 20px;
+    border: 1px solid #444;
+    background-color: #151518;
+    color: #fff;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.wr-chat-input:focus {
+    border-color: #4facfe;
+}
+
+.wr-chat-send-button {
+    padding: 0 20px;
+    background-color: #4facfe;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.wr-chat-send-button:hover {
+    background-color: #007bff;
+}
+
+/* Mensaje de chat vacío */
+.empty-chat {
+    color: #666;
+    text-align: center;
+    margin-top: 50px;
+    font-style: italic;
+}

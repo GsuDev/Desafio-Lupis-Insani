@@ -1,5 +1,5 @@
 import './JoinGameModal.css'
-import { joinGameRequest } from '../../providers/joinGame.provider'
+
 import { gameController } from '../../controllers/GameController'
 import { renderWaitingRoom } from '../waitingRoom/waiting-room'
 
@@ -114,7 +114,9 @@ export class JoinGameModal {
 
             //aqui cambiar el componente a waiting-room
             const app = document.getElementById('app')
+
             renderWaitingRoom(app, gameId)
+
             //y cerrar el modal
             this.handleCancel(rootElement)
         } catch (error: any) {

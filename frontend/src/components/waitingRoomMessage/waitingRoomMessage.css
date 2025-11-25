@@ -1,0 +1,81 @@
+/* waitingRoomMessage.css */
+
+/* Animación suave al aparecer el mensaje */
+@keyframes msg-slide-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.waiting-room-message {
+    display: flex;
+    align-items: flex-start; /* Alinea arriba por si el texto es largo */
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    background-color: rgba(
+        255,
+        255,
+        255,
+        0.05
+    ); /* Fondo sutil semitransparente */
+    border-radius: 8px;
+    animation: msg-slide-in 0.3s ease-out forwards;
+    transition: background-color 0.2s;
+}
+
+/* Efecto hover opcional */
+.waiting-room-message:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* --- La Imagen --- */
+.chat-image {
+    flex-shrink: 0; /* Evita que la imagen se aplaste */
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.chat-image img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%; /* Redonda */
+    object-fit: cover; /* Evita que la imagen se deforme */
+    border: 2px solid #4facfe; /* Un borde de color "gaming" (azul neón) */
+    box-shadow: 0 0 5px rgba(79, 172, 254, 0.4); /* Pequeño brillo */
+}
+
+/* --- El Nombre de Usuario --- */
+.chat-user {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 700;
+    color: #4facfe; /* Mismo color que el borde o un color destacado */
+    margin-right: 6px;
+    white-space: nowrap; /* El nombre nunca se parte en dos líneas */
+    font-size: 0.95rem;
+    line-height: 1.4; /* Alineación visual con el texto */
+    margin-top: 2px; /* Ajuste fino para alinear con la imagen si es necesario */
+}
+
+/* --- El Mensaje --- */
+.chat-message {
+    font-family: sans-serif;
+    color: #e0e0e0; /* Color claro para fondo oscuro (o #333 para fondo claro) */
+    line-height: 1.4;
+    word-break: break-word; /* Importante: rompe palabras muy largas para no romper el diseño */
+    font-size: 0.95rem;
+    margin-top: 2px;
+}
+
+.chat-content {
+    display: flex;
+    /* flex-direction: column; */
+    /* Nombre arriba, mensaje abajo */
+    /* O si prefieres en linea: */
+    /* display: inline; */
+}

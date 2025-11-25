@@ -15,7 +15,7 @@ export class GameChatEmitProvider {
             const { data } = await apiClient.post<WolvesChatResponse>(url, {
                 event: eventName,
                 data: payload,
-                gameId: this.gameId
+                gameId: this.gameId,
             })
             return data.success
         } catch (error) {

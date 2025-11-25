@@ -129,7 +129,7 @@ class GameController extends Controller
         try {
             $game = Game::findOrFail($gameId);
 
-            return response()->json(['success' => true, 'message' => 'Mensajes obtenidos', 'data' => $game->getStructuredMessages()], 200);
+            return response()->json(['success' => true, 'message' => 'Mensajes obtenidos', 'data' => ['messages' => $game->getStructuredMessages()]], 200);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => "Error al obtener mensajes, {$e->getMessage()}", 'data' => ''], 500);
         }
@@ -319,6 +319,21 @@ class GameController extends Controller
         } else {
             // Si falla, devolvemos un error 500 para que el test lo detecte
             return response()->json($result, 500);
+        }
+    }
+
+    public function getParticipantsByGame(Request $req, $gameId)
+    {
+        try {
+            $game = Game::findOrFail($gameId);
+            $participants = $game->participants;
+
+            // debería de controllar si el usuario esta en la partida...
+            return response()->json(['success' => true, 'message' => 'Participantes obtenidos', 'data' => ['participants' => $participants]], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['success' => false, 'message' => 'Partida no encontrada', 'data' => ''], 404);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => "Error al obtener participantes, {$e->getMessage()}", 'data' => ''], 500);
         }
     }
 }

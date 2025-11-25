@@ -1,7 +1,6 @@
 import { GameChannel } from './channels/GameChannel'
 import { WolvesChannel } from './channels/WolvesChannel'
 import { emitGameEvent } from './emitters/GameEventEmitter'
-import { emitWolvesEvent } from './emitters/WolvesEventEmitter'
 import type { EventData } from './interfaces/EventData'
 
 // Estado global para la prueba
