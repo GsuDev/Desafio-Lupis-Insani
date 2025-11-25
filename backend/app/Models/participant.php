@@ -52,4 +52,22 @@ class participant extends Model
     public function states(){
         return $this->belongsToMany(State::class);
     }
+
+    public function addState(int $stateId):void{
+        $this->states()->attach($stateId);
+    }
+
+    public function removeState($stateId){
+        $this->states()->detach($stateId);
+    }
+
+    //limpia todos los estados del participante
+    public function clearStates(){
+        $this->states()->detach();
+    }
+
+    //comprueba si tiene estado
+    public function hasState($stateId):bool{
+        return $this->states()->where('state_id', $stateId)->exists();
+    }
 }
