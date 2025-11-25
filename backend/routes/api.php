@@ -4,8 +4,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WolvesChannelController;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\Route;
 
 Broadcast::routes(['middleware' => ['auth:sanctum']]);
 

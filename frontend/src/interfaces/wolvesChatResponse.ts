@@ -1,5 +1,5 @@
 export interface WolvesChatResponse {
-    success: boolean;
-    message: string;
-    data: null;
+    success: boolean
+    message: string
+    data: null
 }

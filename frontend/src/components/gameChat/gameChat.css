@@ -1,23 +1,21 @@
-
 .game-chat-root {
     display: flex;
     flex-direction: column;
-    height: 100%;       
-    min-height: 400px;  
-    max-height: 600px;  
+    height: 100%;
+    min-height: 400px;
+    max-height: 600px;
     border: 2px solid #333;
     border-radius: 12px;
     background-color: #f9f9f9;
-    overflow: hidden;   /* Para que las esquinas redondeadas recorten el contenido */
+    overflow: hidden; /* Para que las esquinas redondeadas recorten el contenido */
     font-family: 'Segoe UI', sans-serif;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-
 
 .chat-tabs-container {
     display: flex;
-    background-color: #333; 
-    padding: 4px 4px 0 4px; 
+    background-color: #333;
+    padding: 4px 4px 0 4px;
 }
 
 .chat-tab {
@@ -47,12 +45,12 @@
 
 /* estilo cuando estas en el chat de lobos*/
 .chat-tab.wolf-tab {
-    background-color: #5a1a1a; 
+    background-color: #5a1a1a;
     color: #ffcccc;
 }
 
 .chat-tab.wolf-tab.active {
-    background-color: #3d0e0e; 
+    background-color: #3d0e0e;
     color: #ffaaaa;
 }
 
@@ -72,7 +70,8 @@
 *queda muy muy chula si pero opcional
 *(puede que se quite luego)
 */
-.chat-messages-area::-webkit-scrollbar { /*pseudoelemento para navegaodres es necesario para que funciona scroll*/
+.chat-messages-area::-webkit-scrollbar {
+    /*pseudoelemento para navegaodres es necesario para que funciona scroll*/
     width: 6px;
 }
 .chat-messages-area::-webkit-scrollbar-thumb {
@@ -93,7 +92,7 @@
 }
 
 .chat-input {
-    flex: 1; 
+    flex: 1;
     padding: 10px 14px;
     border: 1px solid #ccc;
     border-radius: 20px;

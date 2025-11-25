@@ -59,9 +59,9 @@
 
 /*coloes para la burbuja*/
 .message-me .message-bubble {
-    background-color: #dcf8c6; 
+    background-color: #dcf8c6;
     color: #000;
-    border-top-right-radius: 0; 
+    border-top-right-radius: 0;
 }
 
 .message-other .message-bubble {
