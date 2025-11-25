@@ -1,0 +1,32 @@
+name: Validate YAML, JSON and Markdown
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint-config-files:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install tools (yamllint, jq, markdownlint)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+          pip install yamllint
+          npm install -g markdownlint-cli
+
+      - name: Validate YAML files with yamllint
+        run: |
+          yamllint -d "{extends: relaxed, rules: {line-length: disable}}" .
+
+      - name: Validate JSON files with jq
+        run: |
+          find . -name "*.json" -print0 | xargs -0 -n1 -I{} jq empty "{}"
+
+      - name: Validate Markdown files with markdownlint
+        run: |
+          markdownlint "**/*.md"
