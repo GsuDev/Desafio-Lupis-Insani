@@ -3,9 +3,13 @@ import type {
     Player,
     IMessageData,
     RawMessageData,
+    RawResponseMessageData,
+    GameRaw,
+    RawParticipantsData,
 } from '../interfaces/game.models'
 import type { Participant } from '../models/Participant'
 import apiClient from '../services/apiClient'
+import type { IJoinGameResponse } from '../interfaces/JoinGameResponse'
 
 /**
  * --- PROVEEDOR DE API ---
@@ -22,12 +26,12 @@ import apiClient from '../services/apiClient'
  */
 export const getGame = async (gameId: string): Promise<Game> => {
     // 1. Lanzamos las 3 peticiones en paralelo con Axios
-    const requestGame = apiClient.get<Game>(`/games/${gameId}`)
+    const requestGame = apiClient.get<GameRaw>(`/games/${gameId}`)
     //const requestPlayers = apiClient.get<Player[]>(`/games/${gameId}/players`)
-    const requestParticipants = await apiClient.get<Participant[]>(
+    const requestParticipants = await apiClient.get<RawParticipantsData>(
         `/games/${gameId}/participants`
     )
-    const requestMessages = apiClient.get<IMessageData[]>(
+    const requestMessages = apiClient.get<RawResponseMessageData>(
         `/games/${gameId}/messages`
     )
 
@@ -45,7 +49,7 @@ export const getGame = async (gameId: string): Promise<Game> => {
 
     // 3. Extraemos la data de cada respuesta de Axios
 
-    const gameData = gameResponse.data.data
+    const gameData: Game = gameResponse.data.data.game
 
     /*
         let gameData = ''
@@ -55,8 +59,9 @@ export const getGame = async (gameId: string): Promise<Game> => {
     }
     */
     // const playersData = playersResponse.data
-    const participantsData = participantsResponse.data.data
-    const messagesData: RawMessageData[] = messagesResponse.data.data
+    const participantsData: Participant[] =
+        participantsResponse.data.data.particpants
+    const messagesData: RawMessageData[] = messagesResponse.data.data.messages
 
     let messagesMapped: IMessageData[] = []
 
@@ -73,7 +78,6 @@ export const getGame = async (gameId: string): Promise<Game> => {
         }
         messagesMapped.push(modifiedMsg)
     })
-
     // Nota: Si gameData ya trae todo lo necesario, podrías hacer spread (...gameData),
     // pero mantenemos tu asignación manual por seguridad.
     const game: Game = {
@@ -157,4 +161,44 @@ export const getGameParticipants = async (
 
     // Devolvemos directamente los datos (Axios ya parseó el JSON)
     return response.data
+}
+
+export async function joinGameRequest(gameId: string): Promise<Game> {
+    const gameResponse = await apiClient.post<IJoinGameResponse>(
+        `/games/${gameId}/join`
+    )
+    const messagesResponse = await apiClient.get<RawResponseMessageData>(
+        `/games/${gameId}/messages`
+    )
+
+    const gameData = gameResponse.data.data.game
+    const messagesData: RawMessageData[] = messagesResponse.data.data.messages
+
+    let messagesMapped: IMessageData[] = []
+
+    messagesData.forEach((messageData) => {
+        const modifiedMsg: IMessageData = {
+            id: Number(messageData.id),
+            message: messageData.message,
+            createdAt: messageData.time,
+            gameId: Number(gameId),
+            playerName: messageData.user,
+            imageUrl: 'none', // sustituir por el enlace del player
+        }
+        messagesMapped.push(modifiedMsg)
+    })
+
+    const game: Game = {
+        id: gameData.id,
+        started: gameData.started,
+        ended: gameData.ended,
+        url: gameData.url,
+        createdAt: gameData.createdAt,
+        // Asignamos los arrays obtenidos de las otras llamadas
+        // players: playersData,
+        messages: messagesMapped,
+        participants: gameData.participants, // Tu valor por defecto
+    }
+
+    return game
 }

@@ -4,9 +4,10 @@
  * para la Sala de Espera (WaitingRoom) y otras vistas relacionadas con el juego.
  */
 
-import type { Game } from '../interfaces/game.models'
-import { getGame } from '../providers/game.provider'
-import { joinGameRequest } from '../providers/joinGame.provider'
+import type { Game, IMessageData } from '../interfaces/game.models'
+import { getGame, joinGameRequest } from '../providers/game.provider'
+
+// import { joinGameRequest } from '../providers/joinGame.provider'
 // Importamos el provider REAL
 //import { getGame } from '../providers/game.provider.mock' // MOCK con participants para probar
 
@@ -21,6 +22,7 @@ class GameController {
     private _showGlobalError: (message: string) => void = () => {}
     private _renderGameDetails: (game: Game) => void = () => {}
     private _disableStartButton: (isDisabled: boolean) => void = () => {}
+    private _addChatMessage: (message: IMessageData) => void = () => {}
 
     private constructor() {}
 
@@ -40,12 +42,14 @@ class GameController {
         showLoadingCallback: (isLoading: boolean) => void,
         showGlobalErrorCallback: (message: string) => void,
         renderGameDetailsCallback: (game: Game) => void,
-        disableStartButtonCallback: (isDisabled: boolean) => void
+        disableStartButtonCallback: (isDisabled: boolean) => void,
+        addChatMessageCallback: (message: IMessageData) => void
     ): void {
         this._showLoading = showLoadingCallback
         this._showGlobalError = showGlobalErrorCallback
         this._renderGameDetails = renderGameDetailsCallback
         this._disableStartButton = disableStartButtonCallback
+        this._addChatMessage = addChatMessageCallback
     }
 
     public setGameData(game: Game): void {
@@ -68,7 +72,6 @@ class GameController {
         this._showLoading(true)
         this._showGlobalError('') // Limpiar errores antiguos
         this._disableStartButton(true)
-
         try {
             //Como ahora guardo en memoria
             if (
@@ -86,6 +89,14 @@ class GameController {
                 this._currentGame = game
                 this._renderGameDetails(game)
             }
+
+            //        // Si no, llamamos a la API
+            //     //console.log('Fetching datos desde API...')
+            //     const game = await getGame(gameId)
+            //     localStorage.setItem('currentGame', JSON.stringify(game))
+            //     // Guardamos en memoria
+            //     this._currentGame = game
+            //     this._renderGameDetails(game)
 
             // // 2. Llamar al Provider (la API real)
             // //llama al mock //TOCADO
@@ -121,14 +132,20 @@ class GameController {
         }, 1000)
     }
 
+    public handleNewMessage(message: IMessageData): void {
+        if (this._addChatMessage) {
+            this._addChatMessage(message)
+        }
+    }
+
     public async handleJoin(gameId: string): Promise<Game> {
         const response = await joinGameRequest(gameId)
-        if (!response.success) {
-            throw new Error(response.message || 'Error al unirse a la partida.')
+        if (!response) {
+            throw new Error('Error al unirse a la partida.')
         }
-        localStorage.setItem('currentGame', JSON.stringify(response.data.game))
+        localStorage.setItem('currentGame', JSON.stringify(response))
 
-        return response.data.game
+        return response
     }
 }
 

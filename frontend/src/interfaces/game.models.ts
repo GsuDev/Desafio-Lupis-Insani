@@ -1,4 +1,5 @@
 import type { Participant } from '../models/Participant'
+
 /**
  * Modelos de Dominio del Frontend
  * (Sincronizados con la API del Backend)
@@ -17,11 +18,44 @@ export type IMessageData = {
     playerName: string
     imageUrl: string
 }
+
+export interface RawResponseMessageData {
+    success: boolean
+    message: string
+    data: {
+        messages: RawMessageData[]
+    }
+}
+
 export interface RawMessageData {
     id: string
     message: string
     time: string
     user: string
+}
+
+export interface RawParticipantsData {
+    succes: boolean
+    message: string
+    data: {
+        particpants: Participant[]
+    }
+}
+
+// export type IJoinGameResponse = {
+//     success: boolean
+//     message: string
+//     data: {
+//         game: Game
+//     }
+// }
+
+export type GameRaw = {
+    success: boolean
+    message: string
+    data: {
+        game: Game
+    }
 }
 
 export type Game = {

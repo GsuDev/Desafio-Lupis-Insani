@@ -19,7 +19,7 @@ import ChangePasswordModal from './components/changePasswordModal/changePassword
 import { renderWaitingRoom } from './components/waitingRoom/waiting-room'
 // Nuevo: importar el formulario de usuario (ajusta la ruta si es distinta)
 // import { renderUserForm } from './components/userForm/userForm'
-
+import JoinGameModal from './components/joinGameModal/JoinGameModal'
 /**
  * PUNTO DE ENTRADA DE LA APLICACIÓN
  */
@@ -81,7 +81,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             // const changePassword = new ChangePasswordModal(appContainer)
             // changePassword.render()
             const gameId = '1'
-            renderWaitingRoom(appContainer, gameId)
+            // renderWaitingRoom(appContainer, gameId)
+            const joinGame = new JoinGameModal(appContainer, () => {
+                console.log('Modal cerrado')
+            })
+            joinGame.render()
         } catch (error) {
             console.error('Falló la prueba:', error)
             appContainer.innerHTML = `<h2 style="color:white">Error: No se pudo conectar. Revisa la consola.</h2>`

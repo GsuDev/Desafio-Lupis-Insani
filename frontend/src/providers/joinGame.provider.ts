@@ -7,5 +7,6 @@ export async function joinGameRequest(
     const response = await apiClient.post<IJoinGameResponse>(
         `/games/${gameId}/join`
     )
+
     return response.data
 }

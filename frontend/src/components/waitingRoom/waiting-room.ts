@@ -112,8 +112,10 @@ export const renderWaitingRoom = (
         showLoading,
         showGlobalError,
         renderGameDetails,
-        (_isDisabled: boolean) =>
+        (_isDisabled: boolean) => {
             participantList.disableButton(!participantController.isHost())
+        },
+        (message: IMessageData) => chatComponent.addMessage(message)
     )
 
     // 6. Añadir Listeners de la Vista
