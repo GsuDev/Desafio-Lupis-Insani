@@ -47,4 +47,9 @@ class participant extends Model
     {
         return $this->belongsTo(Character::class);
     }
+
+    /**relacion N:M con estaods  */
+    public function states(){
+        return $this->belongsToMany(State::class);
+    }
 }
