@@ -1,0 +1,130 @@
+.game-chat-root {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 400px;
+    max-height: 600px;
+    border: 2px solid #333;
+    border-radius: 12px;
+    background-color: #f9f9f9;
+    overflow: hidden; /* Para que las esquinas redondeadas recorten el contenido */
+    font-family: 'Segoe UI', sans-serif;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.chat-tabs-container {
+    display: flex;
+    background-color: #333;
+    padding: 4px 4px 0 4px;
+}
+
+.chat-tab {
+    flex: 1; /* para que las dos pestañas ocupen el mismo ancho */
+    border: none;
+    padding: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    color: #aaa;
+    background-color: #444;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.chat-tab:hover {
+    background-color: #555;
+    color: #fff;
+}
+
+/* estado activo general */
+.chat-tab.active {
+    background-color: #f9f9f9; /* fondo del chat */
+    color: #333;
+}
+
+/* estilo cuando estas en el chat de lobos*/
+.chat-tab.wolf-tab {
+    background-color: #5a1a1a;
+    color: #ffcccc;
+}
+
+.chat-tab.wolf-tab.active {
+    background-color: #3d0e0e;
+    color: #ffaaaa;
+}
+
+/*aqui va el area de todos los mensajes del chat*/
+.chat-messages-area {
+    flex: 1; /* ocupa todo el espacio sobrante */
+    overflow-y: auto; /* esto es para el scroll automatico vertical*/
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    background-color: #f9f9f9;
+    scroll-behavior: smooth; /* hace que el desplazamiento sea suave */
+    transition: background-color 0.3s ease;
+}
+
+/* Scrollbar personalizada 
+*queda muy muy chula si pero opcional
+*(puede que se quite luego)
+*/
+.chat-messages-area::-webkit-scrollbar {
+    /*pseudoelemento para navegaodres es necesario para que funciona scroll*/
+    width: 6px;
+}
+.chat-messages-area::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 3px;
+}
+
+/*
+* el footer el input y el boton de enviar
+*/
+.chat-footer {
+    display: flex;
+    padding: 12px;
+    background-color: #eee;
+    border-top: 1px solid #ddd;
+    gap: 8px;
+    align-items: center;
+}
+
+.chat-input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    outline: none;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.chat-input:focus {
+    border-color: #666;
+}
+
+.chat-send-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background-color: #333;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s;
+}
+
+.chat-send-btn:hover {
+    background-color: #000;
+    transform: scale(1.05);
+}
+
+.chat-send-btn:active {
+    transform: scale(0.95);
+}

@@ -15,6 +15,7 @@ export type Message = {
     createdAt: string
     gameId: number
     playerName: string
+    image_url?: string
 }
 
 export type Game = {

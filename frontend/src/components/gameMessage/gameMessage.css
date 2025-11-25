@@ -1,0 +1,79 @@
+.game-message-root {
+    display: flex;
+    margin-bottom: 12px;
+    align-items: flex-end;
+    gap: 8px;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* estilos cuando soy yo, alinea el mensaje a la derecha */
+.message-me {
+    flex-direction: row-reverse; /* esto pone la foto a la derecha */
+}
+
+/* estilos para los demas mensajes, los de las izquierda*/
+.message-other {
+    flex-direction: row;
+}
+
+.message-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    overflow: hidden;
+}
+
+.message-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.message-content-section {
+    display: flex;
+    flex-direction: column;
+    max-width: 70%;
+}
+
+.message-name {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 2px;
+    margin-left: 4px;
+}
+
+.message-bubble {
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.4;
+    position: relative;
+}
+
+/*coloes para la burbuja*/
+.message-me .message-bubble {
+    background-color: #dcf8c6;
+    color: #000;
+    border-top-right-radius: 0;
+}
+
+.message-other .message-bubble {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    color: #000;
+    border-top-left-radius: 0;
+}
+
+.message-time {
+    font-size: 10px;
+    color: #999;
+    text-align: right;
+    margin-top: 2px;
+}
