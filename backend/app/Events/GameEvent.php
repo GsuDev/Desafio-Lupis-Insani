@@ -2,24 +2,37 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\PresenceChannel;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
 
 class GameEvent implements ShouldBroadcast
 {
-    public function __construct(
-        public string $event,
-        public array $data,
-        public int $gameId
-    ) {}
+    use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public function broadcastOn()
+    public string $event;
+
+    public array $data;
+
+    public int $gameId;
+
+    public function __construct(string $event, array $data, int $gameId)
     {
-        return new PresenceChannel("game.{$this->gameId}");
+        $this->event = $event;
+        $this->data = $data;
+        $this->gameId = $gameId;
     }
 
-    public function broadcastAs()
+    public function broadcastOn(): Channel
     {
-        return $this->event; // ej: "game.start", "player.dead"
+        return new PrivateChannel("game.{$this->gameId}");
+    }
+
+    public function broadcastAs(): string
+    {
+        return $this->event;
     }
 }
