@@ -58,5 +58,3 @@ export class WolvesChannel {
         console.log(`👋 desconectado del canal: ${channelName}`)
     }
 }
-
-
