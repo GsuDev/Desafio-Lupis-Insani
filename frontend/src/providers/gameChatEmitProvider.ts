@@ -11,10 +11,11 @@ export class GameChatEmitProvider {
 
     async emit(eventName: string, payload: ChatPayload): Promise<boolean> {
         try {
-            const url = `/games/${this.gameId}/wolves/message`
+            const url = `/games/${this.gameId}/wolves/send`
             const { data } = await apiClient.post<WolvesChatResponse>(url, {
                 event: eventName,
                 data: payload,
+                gameId: this.gameId
             })
             return data.success
         } catch (error) {

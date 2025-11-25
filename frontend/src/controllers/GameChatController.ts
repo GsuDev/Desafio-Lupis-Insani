@@ -5,7 +5,7 @@ import {
 } from '../managers/GameChatManager'
 import { GameChatEmitProvider } from '../providers/gameChatEmitProvider'
 import type { Message } from '../interfaces/game.models'
-import { type WolfEventData } from '../channels/WolvesChannel'
+import { type EventData } from '../interfaces/EventData'
 import type { WolvesEventPayload } from '../interfaces/wolvesEventPayload'
 
 // Implementamos la interfaz IChatController para cumplir el contrato con el Manager
@@ -66,7 +66,7 @@ export class GameChatController implements IChatController {
      * este metodo lo llama el manager cuando escucha algo
      */
 
-    onMessageReceived(eventName: string, data: WolfEventData): void {
+    onMessageReceived(eventName: string, data: EventData): void {
         //validamos que haya vista y datos
         if (!this.view || !data) return
 
