@@ -1,21 +1,13 @@
-import echo from '../echo'
-
-// "record<string, unknown>" es la forma de decir
-// "un objeto json que tiene claves de texto, pero no se seguro que valores trae"
-export type WolfEventData = Record<string, unknown> | null
-
-// funcion que recibe (nombre del evento, datos) y no devuelve nada (void)
-export type WolfEventHandler = (eventName: string, data: WolfEventData) => void
+import { WolvesEventRouter } from '../eventRouters/WolvesEventRouter'
+import type { EventData } from '../interfaces/EventData'
+import echo from '../services/echo'
 
 export class WolvesChannel {
     private gameId: number
-    //para guardar la funcion que actualiza la pantalla
-    private handler: WolfEventHandler
-
+    private router: WolvesEventRouter | null = null
     //el constructor recibe la id y la funcion para avisar cuando llegue algo
-    constructor(gameId: number, handler: WolfEventHandler) {
+    constructor(gameId: number) {
         this.gameId = gameId
-        this.handler = handler
 
         //cuando se crea la clase nos subscribimos automaticamente
         this.subscribe()
@@ -32,7 +24,7 @@ export class WolvesChannel {
         echo.private(channelName)
             // .listentoall() es como una antena universal
             // escucha cualquier evento que ocurra en este canal (chat, votos, muerte)
-            .listenToAll((eventName: string, data: WolfEventData) => {
+            .listenToAll((eventName: string, data: EventData) => {
                 // cuando llega un mensaje, se lo pasamos a la funcion handler
                 // el "chatcontroller" o como se llame que se hara en otra hu recibira esto y pintara el mensaje
                 // se quita el punto inicial si viene con el ya que a veces laravel lo pone
@@ -43,7 +35,12 @@ export class WolvesChannel {
 
                 //console.log(`📩 evento recibido en ${channelName}:`, cleanEventName, data);
 
-                this.handler(cleanEventName, data)
+                // Crear router UNA SOLA VEZ y reutilizarlo
+                if (!this.router) {
+                    this.router = new WolvesEventRouter(this.gameId, this)
+                }
+
+                this.router.routeEvent(cleanEventName, data)
             })
 
         // aviso por consola para saber que todo ha ido bien
@@ -57,8 +54,4 @@ export class WolvesChannel {
         echo.leave(channelName)
         console.log(`👋 desconectado del canal: ${channelName}`)
     }
-}
-
-function listenToAll(arg0: (eventName: string, data: WolfEventData) => void) {
-    throw new Error('Function not implemented.')
 }

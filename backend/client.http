@@ -21,7 +21,7 @@ Content-Type: {{contentType}}
 
 {
   "email": "user@example.com",
-  "password": "password123"
+  "password": "password"
 }
 
 ### Guardar como @userToken (respuesta del login)
@@ -137,3 +137,30 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ### 12. Logout (requiere autenticación)
 POST {{baseUrl}}/logout
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+###  Enviar eventos a canal de lobos  1
+
+POST {{baseUrl}}/games/1/wolves/send
+Authorization: Bearer 4|KnqB5pf2T67gHbb3yrpfn4qLFkHKrK9iT3wwdXIabcad27ef
+Content-Type: {{contentType}}
+
+{
+    "event": "chat.message",
+    "data": {
+        "message": "¡Hola desde el canal de lobos!"
+    },
+    "gameId": 1
+}
+###  Enviar eventos a canal de partida  1
+
+POST {{baseUrl}}/games/1/send
+Authorization: Bearer 2|Gu7A9GveGFPzN5vmJ6pfeUY64Okkg0v0l6AvFd5L2af7140a
+Content-Type: {{contentType}}
+
+{
+    "event": "chat.message",
+    "data": {
+        "message": "¡Hola desde el canal de partida!"
+    },
+    "gameId": 1
+}
