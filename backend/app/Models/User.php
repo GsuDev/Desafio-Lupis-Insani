@@ -50,4 +50,9 @@ class User extends Authenticatable
     {
         return $this->roles()->pluck('name')->contains($roleName);
     }
+
+    /**helper para saber si el usuario es anonimo */
+    public function isAnonymous():bool{
+        return $this->is_anonymous;
+    }
 }
