@@ -104,29 +104,44 @@ class AuthController extends Controller
         // En login NO se debe volver a checkear el hash
         // porque ya se hizo en publicLogin()
 
-        // Definir abilities según rol
+        //esto de las abilities está hecho asi por el tema de gestionar los accesos del jugador anonimo
+        $gameAbilities = [
+            'join-game',
+            'send-events',
+            'read-game-state',
+        ];
+
+        
+        $userAbilities = [
+            'update-itself',
+            'view-itself',
+            'delete-itself',
+        ];
+
+        
+        $adminAbilities = [
+            'list-users',
+            'view-user',
+            'update-user',
+            'delete-user',
+            'assign-roles',
+        ];
+
+        -
+        
         $abilities = [];
 
         if ($user->hasRole('admin')) {
-            $abilities = [
-                'list-users',
-                'view-user',
-                'update-user',
-                'delete-user',
-                'assign-roles',
-            ];
-        }elseif ($user->hasRole('player_anonymous')) {
-            $abilities = [
-                'join-game', 
-                'send-events',
-                'read-game-state',
-            ];
-        }else {
-            $abilities = [
-                'update-itself',
-                'view-itself',
-                'delete-itself',
-            ];
+            // Admin: Todo el poder + Jugar
+            $abilities = array_merge($adminAbilities, $gameAbilities);
+
+        } elseif ($user->hasRole('player_anonymous')) {
+            // Anónimo: Solo jugar
+            $abilities = $gameAbilities;
+
+        } else {
+            // Usuario Normal: Su perfil + Jugar
+            $abilities = array_merge($userAbilities, $gameAbilities);
         }
         
 
