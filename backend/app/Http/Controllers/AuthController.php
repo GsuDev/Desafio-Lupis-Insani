@@ -127,7 +127,7 @@ class AuthController extends Controller
             'assign-roles',
         ];
 
-        -
+        
         
         $abilities = [];
 
