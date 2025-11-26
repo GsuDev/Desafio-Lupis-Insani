@@ -52,7 +52,8 @@ class User extends Authenticatable
     }
 
     /**helper para saber si el usuario es anonimo */
-    public function isAnonymous():bool{
+    public function isAnonymous(): bool
+    {
         return $this->is_anonymous;
     }
 }

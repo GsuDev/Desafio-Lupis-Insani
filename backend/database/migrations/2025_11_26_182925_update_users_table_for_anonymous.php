@@ -15,7 +15,7 @@ return new class extends Migration
             /**
              * Si pones change, Laravel intentará crear una columna nueva llamada email
              * Como email ya existe mysql  dara un error  Duplicate column name 'email'
-             *  Al poner change() le dices a laravel no crees nada nuevo 
+             *  Al poner change() le dices a laravel no crees nada nuevo
              * buscala columna que ya existe y modifica sus propiedades en este caso le quita la obligatoriedad
              */
             $table->string('email')->nullable()->change();
@@ -32,8 +32,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            
-            //Esto fallará si hay datos nulos en la bbdd al hacer rollback.
+
+            // Esto fallará si hay datos nulos en la bbdd al hacer rollback.
             // Pero en desarrollo es el comportamiento correcto.
             $table->string('email')->nullable(false)->change();
             $table->string('password')->nullable(false)->change();
