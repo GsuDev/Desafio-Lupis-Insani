@@ -8,8 +8,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
+
 class AuthController extends Controller
 {
+
+    
+
     // Login y creación de token
     public function publicLogin(Request $request)
     {
@@ -59,13 +63,20 @@ class AuthController extends Controller
                 'delete-user',
                 'assign-roles',
             ];
-        } else {
+        }elseif ($user->hasRole('player_anonymous')) {
+            $abilities = [
+                'join-game', 
+                'send-events',
+                'read-game-state',
+            ];
+        }else {
             $abilities = [
                 'update-itself',
                 'view-itself',
                 'delete-itself',
             ];
         }
+        
 
         $token = $user->createToken('auth-token', $abilities)->plainTextToken;
 
