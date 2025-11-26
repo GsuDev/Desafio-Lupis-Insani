@@ -19,6 +19,7 @@ class User extends Authenticatable
         'password',
         'birthdate',
         'profile_url',
+        'is_anonymous',
     ];
 
     protected $hidden = [
@@ -31,6 +32,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'birthdate' => 'date',
+        'is_anonymous' => 'boolean',
     ];
 
     /**
