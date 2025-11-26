@@ -11,22 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('states',function (Blueprint $table){
+        Schema::create('states', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
             $table->string('description')->nullable();
         });
 
         Schema::create('participant_state', function (Blueprint $table) {
-        $table->id(); 
-        $table->foreignId('participant_id')->constrained()->onDelete('cascade');
-        $table->foreignId('state_id')->constrained()->onDelete('cascade');
+            $table->id();
+            $table->foreignId('participant_id')->constrained()->onDelete('cascade');
+            $table->foreignId('state_id')->constrained()->onDelete('cascade');
 
-        
         });
     }
 
-    
     public function down(): void
     {
         Schema::dropIfExists('states');
