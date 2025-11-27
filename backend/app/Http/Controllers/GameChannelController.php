@@ -30,6 +30,7 @@ class GameChannelController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Usuario no autenticado.',
+                'data' => null,
             ], 401);
         }
 
@@ -55,6 +56,7 @@ class GameChannelController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error al emitir el evento.',
+                'data' => null,
             ], 500);
         }
 

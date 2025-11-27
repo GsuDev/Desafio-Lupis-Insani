@@ -1,5 +1,5 @@
+import type { Participant } from '../../models/models'
 import './participant.css'
-import type { Participant } from '../../models/Participant'
 
 export class ParticipantComponent {
     private participant: Participant

@@ -68,7 +68,8 @@ export class JoinGameModal {
         const btnJoin = document.createElement('button')
         btnJoin.className = 'btn btn-join'
         btnJoin.textContent = 'Ir a SALA'
-        btnJoin.onclick = () => this.handleJoin(input.value, errorMsg, root)
+        btnJoin.onclick = () =>
+            this.handleJoin(Number(input.value), errorMsg, root)
 
         actions.appendChild(btnCancel)
         actions.appendChild(btnJoin)
@@ -91,11 +92,11 @@ export class JoinGameModal {
     }
 
     private async handleJoin(
-        gameId: string,
+        gameId: number,
         errorElement: HTMLElement,
         rootElement: HTMLElement
     ): Promise<void> {
-        if (!gameId.trim()) {
+        if (!gameId) {
             this.showError(errorElement, 'Por favor ingresa un código')
             return
         }
@@ -115,6 +116,9 @@ export class JoinGameModal {
             //aqui cambiar el componente a waiting-room
             const app = document.getElementById('app')
 
+            if (!app) {
+                throw new Error('Imposible renderizar')
+            }
             renderWaitingRoom(app, gameId)
 
             //y cerrar el modal

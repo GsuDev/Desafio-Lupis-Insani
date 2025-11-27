@@ -1,11 +1,11 @@
 import './watitingRoomChat.css'
-import type { IMessageData } from '../../interfaces/game.models'
 import { WaitingRoomMessage } from '../waitingRoomMessage/waitingRoomMessage'
+import type { Message } from '../../models/models'
 
 export class WaitingRoomChat {
     //las propiedades
     private container: HTMLElement
-    private messages: IMessageData[]
+    private messages: Message[]
 
     //elementos del dom
     private chatListElement!: HTMLElement
@@ -17,7 +17,7 @@ export class WaitingRoomChat {
 
     constructor(
         container: HTMLElement,
-        initialMessages: IMessageData[] = [],
+        initialMessages: Message[] = [],
         onSendMessage?: (message: string) => void
     ) {
         if (!container) {
@@ -95,7 +95,7 @@ export class WaitingRoomChat {
         if (message) {
             //con esto envia el callback al controllador de que hay un mensaje
             if (this.onSendMessage) {
-                //const messageData = new IMessageData....
+                //const messageData = new Message....
                 //this.onSendMessage(messageData)
                 this.onSendMessage(message) //creo que esto lo tengo que cambiar para enviar los datos de la persona
             }
@@ -126,7 +126,7 @@ export class WaitingRoomChat {
     }
 
     //metodo para añadir un mensaje desde fuera
-    public addMessage(message: IMessageData): void {
+    public addMessage(message: Message): void {
         this.messages.push(message)
         this.updateView()
     }

@@ -1,15 +1,21 @@
 import type {
     Game,
-    Player,
-    IMessageData,
-    RawMessageData,
-    RawResponseMessageData,
-    GameRaw,
-    RawParticipantsData,
-} from '../interfaces/game.models'
-import type { Participant } from '../models/Participant'
+    GameData,
+    Message,
+    Participant,
+    SlideData,
+} from '../models/models'
+import type {
+    GameResponse,
+    MessagesResponse,
+    ParticipantsResponse,
+    VoidResponse,
+    GameDataResponse,
+    SlidesResponse,
+} from '../types/response.types'
 import apiClient from '../services/apiClient'
-import type { IJoinGameResponse } from '../interfaces/JoinGameResponse'
+import type { ApiErrorResponse } from '../types/api.types'
+import slidesData from '../assets/data/tipSlides.json'
 
 /**
  * --- PROVEEDOR DE API ---
@@ -18,187 +24,250 @@ import type { IJoinGameResponse } from '../interfaces/JoinGameResponse'
 
 /**
  * Llama a: GameController@getGame, getPlayersByGame, getMessagesByGame
- * * Esta es una función "inteligente":
+ * Esta es una función "inteligente":
  * 1. Obtiene los datos base de la partida (id, url, ended)
  * 2. Obtiene la lista de jugadores de esa partida
  * 3. Obtiene los mensajes de esa partida si ya tiene
  * 4. Combina todo en un solo objeto 'Game' para el frontend.
  */
-export const getGame = async (gameId: string): Promise<Game> => {
-    // 1. Lanzamos las 3 peticiones en paralelo con Axios
-    const requestGame = apiClient.get<GameRaw>(`/games/${gameId}`)
-    //const requestPlayers = apiClient.get<Player[]>(`/games/${gameId}/players`)
-    const requestParticipants = await apiClient.get<RawParticipantsData>(
-        `/games/${gameId}/participants`
-    )
-    const requestMessages = apiClient.get<RawResponseMessageData>(
-        `/games/${gameId}/messages`
-    )
+export const getGame = async (
+    gameId: number
+): Promise<GameResponse | ApiErrorResponse> => {
+    try {
+        // 1. Lanzamos las 3 peticiones en paralelo con Axios
+        const requestGame = apiClient.get<GameDataResponse | ApiErrorResponse>(
+            `/games/${gameId}`
+        )
+        const requestParticipants = apiClient.get<
+            ParticipantsResponse | ApiErrorResponse
+        >(`/games/${gameId}/participants`)
+        const requestMessages = apiClient.get<
+            MessagesResponse | ApiErrorResponse
+        >(`/games/${gameId}/messages`)
 
-    // 2. Esperamos a que terminen todas
-    const [
-        gameResponse,
-        /*playersResponse,*/ participantsResponse,
-        messagesResponse,
-    ] = await Promise.all([
-        requestGame,
-        // requestPlayers,
-        requestParticipants,
-        requestMessages,
-    ])
+        // 2. Esperamos a que terminen todas
+        const [
+            { data: gameResponse },
+            { data: participantsResponse },
+            { data: messagesResponse },
+        ] = await Promise.all([
+            requestGame,
+            requestParticipants,
+            requestMessages,
+        ])
 
-    // 3. Extraemos la data de cada respuesta de Axios
+        // 3. Extraemos la data
+        const gameData: GameData | null = gameResponse?.data?.game ?? null
 
-    const gameData: Game = gameResponse.data.data.game
-
-    /*
-        let gameData = ''
-    // 3. Extraemos la data de cada respuesta de Axios
-    if(gameResponse && gameResponse.data && gameResponse.data.data){
-        gameData = gameResponse.data.data
-    }
-    */
-    // const playersData = playersResponse.data
-    const participantsData: Participant[] =
-        participantsResponse.data.data.particpants
-    const messagesData: RawMessageData[] = messagesResponse.data.data.messages
-
-    let messagesMapped: IMessageData[] = []
-
-    // 4. Mapeamos al objeto final
-
-    messagesData.forEach((messageData) => {
-        const modifiedMsg: IMessageData = {
-            id: Number(messageData.id),
-            message: messageData.message,
-            createdAt: messageData.time,
-            gameId: Number(gameId),
-            playerName: messageData.user,
-            imageUrl: 'none', // sustituir por el enlace del player
+        // ❗ Si no existe la partida → respuesta de error estándar
+        if (!gameData) {
+            return {
+                success: false,
+                message: gameResponse.message,
+                data: null,
+            }
         }
-        messagesMapped.push(modifiedMsg)
-    })
-    // Nota: Si gameData ya trae todo lo necesario, podrías hacer spread (...gameData),
-    // pero mantenemos tu asignación manual por seguridad.
-    const game: Game = {
-        id: gameData.id,
-        started: gameData.started,
-        ended: gameData.ended,
-        url: gameData.url,
-        createdAt: gameData.createdAt,
 
-        // Asignamos los arrays obtenidos de las otras llamadas
-        // players: playersData,
-        messages: messagesMapped,
+        const participantsData: Participant[] =
+            participantsResponse?.data?.participants ?? []
 
-        participants: participantsData, // Tu valor por defecto
+        const messagesData: Message[] = messagesResponse?.data?.messages ?? []
+
+        // 4. Parseamos a Date el time del msg
+        const parseMessages = (rawMessages: Message[]): Message[] => {
+            return rawMessages.map((msg) => ({
+                ...msg,
+                time: formatTime(msg.time),
+            }))
+        }
+
+        const messages: Message[] = parseMessages(messagesData)
+
+        const game: Game = {
+            id: gameData.id,
+            state: gameData.state,
+            url: gameData.url,
+            createdAt: formatTime(gameData.createdAt),
+            participants: participantsData,
+            messages: messages,
+        }
+
+        // ✅ Respuesta API correcta
+        return {
+            success: true,
+            message: gameResponse.message,
+            data: {
+                game,
+            },
+        }
+    } catch (error) {
+        return {
+            success: false,
+            message:
+                error instanceof Error
+                    ? error.message
+                    : 'Unexpected error while loading game',
+            data: null,
+        }
     }
-
-    return game
 }
 
 /**
- * Llama a: GameController@addMessageByGame
+ * Carga los slides de tips desde tipSlides.json
+ * Devuelve un objeto tipado al estilo de los otros endpoints
  */
-export const addMessage = async (
-    gameId: string,
-    messageContent: string,
-    userId: number | undefined
-): Promise<IMessageData> => {
-    // Construimos el objeto (Payload)
-    // Axios se encargará de convertirlo a JSON automáticamente
-    const payload = {
-        userId,
-        type: 'MESSAGE',
-        message: messageContent,
+export const getTipSlides = async (): Promise<
+    SlidesResponse | ApiErrorResponse
+> => {
+    try {
+        if (!slidesData || !Array.isArray(slidesData)) {
+            return {
+                success: false,
+                message: 'Slides data not found or invalid',
+                data: null,
+            }
+        }
+
+        // ✅ Convertimos si fuera necesario (en este caso no hace falta)
+        const slides: SlideData[] = slidesData.map((slide) => ({
+            stepNumber: slide.stepNumber,
+            tittle: slide.tittle,
+            description: slide.description,
+            imageUrl: slide.imageUrl.trim(), // quitamos espacios extra en URLs
+        }))
+
+        return {
+            success: true,
+            message: 'Slides cargadas correctamente',
+            data: { slides },
+        }
+    } catch (error) {
+        return {
+            success: false,
+            message:
+                error instanceof Error
+                    ? error.message
+                    : 'Error cargando slides',
+            data: null,
+        }
     }
-
-    // Realizamos la petición POST
-    // <IMessageData> indica a TypeScript qué tipo de dato nos devuelve el servidor en 'response.data'
-    const response = await apiClient.post<IMessageData>(
-        `/games/${gameId}/messages`,
-        payload
-    )
-
-    return response.data
 }
 
-export const addPlayerToGame = async (
-    gameId: string,
-    playerName: string
-): Promise<Player> => {
-    // 1. Preparamos el payload (el cuerpo de la petición)
-    const payload = { name: playerName }
+// DEPRECATED: Ahora los mensajes van a través del event.provider.ts
 
-    // 2. Hacemos el POST usando el cliente de Axios
-    // apiClient.post<TipoRespuesta>(url, datos)
-    const response = await apiClient.post<Player>(
-        `/games/${gameId}/players`,
-        payload
-    )
+// /**
+//  * Llama a: GameController@addMessageByGame
+//  */
+// export const addMessage = async (
+//     gameId: string,
+//     messageContent: string,
+//     userId: number | undefined
+// ): Promise<IMessageData> => {
+//     // Construimos el objeto (Payload)
+//     // Axios se encargará de convertirlo a JSON automáticamente
+//     const payload = {
+//         userId,
+//         type: 'MESSAGE',
+//         message: messageContent,
+//     }
 
-    // 3. Devolvemos los datos limpios
-    return response.data
-}
+//     // Realizamos la petición POST
+//     // <IMessageData> indica a TypeScript qué tipo de dato nos devuelve el servidor en 'response.data'
+//     const response = await apiClient.post<IMessageData>(
+//         `/games/${gameId}/messages`,
+//         payload
+//     )
+
+//     return response.data
+// }
+
+// DEPRECATED: Ahora los usuarios se registran a través del user.provider.ts
+
+// export const addPlayerToGame = async (
+//     gameId: string,
+//     playerName: string
+// ): Promise<Player> => {
+//     // 1. Preparamos el payload (el cuerpo de la petición)
+//     const payload = { name: playerName }
+
+//     // 2. Hacemos el POST usando el cliente de Axios
+//     // apiClient.post<TipoRespuesta>(url, datos)
+//     const response = await apiClient.post<Player>(
+//         `/games/${gameId}/players`,
+//         payload
+//     )
+
+//     // 3. Devolvemos los datos limpios
+//     return response.data
+// }
 // --- (Aquí añadirías el RESTO de funciones del provider...) ---
 // createGame, getGames, updateGame, deleteGame...
 
-//HU7 apartado consumir api GameProvider //no se si esta bien // se puede cambiar
-/**
- * Obtiene la lista FINAL de participantes de una partida
- * (usuarios + bots + personajes asignados)
- * Llama a: GET /api/games/{id}/participants
- * Se usa DESPUÉS de pulsar "Iniciar" para obtener la lista definitiva
- */
-export const getGameParticipants = async (
-    gameId: string
-): Promise<Participant[]> => {
-    // Realizamos la petición GET usando apiClient
-    // <Participant[]> le dice a TS que esperamos recibir un array de participantes
-    const response = await apiClient.get<Participant[]>(
-        `/games/${gameId}/participants`
-    )
+// DEPRECATED: Ahora recargamos la partida entera y vienen los participantes
 
-    // Devolvemos directamente los datos (Axios ya parseó el JSON)
-    return response.data
-}
+// //HU7 apartado consumir api GameProvider //no se si esta bien // se puede cambiar
+// /**
+//  * Obtiene la lista FINAL de participantes de una partida
+//  * (usuarios + bots + personajes asignados)
+//  * Llama a: GET /api/games/{id}/participants
+//  * Se usa DESPUÉS de pulsar "Iniciar" para obtener la lista definitiva
+//  */
+// export const getGameParticipants = async (
+//     gameId: string
+// ): Promise<ParticipantsResponse | ApiErrorResponse> => {
+//     try {
+//         // 1. Petición al backend
+//         const {data: participantsResponse} = await apiClient.get<ParticipantsResponse>(
+//             `/games/${gameId}/participants`
+//         )
 
-export async function joinGameRequest(gameId: string): Promise<Game> {
-    const gameResponse = await apiClient.post<IJoinGameResponse>(
+//         const participants = participantsResponse?.data?.participants ?? []
+
+//         // ✅ Respuesta correcta tipada
+//         return {
+//             success: true,
+//             message: participantsResponse.message,
+//             data: {
+//                 participants,
+//             },
+//         }
+//     } catch (error) {
+//         return {
+//             success: false,
+//             message:
+//                 error instanceof Error
+//                     ? error.message
+//                     : 'Unexpected error while loading participants',
+//             data: null,
+//         }
+//     }
+// }
+
+export async function joinGameRequest(
+    gameId: number
+): Promise<GameResponse | ApiErrorResponse> {
+    const { data: joinResponse } = await apiClient.post<VoidResponse>(
         `/games/${gameId}/join`
     )
-    const messagesResponse = await apiClient.get<RawResponseMessageData>(
-        `/games/${gameId}/messages`
-    )
-
-    const gameData = gameResponse.data.data.game
-    const messagesData: RawMessageData[] = messagesResponse.data.data.messages
-
-    let messagesMapped: IMessageData[] = []
-
-    messagesData.forEach((messageData) => {
-        const modifiedMsg: IMessageData = {
-            id: Number(messageData.id),
-            message: messageData.message,
-            createdAt: messageData.time,
-            gameId: Number(gameId),
-            playerName: messageData.user,
-            imageUrl: 'none', // sustituir por el enlace del player
-        }
-        messagesMapped.push(modifiedMsg)
-    })
-
-    const game: Game = {
-        id: gameData.id,
-        started: gameData.started,
-        ended: gameData.ended,
-        url: gameData.url,
-        createdAt: gameData.createdAt,
-        // Asignamos los arrays obtenidos de las otras llamadas
-        // players: playersData,
-        messages: messagesMapped,
-        participants: gameData.participants, // Tu valor por defecto
+    if (!joinResponse.success) {
+        const gameResponse = await getGame(gameId)
+        return gameResponse
     }
 
-    return game
+    return joinResponse
+}
+
+/**
+ * Formatea la fecha string "2023-11-24T10:00:00" a "10:00"
+ */
+const formatTime = (dateString: string): string => {
+    try {
+        const date = new Date(dateString)
+        return date.toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+        })
+    } catch (e) {
+        return ''
+    }
 }
