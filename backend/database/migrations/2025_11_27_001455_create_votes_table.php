@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('votes',function (Blueprint $table){
+        Schema::create('votes', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('game_id')
@@ -25,11 +25,11 @@ return new class extends Migration
             $table->foreignId('target_id')
                 ->constrained('participants')
                 ->onDelete('cascade');
-            
-            //contexto temporal del juego
-            $table->boolean('is_day'); 
+
+            // contexto temporal del juego
+            $table->boolean('is_day');
             $table->integer('day_number');
-        }); 
+        });
     }
 
     /**

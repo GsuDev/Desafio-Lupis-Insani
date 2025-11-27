@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Game;
 use App\Models\participant;
 use App\Models\Vote;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class VotesSeeder extends Seeder
@@ -15,14 +14,14 @@ class VotesSeeder extends Seeder
      */
     public function run(): void
     {
-        //busco una partida existente para no invertarme el id 
+        // busco una partida existente para no invertarme el id
         $game = Game::first();
 
         if (! $game) {
             return;
         }
 
-        //busco 2 participantes de la partda
+        // busco 2 participantes de la partda
         $participants = participant::where('game_id', $game->id)->take(2)->get();
 
         if ($participants->count() < 2) {
@@ -32,7 +31,7 @@ class VotesSeeder extends Seeder
         $voter = $participants[0];
         $target = $participants[1];
 
-        //se borran los votos previos de esta partda
+        // se borran los votos previos de esta partda
         Vote::where('game_id', $game->id)->delete();
 
         Vote::create([
@@ -44,10 +43,10 @@ class VotesSeeder extends Seeder
         ]);
 
         Vote::create([
-            'game_id'    => $game->id,
-            'voter_id'   => $target->id,
-            'target_id'  => $voter->id,
-            'is_day'     => false, 
+            'game_id' => $game->id,
+            'voter_id' => $target->id,
+            'target_id' => $voter->id,
+            'is_day' => false,
             'day_number' => 1,
         ]);
 
