@@ -23,6 +23,9 @@ export type User = {
 
     /** URL de la imagen de perfil */
     profile_url: string | null
+
+    /**Indica si el usuario es anonimo */
+    is_anonymous: boolean
 }
 
 export type Participant = {
