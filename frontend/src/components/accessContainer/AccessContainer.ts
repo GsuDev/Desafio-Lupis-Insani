@@ -16,7 +16,8 @@ class AccessContainer {
      */
     render(): void {
         const container = this.container
-
+        const root = document.createElement('div')
+        root.className = 'root-div'
         // Header con logo y título
         const header = document.createElement('header')
         header.className = 'access-header'
@@ -56,8 +57,9 @@ class AccessContainer {
         this.loadChildComponents(cardsContainer)
 
         // Añadir todo al container
-        container.appendChild(header)
-        container.appendChild(cardsContainer)
+        root.appendChild(header)
+        root.appendChild(cardsContainer)
+        container.appendChild(root)
     }
 
     // Carga unificada de componentes hijos

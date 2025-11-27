@@ -1,6 +1,8 @@
+import './gameChat.css'
 import { ChatController } from '../../controllers/GameChatController'
 import type { Message } from '../../models/models'
 import { GameMessage } from '../gameMessage/gameMessage'
+import type { ChatData } from '../../types/events.types'
 
 export class GameChat {
     private isWolf: boolean
@@ -112,6 +114,7 @@ export class GameChat {
         const wolvesContainer = document.getElementById(
             'wolves-messages-container'
         )
+        console.log('Quien hay ahí', msgData)
 
         const messageComponent = new GameMessage(msgData, isMine)
         if (!generalContainer || !wolvesContainer) {
