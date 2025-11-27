@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GameChannelController;
 use App\Http\Controllers\GameController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WolvesChannelController;
 use Illuminate\Support\Facades\Broadcast;
@@ -73,6 +74,11 @@ Route::middleware('auth:sanctum')->group(function () {
     // Eliminar → 'delete-user'
     Route::delete('/users/{id}', [UserController::class, 'destroy'])
         ->middleware('delete-user');
+
+    // Envio de mensajes por parte de admin
+
+    Route::post('/notification/global', [NotificationController::class, 'send'])
+        ->middleware('send-global-message');
 
     // --------------------------------
     // Solo para roles 'user' y 'admin'
