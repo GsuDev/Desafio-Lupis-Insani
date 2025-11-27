@@ -1,303 +1,273 @@
 import { GameChannel } from './channels/GameChannel'
 import { WolvesChannel } from './channels/WolvesChannel'
-import { emitGameEvent } from './emitters/GameEventEmitter'
-import type { EventData } from './interfaces/EventData'
+import { GameChat } from './components/gameChat/GameChat'
+import { ChatController } from './controllers/GameChatController'
+import { userController } from './controllers/UserController'
 
-// Estado global para la prueba
+// Estado global
 let gameChannel: GameChannel | null = null
 let wolvesChannel: WolvesChannel | null = null
-const gameId = 1 // ID de prueba
+const gameId = 1
+const userId = 'test-user-1' // En prod vendría del user autenticado
+const playerName = 'Juan' // En prod vendría del perfil del usuario
 
-// Crear interfaz HTML
+// Login
+userController.login('user@example.com', 'password')
+
 function createUI(): void {
     const container = document.createElement('div')
-    container.id = 'test-container'
+    container.id = 'app-container'
     container.style.cssText = `
-        font-family: Arial, sans-serif;
-        max-width: 800px;
-        margin: 20px auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
         padding: 20px;
+        height: 100vh;
         background: #f5f5f5;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     `
 
-    container.innerHTML = `
-        <h1>🎮 Game Channel Test Interface</h1>
+    // Panel izquierdo: Control de canales
+    const controlPanel = document.createElement('div')
+    controlPanel.style.cssText = `
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        overflow-y: auto;
+    `
+
+    controlPanel.innerHTML = `
+        <h1>🎮 Control Panel</h1>
         
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-            <!-- Panel de Control de Canales -->
-            <div style="background: white; padding: 15px; border-radius: 6px;">
-                <h2>📡 Canal Control</h2>
-                <div style="margin-bottom: 10px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Game ID:</label>
-                    <input type="number" id="gameId" value="${gameId}" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                </div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <button id="connectGame" style="padding: 10px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
-                        ✅ Conectar Game
-                    </button>
-                    <button id="disconnectGame" disabled style="padding: 10px; background: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
-                        ❌ Desconectar Game
-                    </button>
-                    <button id="connectWolves" style="padding: 10px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
-                        ✅ Conectar Wolves
-                    </button>
-                    <button id="disconnectWolves" disabled style="padding: 10px; background: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
-                        ❌ Desconectar Wolves
-                    </button>
-                </div>
+        <div style="margin-bottom: 20px;">
+            <h3>📡 Canales</h3>
+            <button id="connectGame" style="
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 10px;
+                background: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-weight: bold;
+            ">✅ Conectar Game Channel</button>
+            
+            <button id="disconnectGame" disabled style="
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 10px;
+                background: #f44336;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-weight: bold;
+            ">❌ Desconectar Game</button>
 
-                <div style="margin-top: 15px; padding: 10px; background: #e3f2fd; border-radius: 4px;">
-                    <strong>Estado:</strong>
-                    <p id="status" style="margin: 5px 0; font-size: 14px;">
-                        Game: <span id="gameStatus" style="color: #f44336;">Desconectado</span> | 
-                        Wolves: <span id="wolvesStatus" style="color: #f44336;">Desconectado</span>
-                    </p>
-                </div>
-            </div>
-
-            <!-- Panel de Envío de Mensajes -->
-            <div style="background: white; padding: 15px; border-radius: 6px;">
-                <h2>📤 Enviar Mensaje</h2>
-                <div style="margin-bottom: 10px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Canal:</label>
-                    <select id="channel" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                        <option value="game">Game Channel</option>
-                        <option value="wolves">Wolves Channel</option>
-                    </select>
-                </div>
-                <div style="margin-bottom: 10px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Mensaje:</label>
-                    <input type="text" id="messageInput" placeholder="Escribe un mensaje..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                </div>
-                <button id="sendMessage" style="width: 100%; padding: 10px; background: #FF9800; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
-                    📨 Enviar Mensaje
-                </button>
-            </div>
+            <button id="connectWolves" style="
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 10px;
+                background: #2196F3;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-weight: bold;
+            ">✅ Conectar Wolves Channel</button>
+            
+            <button id="disconnectWolves" disabled style="
+                width: 100%;
+                padding: 10px;
+                background: #f44336;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-weight: bold;
+            ">❌ Desconectar Wolves</button>
         </div>
 
-        <!-- Log de eventos -->
-        <div style="background: white; padding: 15px; border-radius: 6px;">
-            <h2>📋 Log de Eventos</h2>
+        <div id="status" style="
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        ">
+            <h3 style="margin-top: 0;">Estado</h3>
+            <p>🎮 Game: <span id="gameStatus" style="color: #f44336;">Desconectado</span></p>
+            <p>🐺 Wolves: <span id="wolvesStatus" style="color: #f44336;">Desconectado</span></p>
+        </div>
+
+        <div>
+            <h3>📋 Log</h3>
             <div id="log" style="
                 background: #1e1e1e;
                 color: #00ff00;
-                padding: 15px;
+                padding: 10px;
                 border-radius: 4px;
                 height: 300px;
                 overflow-y: auto;
-                font-family: 'Courier New', monospace;
+                font-family: monospace;
                 font-size: 12px;
-                border: 1px solid #ddd;
             "></div>
-            <button id="clearLog" style="margin-top: 10px; padding: 8px 15px; background: #757575; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                🗑️ Limpiar Log
-            </button>
+            <button id="clearLog" style="
+                width: 100%;
+                margin-top: 10px;
+                padding: 8px;
+                background: #757575;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            ">🗑️ Limpiar Log</button>
         </div>
     `
 
+    // Panel derecho: Chat
+    const chatPanel = document.createElement('div')
+    chatPanel.style.cssText = `
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+    `
+
+    // Inicializar ChatController e insertar su UI
+
+    const chatUI = new GameChat(chatPanel, true)
+    chatUI.render()
+
+    container.appendChild(controlPanel)
+    container.appendChild(chatPanel)
     document.body.appendChild(container)
     document.body.style.margin = '0'
-    document.body.style.background = '#fff'
 }
 
-// Función para agregar mensajes al log
 function addLog(
-    message: string,
-    type: 'info' | 'success' | 'error' | 'event' = 'info'
+    msg: string,
+    type: 'info' | 'success' | 'error' = 'info'
 ): void {
     const log = document.getElementById('log')
     if (!log) return
 
-    const timestamp = new Date().toLocaleTimeString()
     const colors: Record<string, string> = {
         info: '#00ff00',
         success: '#00ff00',
         error: '#ff4444',
-        event: '#ffff00',
     }
 
     const div = document.createElement('div')
+    const time = new Date().toLocaleTimeString()
     div.style.color = colors[type]
-    div.textContent = `[${timestamp}] ${message}`
+    div.textContent = `[${time}] ${msg}`
     log.appendChild(div)
     log.scrollTop = log.scrollHeight
 }
 
-// Conectar a Game Channel
 function connectGameChannel(): void {
     try {
-        const newGameId = parseInt(
-            (document.getElementById('gameId') as HTMLInputElement).value
-        )
-        gameChannel = new GameChannel(newGameId)
-
-        // Actualizar interfaz
-        const gameBtn = document.getElementById(
-            'connectGame'
-        ) as HTMLButtonElement
+        gameChannel = new GameChannel(gameId)
+        const btn = document.getElementById('connectGame') as HTMLButtonElement
         const disconnectBtn = document.getElementById(
             'disconnectGame'
         ) as HTMLButtonElement
-        gameBtn.disabled = true
+        btn.disabled = true
         disconnectBtn.disabled = false
 
-        const gameStatus = document.getElementById('gameStatus')
-        if (gameStatus) {
-            gameStatus.textContent = '✅ Conectado'
-            gameStatus.style.color = '#4CAF50'
+        const status = document.getElementById('gameStatus')
+        if (status) {
+            status.textContent = '✅ Conectado'
+            status.style.color = '#4CAF50'
         }
 
-        addLog(`✅ Conectado a Game Channel (ID: ${newGameId})`, 'success')
+        addLog(`✅ Game Channel conectado`, 'success')
     } catch (error) {
-        addLog(`❌ Error conectando Game Channel: ${error}`, 'error')
+        addLog(`❌ Error: ${error}`, 'error')
     }
 }
 
-// Desconectar Game Channel
 function disconnectGameChannel(): void {
     try {
         if (gameChannel) {
             gameChannel.leave()
             gameChannel = null
         }
-
-        const gameBtn = document.getElementById(
-            'connectGame'
-        ) as HTMLButtonElement
+        const btn = document.getElementById('connectGame') as HTMLButtonElement
         const disconnectBtn = document.getElementById(
             'disconnectGame'
         ) as HTMLButtonElement
-        gameBtn.disabled = false
+        btn.disabled = false
         disconnectBtn.disabled = true
 
-        const gameStatus = document.getElementById('gameStatus')
-        if (gameStatus) {
-            gameStatus.textContent = '❌ Desconectado'
-            gameStatus.style.color = '#f44336'
+        const status = document.getElementById('gameStatus')
+        if (status) {
+            status.textContent = '❌ Desconectado'
+            status.style.color = '#f44336'
         }
 
-        addLog('👋 Desconectado de Game Channel', 'info')
+        addLog('👋 Game Channel desconectado', 'info')
     } catch (error) {
-        addLog(`❌ Error desconectando: ${error}`, 'error')
+        addLog(`❌ Error: ${error}`, 'error')
     }
 }
 
-// Conectar a Wolves Channel
 function connectWolvesChannel(): void {
     try {
-        const newGameId = parseInt(
-            (document.getElementById('gameId') as HTMLInputElement).value
-        )
-        wolvesChannel = new WolvesChannel(newGameId)
-
-        const wolvesBtn = document.getElementById(
+        wolvesChannel = new WolvesChannel(gameId)
+        const btn = document.getElementById(
             'connectWolves'
         ) as HTMLButtonElement
         const disconnectBtn = document.getElementById(
             'disconnectWolves'
         ) as HTMLButtonElement
-        wolvesBtn.disabled = true
+        btn.disabled = true
         disconnectBtn.disabled = false
 
-        const wolvesStatus = document.getElementById('wolvesStatus')
-        if (wolvesStatus) {
-            wolvesStatus.textContent = '✅ Conectado'
-            wolvesStatus.style.color = '#4CAF50'
+        const status = document.getElementById('wolvesStatus')
+        if (status) {
+            status.textContent = '✅ Conectado'
+            status.style.color = '#4CAF50'
         }
 
-        addLog(`✅ Conectado a Wolves Channel (ID: ${newGameId})`, 'success')
+        addLog(`✅ Wolves Channel conectado`, 'success')
     } catch (error) {
-        addLog(`❌ Error conectando Wolves Channel: ${error}`, 'error')
+        addLog(`❌ Error: ${error}`, 'error')
     }
 }
 
-// Desconectar Wolves Channel
 function disconnectWolvesChannel(): void {
     try {
         if (wolvesChannel) {
             wolvesChannel.leave()
             wolvesChannel = null
         }
-
-        const wolvesBtn = document.getElementById(
+        const btn = document.getElementById(
             'connectWolves'
         ) as HTMLButtonElement
         const disconnectBtn = document.getElementById(
             'disconnectWolves'
         ) as HTMLButtonElement
-        wolvesBtn.disabled = false
+        btn.disabled = false
         disconnectBtn.disabled = true
 
-        const wolvesStatus = document.getElementById('wolvesStatus')
-        if (wolvesStatus) {
-            wolvesStatus.textContent = '❌ Desconectado'
-            wolvesStatus.style.color = '#f44336'
+        const status = document.getElementById('wolvesStatus')
+        if (status) {
+            status.textContent = '❌ Desconectado'
+            status.style.color = '#f44336'
         }
 
-        addLog('👋 Desconectado de Wolves Channel', 'info')
+        addLog('👋 Wolves Channel desconectado', 'info')
     } catch (error) {
-        addLog(`❌ Error desconectando: ${error}`, 'error')
+        addLog(`❌ Error: ${error}`, 'error')
     }
 }
 
-// Enviar mensaje
-async function sendMessage(): Promise<void> {
-    const channel = (document.getElementById('channel') as HTMLSelectElement)
-        .value
-    const input = document.getElementById('messageInput') as HTMLInputElement
-    const message = input.value.trim()
-
-    if (!message) {
-        addLog('⚠️ El mensaje está vacío', 'error')
-        return
-    }
-
-    try {
-        const newGameId = parseInt(
-            (document.getElementById('gameId') as HTMLInputElement).value
-        )
-        const eventData: EventData = {
-            message,
-            timestamp: new Date().toISOString(),
-            userId: 'test-user',
-        }
-
-        if (channel === 'game') {
-            const success = await emitGameEvent(
-                newGameId,
-                'chat.message',
-                eventData
-            )
-            addLog(
-                `${success ? '✅' : '❌'} Mensaje enviado a Game Channel: "${message}"`,
-                success ? 'success' : 'error'
-            )
-        } else {
-            const success = await emitWolvesEvent(
-                newGameId,
-                'chat.message',
-                eventData
-            )
-            addLog(
-                `${success ? '✅' : '❌'} Mensaje enviado a Wolves Channel: "${message}"`,
-                success ? 'success' : 'error'
-            )
-        }
-
-        input.value = ''
-    } catch (error) {
-        addLog(`❌ Error enviando mensaje: ${error}`, 'error')
-    }
-}
-
-// Inicializar
 function init(): void {
     createUI()
 
-    // Event listeners
     document
         .getElementById('connectGame')
         ?.addEventListener('click', connectGameChannel)
@@ -310,26 +280,15 @@ function init(): void {
     document
         .getElementById('disconnectWolves')
         ?.addEventListener('click', disconnectWolvesChannel)
-    document
-        .getElementById('sendMessage')
-        ?.addEventListener('click', sendMessage)
     document.getElementById('clearLog')?.addEventListener('click', () => {
         const log = document.getElementById('log')
         if (log) log.innerHTML = ''
     })
 
-    // Permitir enviar con Enter
-    document
-        .getElementById('messageInput')
-        ?.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage()
-        })
-
-    addLog('🚀 Interface de prueba inicializada', 'success')
-    addLog('Conecta a los canales y prueba enviar/recibir mensajes', 'info')
+    addLog('🚀 App initialized', 'success')
+    addLog('Conecta los canales y escribe mensajes', 'info')
 }
 
-// Ejecutar cuando el DOM esté listo
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init)
 } else {
