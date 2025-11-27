@@ -159,7 +159,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
             // --RUTAS DE ENVIO DE EVENTOS POR WEBSOCKETS---
             Route::post('/wolves/send', [WolvesChannelController::class, 'send']);
-            Route::post('/send', [GameChannelController::class, 'send']);
+            Route::post('/game/send', [GameChannelController::class, 'send']);
         }
     );
 
