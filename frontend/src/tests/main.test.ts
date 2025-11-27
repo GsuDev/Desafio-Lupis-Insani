@@ -88,10 +88,10 @@ import { userController } from './controllers/UserController'
 })*/
 
 //descomentar si se quiere probar el canal de lobos por consola
-// import { WolvesChannel, type WolfEventData } from './channels/WolvesChannel';
+// import { WolvesChannel, type WolfEvent } from './channels/WolvesChannel';
 
 // // la funcion que se ejecutara cuando el lobo reciba un evento
-// const handleWolfEvent = (eventName: string, data: WolfEventData) => {
+// const handleWolfEvent = (eventName: string, data: WolfEvent) => {
 //     console.log(`🦊 [evento wolf recibido] - asunto: ${eventName}`, data);
 // };
 
@@ -124,7 +124,7 @@ import { userController } from './controllers/UserController'
 
 // import {
 //     GameChannel,
-//     type GameEventData,
+//     type GameEvent,
 //     type GameEventHandler,
 // } from './channels/GameChannel'
 
@@ -134,7 +134,7 @@ import { userController } from './controllers/UserController'
 // // Handler para recibir eventos del canal
 // const handleGameEvent: GameEventHandler = (
 //     eventName: string,
-//     data: GameEventData
+//     data: GameEvent
 // ) => {
 //     const log = document.getElementById('log')!
 //     const p = document.createElement('p')
@@ -173,7 +173,7 @@ import { userController } from './controllers/UserController'
 //     ) as HTMLInputElement
 
 //     const eventName = eventNameInput.value.trim()
-//     let data: GameEventData = null
+//     let data: GameEvent = null
 
 //     try {
 //         data = eventDataInput.value ? JSON.parse(eventDataInput.value) : null
@@ -254,7 +254,7 @@ import { userController } from './controllers/UserController'
 
 // import {
 //     WolvesChannel,
-//     type WolfEventData,
+//     type WolfEvent,
 //     type WolfEventHandler,
 // } from './channels/WolvesChannel'
 
@@ -264,7 +264,7 @@ import { userController } from './controllers/UserController'
 // // Handler para recibir eventos del canal privado
 // const handleWolfEvent: WolfEventHandler = (
 //     eventName: string,
-//     data: WolfEventData
+//     data: WolfEvent
 // ) => {
 //     const log = document.getElementById('log')!
 //     const p = document.createElement('p')
@@ -303,7 +303,7 @@ import { userController } from './controllers/UserController'
 //     ) as HTMLInputElement
 
 //     const eventName = eventNameInput.value.trim()
-//     let data: WolfEventData = null
+//     let data: WolfEvent = null
 
 //     try {
 //         data = eventDataInput.value ? JSON.parse(eventDataInput.value) : null
