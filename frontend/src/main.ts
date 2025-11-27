@@ -1,7 +1,6 @@
 import { GameChannel } from './channels/GameChannel'
 import { WolvesChannel } from './channels/WolvesChannel'
-import { GameChat } from './components/gameChat/GameChat'
-import { ChatController } from './controllers/GameChatController'
+import { GameChat } from './components/gameChat/gameChat'
 import { userController } from './controllers/UserController'
 
 // Estado global

@@ -1,4 +1,4 @@
-import { GameChat } from '../components/gameChat/GameChat'
+import { GameChat } from '../components/gameChat/gameChat'
 import { emitGameEvent, emitWolvesEvent } from '../providers/event.provider'
 import type { ChatEvent, EventPayload } from '../types/events.types'
 import { gameController } from './GameController'
