@@ -53,9 +53,13 @@ class Message extends Model
     public function toStructured()
     {
         return [
-            'time' => $this->created_at,
+            'id' => $this->id,
+            'gameId' => $this->game_id,
             'type' => $this->type,
-            'user' => $this->user->name,
+            'userId' => $this->user->id,
+            'nickname' => $this->user->nickname,
+            'profileUrl' => $this->user->profile_url,
+            'time' => $this->created_at,
             'message' => $this->message,
         ];
     }

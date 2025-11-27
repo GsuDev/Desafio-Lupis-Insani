@@ -1,6 +1,6 @@
-import type { Participant } from '../models/Participant'
 import { ParticipantComponent } from '../components/participant/participant'
-import { getGameParticipants } from '../providers/game.provider'
+import type { Participant } from '../models/models'
+import { gameController } from './GameController'
 
 class ParticipantController {
     private static instance: ParticipantController
@@ -19,9 +19,13 @@ class ParticipantController {
      * y extraer los participantes de ahí.
      */
 
-    async getParticipants(gameId: string): Promise<Participant[]> {
+    async getParticipants(): Promise<Participant[]> {
         // Esto llama directamente a getGameParticipants del gameProvider
-        const participants = await getGameParticipants(gameId)
+        let participants = gameController.currentGame?.participants
+        if (!participants) {
+            participants = []
+        }
+
         return participants
     }
 

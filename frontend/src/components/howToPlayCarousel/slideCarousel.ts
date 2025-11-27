@@ -1,10 +1,10 @@
-import type { ISlideData } from '../../interfaces/carousel'
+import type { SlideData } from '../../models/models'
 
 export class Slide {
-    private slideData: ISlideData
+    private slideData: SlideData
     private slideElement: HTMLDivElement
 
-    constructor(slideData: ISlideData) {
+    constructor(slideData: SlideData) {
         this.slideData = slideData
         this.slideElement = this.createSlideElement()
     }

@@ -13,11 +13,11 @@ declare global {
 window.Pusher = Pusher
 
 // Variables de entorno de Vite
-const PUSHER_KEY = import.meta.env.VITE_PUSHER_KEY || 'app-key'
+const PUSHER_KEY = import.meta.env.VITE_PUSHER_KEY || 'local-app-key'
 const PUSHER_CLUSTER = import.meta.env.VITE_PUSHER_CLUSTER || 'mt1'
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost'
 const REVERB_HOST = import.meta.env.VITE_REVERB_HOST || 'localhost'
-const REVERB_PORT = Number(import.meta.env.VITE_REVERB_PORT) || 8080
+const REVERB_PORT = Number(import.meta.env.VITE_REVERB_PORT) || 80
 
 // Creamos la instancia de Echo
 const echo = new Echo({

@@ -207,9 +207,13 @@ export class LoginFormComponent {
     private handleCreateAccountClick(event: Event): void {
         event.preventDefault()
         console.log('Redirigir a crear cuenta')
-
+        const app = document.getElementById('app')
+        if (!app) {
+            console.log('ERROR NO DOM')
+            return
+        }
         // Aquí se llamaría al router o controlador
-        loadRegister(document.getElementById('app'))
+        loadRegister(app)
     }
 
     /**

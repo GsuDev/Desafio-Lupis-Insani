@@ -1,5 +1,5 @@
+import type { Message } from '../../models/models'
 import './gameMessage.css'
-import type { Message } from '../../interfaces/game.models'
 
 //componente del cuadrito del texto del mensaje en el chat
 
@@ -32,13 +32,13 @@ export class GameMessage {
         avatar.className = 'message-avatar'
 
         // si hay url foto de perfil la ponemos
-        if (this.data.image_url) {
+        if (this.data.profileUrl) {
             const img = document.createElement('img')
-            img.src = this.data.image_url
-            img.alt = this.data.playerName
+            img.src = this.data.profileUrl
+            img.alt = this.data.nickname
             avatar.appendChild(img)
         } else {
-            avatar.textContent = this.data.playerName.charAt(0).toUpperCase()
+            avatar.textContent = this.data.nickname.charAt(0).toUpperCase()
             avatar.style.backgroundColor = '#ccc'
         }
 
@@ -52,7 +52,7 @@ export class GameMessage {
         if (!this.isMine) {
             const name = document.createElement('span')
             name.className = 'message-name'
-            name.textContent = this.data.playerName
+            name.textContent = this.data.nickname
             contentSection.appendChild(name)
         }
 
@@ -63,7 +63,7 @@ export class GameMessage {
 
         const time = document.createElement('span')
         time.className = 'message-time'
-        time.textContent = this.formatTime(this.data.createdAt)
+        time.textContent = this.data.time
 
         contentSection.appendChild(bubble)
         contentSection.appendChild(time)
@@ -74,18 +74,20 @@ export class GameMessage {
         return this.container
     }
 
-    /**
-     * Formatea la fecha string "2023-11-24T10:00:00" a "10:00"
-     */
-    private formatTime(dateString: string): string {
-        try {
-            const date = new Date(dateString)
-            return date.toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit',
-            })
-        } catch (e) {
-            return ''
-        }
-    }
+    // DEPRECATED: Viene formateada ya
+
+    // /**
+    //  * Formatea la fecha string "2023-11-24T10:00:00" a "10:00"
+    //  */
+    // private formatTime(dateString: string): string {
+    //     try {
+    //         const date = new Date(dateString)
+    //         return date.toLocaleTimeString([], {
+    //             hour: '2-digit',
+    //             minute: '2-digit',
+    //         })
+    //     } catch (e) {
+    //         return ''
+    //     }
+    // }
 }

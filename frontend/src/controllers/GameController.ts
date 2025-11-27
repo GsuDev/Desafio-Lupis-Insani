@@ -4,7 +4,7 @@
  * para la Sala de Espera (WaitingRoom) y otras vistas relacionadas con el juego.
  */
 
-import type { Game, IMessageData } from '../interfaces/game.models'
+import type { Game, Message } from '../models/models'
 import { getGame, joinGameRequest } from '../providers/game.provider'
 
 // import { joinGameRequest } from '../providers/joinGame.provider'
@@ -15,14 +15,14 @@ class GameController {
     private static instance: GameController
 
     //tengo que guardar el estado de la partida
-    private _currentGame: Game | null = null
+    private _currentGame: Game | undefined
 
     // 1. Almacenamiento de Callbacks de la Vista
     private _showLoading: (isLoading: boolean) => void = () => {}
     private _showGlobalError: (message: string) => void = () => {}
     private _renderGameDetails: (game: Game) => void = () => {}
     private _disableStartButton: (isDisabled: boolean) => void = () => {}
-    private _addChatMessage: (message: IMessageData) => void = () => {}
+    private _addChatMessage: (message: Message) => void = () => {}
 
     private constructor() {}
 
@@ -34,6 +34,10 @@ class GameController {
         return GameController.instance
     }
 
+    get currentGame() {
+        return this._currentGame
+    }
+
     /**
      * La Vista (waitingRoom.ts) llama a esta función para "conectar"
      * sus funciones de actualización del DOM con este controlador.
@@ -43,7 +47,7 @@ class GameController {
         showGlobalErrorCallback: (message: string) => void,
         renderGameDetailsCallback: (game: Game) => void,
         disableStartButtonCallback: (isDisabled: boolean) => void,
-        addChatMessageCallback: (message: IMessageData) => void
+        addChatMessageCallback: (message: Message) => void
     ): void {
         this._showLoading = showLoadingCallback
         this._showGlobalError = showGlobalErrorCallback
@@ -67,27 +71,30 @@ class GameController {
     /**
      * La Vista llama a este método cuando necesita cargar los datos.
      */
-    public async handleLoadGame(gameId: string): Promise<void> {
+    public async handleLoadGame(gameId: number): Promise<void> {
         // 1. Informar a la vista que estamos cargando
         this._showLoading(true)
         this._showGlobalError('') // Limpiar errores antiguos
         this._disableStartButton(true)
         try {
             //Como ahora guardo en memoria
-            if (
-                this._currentGame &&
-                this._currentGame.id.toString() === gameId
-            ) {
+            if (this._currentGame) {
                 //console.log('Cargando datos desde memoria caché del Controller')
                 this._renderGameDetails(this._currentGame)
             } else {
                 // Si no, llamamos a la API
                 //console.log('Fetching datos desde API...')
-                const game = await getGame(gameId)
-                localStorage.setItem('currentGame', JSON.stringify(game))
+                const response = await getGame(gameId)
+                if (!response.data) {
+                    throw new Error('No ha llegado')
+                }
+                this._currentGame = response.data.game
+                localStorage.setItem(
+                    'currentGame',
+                    JSON.stringify(this._currentGame)
+                )
                 // Guardamos en memoria
-                this._currentGame = game
-                this._renderGameDetails(game)
+                this._renderGameDetails(this._currentGame)
             }
 
             //        // Si no, llamamos a la API
@@ -132,20 +139,21 @@ class GameController {
         }, 1000)
     }
 
-    public handleNewMessage(message: IMessageData): void {
+    public handleNewMessage(message: Message): void {
         if (this._addChatMessage) {
             this._addChatMessage(message)
         }
     }
 
-    public async handleJoin(gameId: string): Promise<Game> {
+    public async handleJoin(gameId: number): Promise<Game> {
         const response = await joinGameRequest(gameId)
-        if (!response) {
+        if (!response.data) {
             throw new Error('Error al unirse a la partida.')
         }
-        localStorage.setItem('currentGame', JSON.stringify(response))
+        this._currentGame = response.data.game
+        localStorage.setItem('currentGame', JSON.stringify(response.data.game))
 
-        return response
+        return response.data.game
     }
 }
 
