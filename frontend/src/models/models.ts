@@ -42,7 +42,7 @@ export type GameData = {
 
 export type Game = {
     id: number
-    state: boolean
+    state: string
     url: string
     messages: Message[]
     participants: Participant[]
