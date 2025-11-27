@@ -1,6 +1,6 @@
 import { WolvesEventRouter } from '../eventRouters/WolvesEvent.router'
-import type { EventData } from '../interfaces/EventData'
 import echo from '../services/echo'
+import type { EventData } from '../types/events.types'
 
 /**
  * WolvesChannel gestiona la conexión al canal privado de lobos

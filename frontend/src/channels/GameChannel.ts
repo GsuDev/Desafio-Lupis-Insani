@@ -1,6 +1,6 @@
-import type { EventData } from '../interfaces/EventData'
 import { GameEventRouter } from '../eventRouters/GameEvent.router'
 import echo from '../services/echo'
+import type { EventData } from '../types/events.types'
 
 /**
  * GameChannel gestiona la conexión al canal público del juego
