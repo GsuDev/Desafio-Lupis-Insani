@@ -1,13 +1,12 @@
 // 1. Importar modelos y el *Controlador*
 import { ParticipantList } from '../participantList/participantList'
-import type { Game } from '../../interfaces/game.models'
 import { gameController } from '../../controllers/GameController.ts'
 import { participantController } from '../../controllers/ParticipantController'
 import { WaitingRoomChat } from '../waitingRoomChat/waitingRoomChat.ts'
-import type { IMessageData } from '../../interfaces/game.models'
 
 // 2. Importar el CSS
 import './waiting-room.css'
+import type { Game, Message } from '../../models/models.ts'
 
 /**
  * Crea la columna derecha (Chat)
@@ -17,10 +16,7 @@ import './waiting-room.css'
 // Función principal de Renderizado
 // --------------------------------------------------
 
-export const renderWaitingRoom = (
-    container: HTMLDivElement,
-    gameId: string
-) => {
+export const renderWaitingRoom = (container: HTMLElement, gameId: number) => {
     // 1. Limpiar el contenedor
     container.innerHTML = ''
 
@@ -115,7 +111,7 @@ export const renderWaitingRoom = (
         (_isDisabled: boolean) => {
             participantList.disableButton(!participantController.isHost())
         },
-        (message: IMessageData) => chatComponent.addMessage(message)
+        (message: Message) => chatComponent.addMessage(message)
     )
 
     // 6. Añadir Listeners de la Vista

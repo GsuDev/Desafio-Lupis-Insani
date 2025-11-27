@@ -1,7 +1,7 @@
 //1º importo el css
 
 import './howToPlayCarousel.css'
-import type { ISlideData } from '../../interfaces/carousel'
+import type { SlideData } from '../../models/models'
 import { Slide } from './slideCarousel'
 import { Pagination } from './paginationCarousel'
 
@@ -12,7 +12,7 @@ import { Pagination } from './paginationCarousel'
 export class Carousel {
     //propiedades
     private container: HTMLElement //-> donde se renderiza
-    private slidesData: ISlideData[]
+    private slidesData: SlideData[]
     private currentIndex: number
 
     //referencia a los subcomponentes
@@ -28,7 +28,7 @@ export class Carousel {
 
     constructor(
         container: HTMLElement,
-        slidesData: ISlideData[],
+        slidesData: SlideData[],
         initialIndex: number = 0
     ) {
         if (!container) {

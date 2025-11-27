@@ -1,6 +1,6 @@
 import './userProfile.css'
 import { userController } from '../../controllers/UserController'
-import type { User } from '../../models/User'
+import type { User } from '../../models/models'
 
 /**
  * Componente que muestra la tarjeta del perfil del usuario
@@ -16,10 +16,19 @@ export class UserProfileComponent {
 
         // si hay usuario logueado lo cogemos  si no  ponemos uno por defecto
         //lo mismo que en la otra, no se va a dar el caso pero TS me da error si no lo pongo asi
-        this.userData = userController.currentUser || {
-            nickname: 'Invitado',
-            profile_url: undefined,
+        let user = userController.currentUser
+        if (!user) {
+            user = {
+                id: 9999,
+                nickname: 'Anónimo',
+                name: 'Usuario Anónimo',
+                lastname: null,
+                email: null,
+                birthdate: null,
+                profile_url: null,
+            }
         }
+        this.userData = user
     }
 
     /**

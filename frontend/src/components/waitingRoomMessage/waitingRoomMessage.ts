@@ -1,10 +1,10 @@
+import type { Message } from '../../models/models'
 import './waitingRoomMessage.css'
-import type { IMessageData } from '../../interfaces/game.models'
 
 export class WaitingRoomMessage {
-    private data: IMessageData
+    private data: Message
 
-    constructor(data: IMessageData) {
+    constructor(data: Message) {
         this.data = data
     }
 
@@ -16,7 +16,7 @@ export class WaitingRoomMessage {
         messageEl.innerHTML = `
       
             <div class="chat-content"> 
-                <p class="chat-user">${this.data.playerName}:</p>
+                <p class="chat-user">${this.data.nickname}:</p>
                 <p class="chat-message">${this.data.message}</p>
             </div>
         `

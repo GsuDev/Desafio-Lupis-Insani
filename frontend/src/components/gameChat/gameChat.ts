@@ -1,197 +1,127 @@
-import './gameChat.css'
+import { ChatController } from '../../controllers/GameChatController'
+import type { Message } from '../../models/models'
 import { GameMessage } from '../gameMessage/gameMessage'
-import type { Message } from '../../interfaces/game.models'
-
-// Definimos una interfaz mínima para no importar la clase entera y evitar ciclos raros
-interface IChatController {
-    sendMessage(text: string): void
-}
 
 export class GameChat {
     private isWolf: boolean
-    private gameId: number
+    private container: HTMLElement
+    private currentTab: 'game' | 'wolves' = 'game'
 
-    private generalContainer: HTMLElement
-    private wolvesContainer: HTMLElement
-
-    private root: HTMLElement
-    private inputElement: HTMLInputElement
-    private tabGeneral: HTMLElement
-    private tabWolves: HTMLElement
-
-    // Referencia al controlador como pide la hu
-    private controller: IChatController | null = null
-
-    private currentTab: 'general' | 'wolves' = 'general'
-
-    constructor(isWolf: boolean, gameId: number) {
+    constructor(container: HTMLElement, isWolf: boolean) {
+        this.container = container
         this.isWolf = isWolf
-        this.gameId = gameId
-
-        this.root = document.createElement('div')
-
-        // Inicializamos los dos contenedores
-        this.generalContainer = document.createElement('div')
-        this.wolvesContainer = document.createElement('div')
-
-        this.inputElement = document.createElement('input')
-
-        this.tabGeneral = document.createElement('button')
-        this.tabWolves = document.createElement('button')
     }
 
-    render(): HTMLElement {
-        this.root.className = 'game-chat-root'
+    render() {
+        // Crear elementos locales
+        const root = document.createElement('div')
+        root.className = 'game-chat-root'
 
-        const tabsContainer = this.renderTabs()
+        const generalContainer = document.createElement('div')
+        generalContainer.id = 'game-messages-container'
+        generalContainer.className = 'chat-messages-area'
+        generalContainer.style.display = 'flex'
 
-        this.generalContainer.className = 'chat-messages-area'
-        this.wolvesContainer.className = 'chat-messages-area'
+        const wolvesContainer = document.createElement('div')
+        wolvesContainer.id = 'wolves-messages-container'
+        wolvesContainer.className = 'chat-messages-area'
+        wolvesContainer.style.display = 'none'
 
-        // estado inicial la ventana de chat general se ve, los lobos oculto
-        this.generalContainer.style.display = 'flex' // Asegurar que se ve
-        this.wolvesContainer.style.display = 'none'
+        const inputElement = document.createElement('input')
+        inputElement.type = 'text'
+        inputElement.className = 'chat-input'
+        inputElement.placeholder = 'Escribe algo...'
 
-        // input para escribir y boton de enviar
-        const footer = this.renderInputArea()
-
-        this.root.appendChild(tabsContainer)
-        this.root.appendChild(this.generalContainer)
-        this.root.appendChild(this.wolvesContainer)
-        this.root.appendChild(footer)
-
-        return this.root
-    }
-
-    private renderTabs(): HTMLElement {
-        const container = document.createElement('div')
-        container.className = 'chat-tabs-container'
-
-        this.tabGeneral.textContent = 'General'
-        this.tabGeneral.className = 'chat-tab active' // Empieza activa
-        this.tabGeneral.onclick = () => this.switchTab('general')
-
-        // Tab lobo solo es visible si lobo true
-        this.tabWolves.textContent = 'Lobos'
-        this.tabWolves.className = 'chat-tab wolf-tab'
-        this.tabWolves.onclick = () => this.switchTab('wolves')
-
-        container.appendChild(this.tabGeneral)
-
-        // Visualizacion segun el rol que se tenga
-        if (this.isWolf) {
-            container.appendChild(this.tabWolves)
-        }
-
-        return container
-    }
-
-    private renderInputArea(): HTMLElement {
-        const footer = document.createElement('footer')
-        footer.className = 'chat-footer'
-
-        this.inputElement.type = 'text'
-        this.inputElement.className = 'chat-input'
-        this.inputElement.placeholder = 'Escribe algo...'
-
-        // Cuando pulsas enter
-        this.inputElement.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') this.onSendMessage()
+        inputElement.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.onSendMessage(inputElement)
         })
 
         const sendBtn = document.createElement('button')
         sendBtn.className = 'chat-send-btn'
         sendBtn.innerHTML = '📩'
-        sendBtn.onclick = () => this.onSendMessage()
+        sendBtn.onclick = () => this.onSendMessage(inputElement)
 
-        footer.appendChild(this.inputElement)
+        const footer = document.createElement('footer')
+        footer.className = 'chat-footer'
+        footer.appendChild(inputElement)
         footer.appendChild(sendBtn)
 
-        return footer
-    }
+        // Tabs
+        const tabGeneral = document.createElement('button')
+        tabGeneral.textContent = 'General'
+        tabGeneral.className = 'chat-tab active'
+        tabGeneral.onclick = () => switchTab('game')
 
-    /**
-     * Metodo interno para cambiar de pestaña
-     */
-    private switchTab(tab: 'general' | 'wolves'): void {
-        this.currentTab = tab
+        const tabWolves = document.createElement('button')
+        tabWolves.textContent = 'Lobos'
+        tabWolves.className = 'chat-tab wolf-tab'
+        tabWolves.onclick = () => switchTab('wolves')
 
-        if (tab === 'general') {
-            this.tabGeneral.classList.add('active')
-            this.tabWolves.classList.remove('active')
+        const tabsContainer = document.createElement('div')
+        tabsContainer.className = 'chat-tabs-container'
+        tabsContainer.appendChild(tabGeneral)
+        if (this.isWolf) tabsContainer.appendChild(tabWolves)
 
-            this.generalContainer.style.display = 'flex'
-            this.wolvesContainer.style.display = 'none'
-        } else {
-            this.tabGeneral.classList.remove('active')
-            this.tabWolves.classList.add('active')
-
-            this.generalContainer.style.display = 'none'
-            this.wolvesContainer.style.display = 'flex'
+        // Función local para cambiar de tab
+        const switchTab = (tab: 'game' | 'wolves') => {
+            this.currentTab = tab
+            if (tab === 'game') {
+                tabGeneral.classList.add('active')
+                tabWolves.classList.remove('active')
+                generalContainer.style.display = 'flex'
+                wolvesContainer.style.display = 'none'
+            } else {
+                tabGeneral.classList.remove('active')
+                tabWolves.classList.add('active')
+                generalContainer.style.display = 'none'
+                wolvesContainer.style.display = 'flex'
+            }
+            generalContainer.scrollTop = generalContainer.scrollHeight
+            wolvesContainer.scrollTop = wolvesContainer.scrollHeight
         }
 
-        //debug
-        console.log(`🔀 Cambiado a pestaña: ${tab}`)
-        this.scrollToBottom()
+        // Append a root
+        root.appendChild(tabsContainer)
+        root.appendChild(generalContainer)
+        root.appendChild(wolvesContainer)
+        root.appendChild(footer)
+
+        this.container.appendChild(root)
     }
 
-    // Metodo para vincular el controlador
-    public setController(controller: IChatController) {
-        this.controller = controller
-    }
-
-    /**
-     * Aqui se recoge el mensaje y llama al controller
-     */
-    public onSendMessage(): void {
-        const text = this.inputElement.value.trim()
+    private async onSendMessage(inputElement: HTMLInputElement) {
+        const text = inputElement.value.trim()
         if (!text) return
-
-        // Bloquear envío si estoy en General para probar
-        // la logica buena buena se implementara en otra hu
-        if (this.currentTab === 'general') {
-            alert('El chat General aún no está disponible.')
-            return
+        if (this.currentTab === 'game') {
+            await ChatController.sendToGame(text)
+        } else {
+            await ChatController.sendToWolves(text)
         }
 
-        //debug
-        console.log(`📤 Vista: Usuario quiere enviar: ${text}`)
-
-        // Llamamos al controlador si existe
-        if (this.controller) {
-            this.controller.sendMessage(text)
-        }
-
-        // Se limpia input
-        this.inputElement.value = ''
+        inputElement.value = ''
     }
 
-    /**
-     * Para añadir a la lista
-     */
-    public addMessage(
+    public static addMessage(
         msgData: Message,
         isMine: boolean,
-        targetTab: 'general' | 'wolves' = 'wolves'
+        targetTab: 'game' | 'wolves' = 'wolves'
     ): void {
+        const generalContainer = document.getElementById(
+            'game-messages-container'
+        )
+        const wolvesContainer = document.getElementById(
+            'wolves-messages-container'
+        )
+
         const messageComponent = new GameMessage(msgData, isMine)
-
-        // Decidimos en qué caja meterlo
-        const targetContainer =
-            targetTab === 'general'
-                ? this.generalContainer
-                : this.wolvesContainer
-
-        targetContainer.appendChild(messageComponent.render())
-        this.scrollToBottom()
-    }
-
-    private scrollToBottom(): void {
-        // Scroleamos el contenedor que esté visible
-        if (this.currentTab === 'general') {
-            this.generalContainer.scrollTop = this.generalContainer.scrollHeight
-        } else {
-            this.wolvesContainer.scrollTop = this.wolvesContainer.scrollHeight
+        if (!generalContainer || !wolvesContainer) {
+            console.error(`❌ Error al recibir un mensaje`)
+            alert('Error al recibir el mensaje. Intenta de nuevo.')
+            return
         }
+        const targetContainer =
+            targetTab === 'game' ? generalContainer : wolvesContainer
+        targetContainer.appendChild(messageComponent.render())
+        targetContainer.scrollTop = targetContainer.scrollHeight
     }
 }
