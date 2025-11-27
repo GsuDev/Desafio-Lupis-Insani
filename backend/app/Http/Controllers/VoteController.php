@@ -28,5 +28,28 @@ class VoteController extends Controller
         ],201);
     }
 
+    /**
+     * 
+     * Obtiene los votos filtrados por partida, fase y ciclo.
+     */
 
+    public function getVotes(Request $request, $gameId){
+        $request->validate([
+            'is_day' => 'required|boolean',
+            'day_number' => 'required|integer',
+        ]);
+
+        $votes = Vote::where('game_id',$gameId)
+            ->where('is_day', $request->boolean('is_day'))
+            ->where('day_number', $request->input('day_number'))
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Votos recuperados con exito',
+            'data' => [
+                'votes' => $votes
+            ]
+        ],200);
+    }
 }
