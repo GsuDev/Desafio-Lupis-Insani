@@ -153,14 +153,17 @@ Content-Type: {{contentType}}
 }
 ###  Enviar eventos a canal de partida  1
 
-POST {{baseUrl}}/games/1/send
-Authorization: Bearer 2|Gu7A9GveGFPzN5vmJ6pfeUY64Okkg0v0l6AvFd5L2af7140a
+POST {{baseUrl}}/games/1/game/send
+Authorization: Bearer 144|NaT7sqbGkRSkNQmskeMpD3GzfmhXgVioLOjqV8IT026cc5a4
 Content-Type: {{contentType}}
 
 {
     "event": "chat.message",
     "data": {
-        "message": "¡Hola desde el canal de partida!"
+        "gameId": 1,
+        "userId": 2,
+        "message": "¡Hola! Este es un mensaje válido del chat general."
+
     },
     "gameId": 1
 }
