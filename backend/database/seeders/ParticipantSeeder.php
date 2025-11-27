@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Character;
 use App\Models\Game;
+use App\Models\participant;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -26,25 +27,24 @@ class ParticipantSeeder extends Seeder
 
         // se insertan dos participantes de prueba
         $now = now();
-        DB::table('game_participants')->insert([
+        DB::table('participants')->insert([
             [
                 'game_id' => $game->id,
                 'user_id' => $user1->id,
                 'is_bot' => false,
-                'nickname' => null,
-                'character_id' => $char1->id,
-                'created_at' => $now,
-                'updated_at' => $now,
+                'is_host' => false,
+                'nickname' => $user1->nickname,
+                'character_id' => $char2->id,
             ],
             [
                 'game_id' => $game->id,
                 'user_id' => $user2->id,
                 'is_bot' => false,
-                'nickname' => null,
+                'is_host' => true,
+                'nickname' => $user2->nickname,
                 'character_id' => $char2->id,
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
         ]);
+        participant::factory()->count(10)->create();
     }
 }
