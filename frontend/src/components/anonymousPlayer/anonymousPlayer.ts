@@ -1,7 +1,6 @@
 import { userController } from '../../controllers/UserController'
 import JoinGameModal from '../joinGameModal/JoinGameModal'
 import UserProfileContainer from '../userProfileContainer/userProfileContainer'
-import { loadWaitingRoom } from '../waitingRoom/waitingRoomView.mock'
 import './anonymousPlayer.css'
 
 /**
@@ -209,7 +208,6 @@ export class AnonymousSelectorComponent {
 
         if (createButton) {
             createButton.addEventListener('click', () =>
-                this.handleJoinRoom(nicknameInput)
                 this.handleJoin(nicknameInput)
             )
         }
@@ -218,7 +216,6 @@ export class AnonymousSelectorComponent {
         if (nicknameInput) {
             nicknameInput.addEventListener('keypress', (event) => {
                 if (event.key === 'Enter') {
-                    this.handleJoinRoom(nicknameInput)
                     this.handleJoin(nicknameInput)
                 }
             })
