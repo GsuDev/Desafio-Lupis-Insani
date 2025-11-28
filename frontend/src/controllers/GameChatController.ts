@@ -1,97 +1,103 @@
 import { GameChat } from '../components/gameChat/gameChat'
-import {
-    GameChatManager,
-    type IChatController,
-} from '../managers/GameChatManager'
-import { GameChatEmitProvider } from '../providers/gameChatEmitProvider'
-import type { Message } from '../interfaces/game.models'
-import { type EventData } from '../interfaces/EventData'
-import type { WolvesEventPayload } from '../interfaces/wolvesEventPayload'
+import { WaitingRoomChat } from '../components/waitingRoomChat/waitingRoomChat'
+import type { Message } from '../models/models'
+import { emitGameEvent, emitWolvesEvent } from '../providers/event.provider'
+import type { EventPayload } from '../types/events.types'
+import { gameController } from './GameController'
+import { userController } from './UserController'
 
-// Implementamos la interfaz IChatController para cumplir el contrato con el Manager
-export class GameChatController implements IChatController {
-    private view: GameChat | null = null
-    private manager: GameChatManager
-    private provider: GameChatEmitProvider
-
-    private gameId: number
-    private playerName: string
-
-    constructor(gameId: number, manager: GameChatManager, playerName: string) {
-        this.gameId = gameId
-        this.playerName = playerName
-
-        // "contratamos al manager"
-        this.manager = manager
-        this.manager.setController(this)
-
-        // "contratamos al provider"
-        this.provider = new GameChatEmitProvider(gameId)
-    }
-
-    /**Conectamos la vista (GameChat) con el controller */
-    public setView(view: GameChat): void {
-        this.view = view
-    }
-
-    /**accion 1
-     * enviar mensaje -> desde la vista hacia el backend
-     * este metodo lo llamará la vista cuando des a enviar
+/**
+ * ChatController es el puente entre:
+ * - La UI (GameChat) que quiere enviar mensajes
+ * - Los providers (WolvesChatEmitProvider, GameChatEmitProvider) que hablan con el backend
+ * - Los event routers que reciben mensajes del backend
+ */
+export class ChatController {
+    /**
+     * Escucha los custom events que dispara ChatManager
      */
+    static async addMessage(
+        chatEvent: Message,
+        targetTab: 'game' | 'wolves' = 'game'
+    ) {
+        // Evento: mensaje recibido del canal wolves o game
+        const user = userController.currentUser
 
-    async sendMessage(text: string): Promise<void> {
-        //debug
-        console.log('Controller: procesando el envio', text)
-
-        // se prepara el paquete para el provider
-        const payload = {
-            message: text,
-            playerName: this.playerName,
+        if (!chatEvent || !user) {
+            return
+        }
+        const isMine = chatEvent.userId === user.id
+        if (gameController.currentGame?.state === 'waiting') {
+            WaitingRoomChat.addMessage(chatEvent)
+        } else {
+            // Añadir a la UI en la pestaña correcta
+            GameChat.addMessage(chatEvent, isMine, targetTab)
         }
 
-        //usamos el provider para enviar
-        const success = await this.provider.emit('wolves.chat', payload)
-
-        //para probar se hara refactor luego
-        if (!success) {
-            alert('Error al enviar mensaje ')
-        }
-
-        //no pintamos el mensaje aqui esperamos a que vuelva por el websockets
+        console.log(`📨 Mensaje recibido en ${targetTab}:`, chatEvent.message)
     }
 
     /**
-     * accion 2
-     * recibit mensaje -> desde el backend hacia la vista
-     * este metodo lo llama el manager cuando escucha algo
+     * Envía un mensaje al canal de LOBOS
      */
+    static async sendToWolves(text: string) {
+        const game = gameController.currentGame
+        const user = userController.currentUser
 
-    onMessageReceived(eventName: string, data: EventData): void {
-        //validamos que haya vista y datos
-        if (!this.view || !data) return
+        console.log('que pasa aqui', game)
+        console.log('que pasa aqui', user)
+        if (!user || !game) {
+            console.error(`❌ Error al enviar mensaje a Wolves`)
+            // Mostrar alerta al usuario
+            alert('Error al enviar el mensaje. Intenta de nuevo.')
+            return
+        }
+        const payload: EventPayload = {
+            gameId: game.id,
+            message: text,
+            userId: user.id,
+        }
 
-        //filtramos solo queremos los eventos de chat
-        //el nombre del evento viene del wolvesChannelcontroller en el back
-        if (eventName === 'wolves.chat' || eventName === 'client-wolves.chat') {
-            //convertimos los datos crudos json a interfaz messsage
-            //  Convertimos el objeto genérico a nuestra interfaz
-            // Usamos 'unknown' como paso intermedio obligatorio en TS
-            const eventPayload = data as unknown as WolvesEventPayload
+        console.log(`📤 Enviando a Wolves Channel...`)
+        const success = await emitWolvesEvent(game.id, 'chat.message', payload)
 
-            const msg: Message = {
-                id: Date.now(),
-                gameId: this.gameId,
-                playerName: eventPayload.data.playerName || 'Desconocido',
-                message: eventPayload.data.message || '',
-                createdAt: new Date().toISOString(),
-                image_url: eventPayload.data.image_url,
-            }
+        if (success) {
+            console.log(`✅ Mensaje enviado a Wolves correctamente`)
+        } else {
+            console.error(`❌ Error al enviar mensaje a Wolves`)
+            // Mostrar alerta al usuario
+            alert('Error al enviar el mensaje. Intenta de nuevo.')
+        }
+    }
 
-            //para que salga a la izquierda o la derecha
-            const isMine = msg.playerName === this.playerName
+    /**
+     * Envía un mensaje al canal PUBLIC (GAME)
+     */
+    static async sendToGame(text: string): Promise<void> {
+        const game = gameController.currentGame
+        const user = userController.currentUser
 
-            // Ordenamos a la Vista que pinte el mensaje
-            this.view.addMessage(msg, isMine)
+        if (!user || !game) {
+            console.error(`❌ Error al enviar mensaje a Game`)
+            // Mostrar alerta al usuario
+            alert('Error al enviar el mensaje. Intenta de nuevo.')
+            return
+        }
+        const payload: EventPayload = {
+            gameId: game.id,
+            message: text,
+            userId: user.id,
+        }
+
+        console.log(`📤 Enviando a Game Channel...`)
+        const success = await emitGameEvent(game.id, 'chat.message', payload)
+
+        if (success) {
+            console.log(`✅ Mensaje enviado a Game correctamente`)
+        } else {
+            console.error(`❌ Error al enviar mensaje a Game`)
+            // Mostrar alerta al usuario
+            alert('Error al enviar el mensaje. Intenta de nuevo.')
         }
     }
 }

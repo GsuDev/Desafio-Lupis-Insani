@@ -30,6 +30,7 @@ class GameChannelController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Usuario no autenticado.',
+                'data' => null,
             ], 401);
         }
 
@@ -45,16 +46,19 @@ class GameChannelController extends Controller
             ], 403);
         }
 
+        $data = self::eventCategoryFilter($validator->validated()['event'], $validator->validated()['data']);
+
         try {
             broadcast(new GameEvent(
                 $validator->validated()['event'],
-                $validator->validated()['data'] ?? [],
+                $data ?? [],
                 $gameId
             ));
         } catch (\Throwable $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Error al emitir el evento.',
+                'data' => null,
             ], 500);
         }
 
@@ -63,5 +67,24 @@ class GameChannelController extends Controller
             'message' => 'Evento enviado correctamente.',
             'data' => null,
         ]);
+    }
+
+    public function eventCategoryFilter($event, $data)
+    {
+        $category = explode('.', $event);
+        switch ($category[0]) {
+
+            case 'chat':
+                return EventController::chatEventFilter($event, $data);
+                break;
+
+            case 'game':
+                // Mensajes del sistema
+                break;
+
+            default:
+
+                break;
+        }
     }
 }

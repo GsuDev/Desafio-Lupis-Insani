@@ -2,7 +2,7 @@ import './access-container.css'
 import { AnonymousSelectorComponent } from '../anonymousPlayer/anonymousPlayer'
 import { LoginFormComponent } from '../loginForm/loginForm'
 import { Carousel } from '../howToPlayCarousel/howToPlayCarousel'
-import { datosSlides } from '../../providers/slides.mock'
+import { getTipSlides } from '../../providers/game.provider'
 
 class AccessContainer {
     private container: HTMLElement
@@ -16,7 +16,8 @@ class AccessContainer {
      */
     render(): void {
         const container = this.container
-
+        const root = document.createElement('div')
+        root.className = 'root-div'
         // Header con logo y título
         const header = document.createElement('header')
         header.className = 'access-header'
@@ -56,16 +57,35 @@ class AccessContainer {
         this.loadChildComponents(cardsContainer)
 
         // Añadir todo al container
-        container.appendChild(header)
-        container.appendChild(cardsContainer)
+        root.appendChild(header)
+        root.appendChild(cardsContainer)
+        container.appendChild(root)
     }
 
     // Carga unificada de componentes hijos
-    private loadChildComponents(container: HTMLElement) {
+    private async loadChildComponents(container: HTMLElement) {
         // Creamos los componentes
         const anonymousCard = new AnonymousSelectorComponent(container)
         const loginCard = new LoginFormComponent(container)
-        const carouselCard = new Carousel(container, datosSlides, 0)
+        const slides = await getTipSlides()
+        let carouselCard
+        if (slides.data) {
+            carouselCard = new Carousel(container, slides.data.slides, 0)
+        } else {
+            carouselCard = new Carousel(
+                container,
+                [
+                    {
+                        stepNumber: 1,
+                        tittle: 'LOBO',
+                        description: 'LOBEA',
+                        imageUrl:
+                            'https://www.dadocritico.es/2534-medium_default/el-pacto-de-los-hombres-lobo-de-castronegro.jpg',
+                    },
+                ],
+                0
+            )
+        }
 
         // Los renderizamos
         anonymousCard.render()

@@ -1,7 +1,10 @@
 import { WolvesChannel } from '../channels/WolvesChannel'
-import type { EventData } from '../interfaces/EventData'
-import { ChatManager } from '../managers/ChatManager'
+import { ChatManager } from '../managers/Chat.manager'
+import type { Event } from '../types/events.types'
 
+/**
+ * En el Router se separan los eventos que vienen del channel por categoría
+ */
 export class WolvesEventRouter {
     private channel: WolvesChannel
 
@@ -9,27 +12,19 @@ export class WolvesEventRouter {
         this.channel = channel
     }
 
-    // =============================
-    // Router por categoría
-    // =============================
-
-    routeEvent(event: string, data: EventData): void {
+    routeEvent(event: string, data: Event): void {
         const category = event.split('.')[0]
 
         switch (category) {
-            // Añadir categorias aquí
             case 'chat':
-                ChatManager.handleEvent(event, data)
+                // Pasar 'wolves' para que ChatManager sepa dónde mostrar
+                ChatManager.handleEvent(event, data, 'wolves')
                 break
 
             default:
                 console.warn(`⚠️ Evento sin manager asignado: ${event}`, data)
         }
     }
-
-    // =============================
-    // Cierre del canal
-    // =============================
 
     public disconnect(): void {
         this.channel.leave()

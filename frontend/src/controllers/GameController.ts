@@ -4,7 +4,8 @@
  * para la Sala de Espera (WaitingRoom) y otras vistas relacionadas con el juego.
  */
 
-import type { Game, IMessageData } from '../interfaces/game.models'
+import { GameChannel } from '../channels/GameChannel'
+import type { Game, Message } from '../models/models'
 import { getGame, joinGameRequest } from '../providers/game.provider'
 
 // import { joinGameRequest } from '../providers/joinGame.provider'
@@ -14,15 +15,17 @@ import { getGame, joinGameRequest } from '../providers/game.provider'
 class GameController {
     private static instance: GameController
 
+    private gameChannel: GameChannel | null = null
+
     //tengo que guardar el estado de la partida
-    private _currentGame: Game | null = null
+    private _currentGame: Game | undefined
 
     // 1. Almacenamiento de Callbacks de la Vista
     private _showLoading: (isLoading: boolean) => void = () => {}
     private _showGlobalError: (message: string) => void = () => {}
     private _renderGameDetails: (game: Game) => void = () => {}
     private _disableStartButton: (isDisabled: boolean) => void = () => {}
-    private _addChatMessage: (message: IMessageData) => void = () => {}
+    private _addChatMessage: (message: Message) => void = () => {}
 
     private constructor() {}
 
@@ -34,6 +37,27 @@ class GameController {
         return GameController.instance
     }
 
+    get currentGame() {
+        return this._currentGame
+    }
+
+    set currentGame(currentGame) {
+        localStorage.setItem('currentGame', JSON.stringify(currentGame))
+    }
+
+    /** Restaura la sesión desde localStorage si existe */
+    public restoreSession(): void {
+        const savedGame = localStorage.getItem('currentGame')
+        if (savedGame) {
+            try {
+                this._currentGame = JSON.parse(savedGame) as Game
+            } catch {
+                // Si hay error al parsear, limpiamos el localStorage
+                localStorage.removeItem('currentGame')
+            }
+        }
+    }
+
     /**
      * La Vista (waitingRoom.ts) llama a esta función para "conectar"
      * sus funciones de actualización del DOM con este controlador.
@@ -43,7 +67,7 @@ class GameController {
         showGlobalErrorCallback: (message: string) => void,
         renderGameDetailsCallback: (game: Game) => void,
         disableStartButtonCallback: (isDisabled: boolean) => void,
-        addChatMessageCallback: (message: IMessageData) => void
+        addChatMessageCallback: (message: Message) => void
     ): void {
         this._showLoading = showLoadingCallback
         this._showGlobalError = showGlobalErrorCallback
@@ -67,27 +91,30 @@ class GameController {
     /**
      * La Vista llama a este método cuando necesita cargar los datos.
      */
-    public async handleLoadGame(gameId: string): Promise<void> {
+    public async handleLoadGame(gameId: number): Promise<void> {
         // 1. Informar a la vista que estamos cargando
         this._showLoading(true)
         this._showGlobalError('') // Limpiar errores antiguos
         this._disableStartButton(true)
         try {
             //Como ahora guardo en memoria
-            if (
-                this._currentGame &&
-                this._currentGame.id.toString() === gameId
-            ) {
+            if (this._currentGame) {
                 //console.log('Cargando datos desde memoria caché del Controller')
                 this._renderGameDetails(this._currentGame)
             } else {
                 // Si no, llamamos a la API
                 //console.log('Fetching datos desde API...')
-                const game = await getGame(gameId)
-                localStorage.setItem('currentGame', JSON.stringify(game))
+                const response = await getGame(gameId)
+                if (!response.data) {
+                    throw new Error('No ha llegado')
+                }
+                this._currentGame = response.data.game
+                localStorage.setItem(
+                    'currentGame',
+                    JSON.stringify(this._currentGame)
+                )
                 // Guardamos en memoria
-                this._currentGame = game
-                this._renderGameDetails(game)
+                this._renderGameDetails(this._currentGame)
             }
 
             //        // Si no, llamamos a la API
@@ -131,21 +158,37 @@ class GameController {
             this._showLoading(false)
         }, 1000)
     }
+    public handleCreateGame() {}
 
-    public handleNewMessage(message: IMessageData): void {
-        if (this._addChatMessage) {
-            this._addChatMessage(message)
+    public async handleJoin(gameId: number): Promise<Game> {
+        const response = await joinGameRequest(gameId)
+        if (!response.data) {
+            throw new Error('Error al unirse a la partida.')
+        }
+        this._currentGame = response.data.game
+        localStorage.setItem('currentGame', JSON.stringify(response.data.game))
+
+        return response.data.game
+    }
+    public connectGameChannel(gameId: number): void {
+        try {
+            this.gameChannel = new GameChannel(gameId)
+            console.log(`✅ Game Channel conectado`, 'success')
+        } catch (error) {
+            console.log(`❌ Error: ${error}`, 'error')
         }
     }
 
-    public async handleJoin(gameId: string): Promise<Game> {
-        const response = await joinGameRequest(gameId)
-        if (!response) {
-            throw new Error('Error al unirse a la partida.')
+    public disconnectGameChannel(): void {
+        try {
+            if (this.gameChannel) {
+                this.gameChannel.leave()
+                this.gameChannel = null
+            }
+            console.log('👋 Game Channel desconectado', 'info')
+        } catch (error) {
+            console.log(`❌ Error: ${error}`, 'error')
         }
-        localStorage.setItem('currentGame', JSON.stringify(response))
-
-        return response
     }
 }
 

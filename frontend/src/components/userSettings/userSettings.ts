@@ -1,6 +1,6 @@
 import './userSettings.css'
 import { userController } from '../../controllers/UserController'
-import type { User } from '../../models/User'
+import type { User } from '../../models/models'
 
 export class UserSettingsComponent {
     private container: HTMLElement
@@ -9,12 +9,13 @@ export class UserSettingsComponent {
     constructor(container: HTMLElement) {
         this.container = container
         this.userData = userController.currentUser || {
+            id: 0,
             nickname: '',
             name: '',
-            lastname: '',
-            email: '',
-            birthdate: '',
-            profile_url: undefined,
+            lastname: null,
+            email: null,
+            birthdate: null,
+            profile_url: null,
         }
     }
 

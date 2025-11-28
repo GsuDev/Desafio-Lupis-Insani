@@ -31,9 +31,9 @@ class GameController extends Controller
                 'url' => $uniqueUrl,
             ]);
 
-            return response()->json(['success' => true, 'message' => 'Partida creada', 'data' => $game], 201);
+            return response()->json(['success' => true, 'message' => 'Partida creada', 'data' => ['game' => $game]], 201);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => "Error al crear partida, {$e->getMessage()}", 'data' => ''], 500);
+            return response()->json(['success' => false, 'message' => "Error al crear partida, {$e->getMessage()}", 'data' => null], 500);
         }
     }
     // Get Partida
@@ -44,13 +44,12 @@ class GameController extends Controller
         try {
             $game = Game::findOrFail($gameId);
 
-            return response()->json(['success' => true, 'message' => 'Partida obtenida', 'data' => $game], 200);
-
+            return response()->json(['success' => true, 'message' => 'Partida obtenida', 'data' => ['game' => $game]], 200);
         } catch (ModelNotFoundException $e) {
 
-            return response()->json(['seccess' => false, 'message' => 'Partida no encontrada', 'data' => ''], 404);
+            return response()->json(['seccess' => false, 'message' => 'Partida no encontrada', 'data' => null], 404);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => "Error al obtener partida, {$e->getMessage()}", 'data' => ''], 500);
+            return response()->json(['success' => false, 'message' => "Error al obtener partida, {$e->getMessage()}", 'data' => null], 500);
         }
     }
 
@@ -60,12 +59,12 @@ class GameController extends Controller
         try {
             $game = Game::where('url', $url)->firstOrFail();
 
-            return response()->json($game, 200);
+            return response()->json(['success' => true, 'message' => 'Partida obtenida', 'data' => ['game' => $game]], 200);
         } catch (ModelNotFoundException $e) {
 
-            return response()->json(['seccess' => false, 'message' => 'Partida no encontrada', 'data' => ''], 404);
+            return response()->json(['seccess' => false, 'message' => 'Partida no encontrada', 'data' => null], 404);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => "Error al obtener partida {$e->getMessage()}", 'data' => ''], 500);
+            return response()->json(['success' => false, 'message' => "Error al obtener partida {$e->getMessage()}", 'data' => null], 500);
         }
     }
 
@@ -75,11 +74,10 @@ class GameController extends Controller
         try {
             $games = Game::all();
 
-            return response()->json(['success' => true, 'message' => 'Partidas obtenidas', 'data' => $games], 200);
+            return response()->json(['success' => true, 'message' => 'Partida obtenida', 'data' => ['games' => $games]], 200);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => "Error al obtener partidas, {$e->getMessage()}", 'data' => ''], 500);
+            return response()->json(['success' => false, 'message' => "Error al obtener partidas, {$e->getMessage()}", 'data' => null], 500);
         }
-
     }
 
     // updatePartida
@@ -96,30 +94,34 @@ class GameController extends Controller
 
         $validator = Validator::make($req->all(), $rules, $messages);
         if ($validator->fails()) {
-            return response()->json($validator->getErrors(), 422);
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors(),
+                'data' => null,
+            ], 422);
         }
         try {
             $game = Game::findOrFail($gameId);
             $game->state = $req->input('state');
             $game->save();
 
-            return response()->json(['success' => true, 'message' => 'Partida actualizada', 'data' => $game], 200);
+            return response()->json(['success' => true, 'message' => 'Partida obtenida', 'data' => ['games' => $game]], 200);
         } catch (\Exception $e) {
             // Success| message | data
-            return response()->json(['success' => false, 'message' => "Error al actualizar partida, {$e->getMessage()}", 'data' => ''], 500);
+            return response()->json(['success' => false, 'message' => "Error al actualizar partida, {$e->getMessage()}", 'data' => null], 500);
         }
     }
 
     // deletePartida
     public function deleteGame($gameId)
-    {// al usar soft delete, se sobre escribe el delete
+    { // al usar soft delete, se sobre escribe el delete
         try {
             $game = Game::findOrFail($gameId);
             $game->delete();
 
-            return response()->json(['success' => true, 'message' => 'Partida eliminada', 'data' => ''], 200);
+            return response()->json(['success' => true, 'message' => 'Partida eliminada', 'data' => null], 200);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => "Error al eliminar partida, {$e->getMessage()}", 'data' => ''], 500);
+            return response()->json(['success' => false, 'message' => "Error al eliminar partida, {$e->getMessage()}", 'data' => null], 500);
         }
     }
 
@@ -131,38 +133,46 @@ class GameController extends Controller
 
             return response()->json(['success' => true, 'message' => 'Mensajes obtenidos', 'data' => ['messages' => $game->getStructuredMessages()]], 200);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => "Error al obtener mensajes, {$e->getMessage()}", 'data' => ''], 500);
+            return response()->json(['success' => false, 'message' => "Error al obtener mensajes, {$e->getMessage()}", 'data' => null], 500);
         }
     }
 
     // addMensajeByPartida
-    public function addMessageByGame(Request $req, $gameId)
+    public static function addMessageByGame($data, $type)
     {
         $messages = [
-            'type.required' => 'El campo "type" es requerido.',
-            'user_id.integer' => 'El campo "user_id" debe ser un ID de usuario válido.',
+            'gameId.required' => 'El campo "gameId" es requerido.',
+            'userId.integer' => 'El campo "userId" debe ser un ID de usuario válido.',
             'message.required' => 'El campo "message" es requerido.',
         ];
 
         $rules = [
-            'type' => 'required|string',
-            'user_id' => 'nullable|integer|exists:users,id',
+            'gameId' => 'required|integer',
+            'userId' => 'nullable|integer|exists:users,id',
             'message' => 'required|string',
         ];
 
-        $validator = Validator::make($req->all(), $rules, $messages);
+        $validator = Validator::make($data, $rules, $messages);
         if ($validator->fails()) {
-            return response()->json($validator->getErrors(), 422);
+            return [
+                'success' => false,
+                'message' => $validator->errors(),
+                'data' => null,
+            ];
         }
 
         try {
-            $game = Game::findOrFail($gameId);
+            $game = Game::findOrFail($data['gameId']);
             // ¡Pasa el user_id, no el user!
-            $game->addMessage($req->type, $req->user_id, $req->message);
+            $createdMessage = $game->addMessage($type, $data['userId'], $data['message']);
 
-            return response()->json(['success' => true, 'message' => 'Mensaje añadido correctamente', 'data' => ''], 200);
+            return [
+                'success' => true,
+                'message' => 'Mensaje añadido correctamente',
+                'data' => $createdMessage->toStructured(),
+            ];
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => "Error al añadir mensaje,{$e->getMessage()}", 'data' => ''], 500);
+            return ['success' => false, 'message' => "Error al añadir mensaje,{$e->getMessage()}", 'data' => null];
         }
     }
 
@@ -173,11 +183,11 @@ class GameController extends Controller
             $user = $req->user();
 
             if ($game->state != 'waiting') {
-                return response()->json(['success' => false, 'message' => 'No se puede unir a la partida, no está en estado waiting', 'data' => ''], 403);
+                return response()->json(['success' => false, 'message' => 'No se puede unir a la partida, no está en estado waiting', 'data' => null], 403);
             }
             $currentCount = $game->participants->count();
-            if ($currentCount > 28) {// variable global
-                return response()->json(['success' => false, 'message' => 'No se puede unir a la partida, esta completa o el usuario ya está en la partida', 'data' => ''], 403);
+            if ($currentCount > 28) { // variable global
+                return response()->json(['success' => false, 'message' => 'No se puede unir a la partida, esta completa o el usuario ya está en la partida', 'data' => null], 403);
             }
             if ($game->users()->where('user_id', $user->id)->exists()) {
 
@@ -217,14 +227,12 @@ class GameController extends Controller
                 'message' => 'Usuario añadido correctamente',
                 'data' => ['game' => $game],
             ], 200);
-
         } catch (ModelNotFoundException $e) {
 
-            return response()->json(['success' => false, 'message' => 'Partida no encontrada', 'data' => ''], 404);
+            return response()->json(['success' => false, 'message' => 'Partida no encontrada', 'data' => null], 404);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => "Error al añadir usuario a la partida,{$e->getMessage()}", 'data' => ''], 500);
+            return response()->json(['success' => false, 'message' => "Error al añadir usuario a la partida,{$e->getMessage()}", 'data' => null], 500);
         }
-
     }
 
     /**
@@ -298,7 +306,6 @@ class GameController extends Controller
                     'total_participants' => $game->participants->count(),
                 ],
             ];
-
         } catch (\Exception $e) {
             return [
                 'success' => false,
@@ -328,12 +335,36 @@ class GameController extends Controller
             $game = Game::findOrFail($gameId);
             $participants = $game->participants;
 
-            // debería de controllar si el usuario esta en la partida...
-            return response()->json(['success' => true, 'message' => 'Participantes obtenidos', 'data' => ['participants' => $participants]], 200);
+            $participantsFormatted = $participants->map(function ($participant) {
+                return [
+                    'id' => $participant->id,
+                    'isBot' => (bool) $participant->is_bot,
+                    'isHost' => (bool) $participant->is_host,
+                    'nickname' => $participant->nickname,
+                    'characterId' => $participant->character_id,
+                    'profileUrl' => $participant->user->profile_url,
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Participantes obtenidos',
+                'data' => [
+                    'participants' => $participantsFormatted,
+                ],
+            ], 200);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['success' => false, 'message' => 'Partida no encontrada', 'data' => ''], 404);
+            return response()->json([
+                'success' => false,
+                'message' => 'Partida no encontrada',
+                'data' => null,
+            ], 404);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => "Error al obtener participantes, {$e->getMessage()}", 'data' => ''], 500);
+            return response()->json([
+                'success' => false,
+                'message' => "Error al obtener participantes, {$e->getMessage()}",
+                'data' => null,
+            ], 500);
         }
     }
 }

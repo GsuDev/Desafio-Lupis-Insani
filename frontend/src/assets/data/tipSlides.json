@@ -1,0 +1,20 @@
+[
+    {
+        "stepNumber": 1,
+        "tittle": "LOBO",
+        "description": "Actúa con calma y no llames la atención. Manipula las sospechas hacia otros jugadores y coordínate con tu manada para eliminar aldeanos clave sin levantar sospechas.",
+        "imageUrl": "https://www.dadocritico.es/2534-medium_default/el-pacto-de-los-hombres-lobo-de-castronegro.jpg"
+    },
+    {
+        "stepNumber": 2,
+        "tittle": "ALDEANO",
+        "description": "Observa los comportamientos y participa en las votaciones con lógica. Confía, pero mantén siempre la sospecha: cualquier error puede costarte la partida.",
+        "imageUrl": "https://tse3.mm.bing.net/th/id/OIP.9r7sXqg4h24URsL_UoHiBwAAAA?rs=1&pid=ImgDetMain&o=7&rm=3"
+    },
+    {
+        "stepNumber": 3,
+        "tittle": "ASESINO",
+        "description": "Juega en la sombra y elimina estratégicamente a quienes puedan descubrirte. Sé impredecible y aprovecha el caos para sembrar miedo y desconfianza.",
+        "imageUrl": "https://th.bing.com/th/id/R.0464bb17cbdbf68ba78b40d9752f7b75?rik=KJCJAOL1zVTMIg&riu=http%3a%2f%2fgetwallpapers.com%2fwallpaper%2ffull%2f2%2fe%2fb%2f1519627-cool-ezio-auditore-wallpaper-2560x1440-for-windows.jpg&ehk=zGwr85bZW30vVLwJ4vp5f5Vimq4jBOZLlVhAmXMN5Dw%3d&risl=&pid=ImgRaw&r=0"
+    }
+]

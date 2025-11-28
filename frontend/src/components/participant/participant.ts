@@ -1,5 +1,5 @@
+import type { Participant } from '../../models/models'
 import './participant.css'
-import type { Participant } from '../../models/Participant'
 
 export class ParticipantComponent {
     private participant: Participant
@@ -14,8 +14,17 @@ export class ParticipantComponent {
 
         // Avatar circular
         const avatar = document.createElement('div')
+
         avatar.className = 'participant-avatar'
-        avatar.textContent = this.participant.nickname.charAt(0).toUpperCase()
+        if (!this.participant.profileUrl) {
+            avatar.textContent = this.participant.nickname
+                .charAt(0)
+                .toUpperCase()
+        } else {
+            const img = document.createElement('img')
+            img.src = this.participant.profileUrl
+            avatar.appendChild(img)
+        }
 
         // Nombre del participante
         const nameWrapper = document.createElement('div')

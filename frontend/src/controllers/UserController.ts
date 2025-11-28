@@ -1,7 +1,6 @@
-import type { User } from '../models/User'
-import * as userProvider from '../providers/userProvider'
-import { registerUser } from '../providers/userProvider'
-import type { RegisterData } from '../interfaces/RegisterData'
+import type { User } from '../models/models'
+import * as userProvider from '../providers/user.provider'
+import type { RegisterPayload } from '../types/payload.types'
 
 let showValidationError: (field: string, message: string) => void
 let clearValidationErrors: () => void
@@ -42,23 +41,80 @@ class UserController {
         return userProvider.isLoggedIn() && Boolean(this._currentUser)
     }
 
-    /**
-     * Inicia sesión con email y contraseña
-     * @param email Correo electrónico del usuario
-     * @param password Contraseña del usuario
-     * @returns Usuario logueado
-     * @throws Error si falla el login
-     */
     async login(email: string, password: string): Promise<User | undefined> {
-        const user = await userProvider.login(email, password)
-        if (user) {
-            this._currentUser = user
-            localStorage.setItem('currentUser', JSON.stringify(user))
+        try {
+            const response = await userProvider.login(email, password)
 
-            console.log('Usuario guardado:', this._currentUser)
+            if (!response.success) {
+                showGlobalMessage(
+                    response.message || 'Error desconocido en login',
+                    false
+                )
+                return undefined
+            }
+
+            this._currentUser = response.data?.user
+            localStorage.setItem(
+                'currentUser',
+                JSON.stringify(this._currentUser)
+            )
+
+            return this._currentUser
+        } catch (error: any) {
+            showGlobalMessage(
+                error.message || 'Error de conexión al servidor',
+                false
+            )
+            return undefined
         }
+    }
 
-        return user
+    /**Registra un usuario anonimo  */
+    async registerAnonymous(
+        nickname?: string,
+        profileUrl?: string
+    ): Promise<User | undefined> {
+        try {
+            const response = await userProvider.registerAnonymous(
+                nickname,
+                profileUrl
+            )
+
+            if (!response.success || !response.data?.user) {
+                if (showGlobalMessage) {
+                    showGlobalMessage(
+                        response.message || 'Error en el registro anónimo',
+                        false
+                    )
+                }
+                return undefined
+            }
+
+            this._currentUser = response.data.user
+
+            localStorage.setItem(
+                'currentUser',
+                JSON.stringify(this._currentUser)
+            )
+
+            if (showGlobalMessage) {
+                showGlobalMessage(
+                    'Has entrado como anónimo correctamente',
+                    true
+                )
+            }
+
+            return this._currentUser
+        } catch (error: any) {
+            if (showGlobalMessage) {
+                showGlobalMessage(
+                    error.message || 'Error de conexion al intentar entrar',
+                    false
+                )
+            }
+
+            return undefined
+        }
     }
 
     /**
@@ -103,27 +159,62 @@ class UserController {
         const response = userProvider.restorePassword(email)
         return response
     }
-    /**
-     * Carga el perfil del usuario desde la API y actualiza la sesión
-     * @returns Usuario actualizado
-     * @throws Error si falla la carga del perfil
-     */
-    async loadProfile(): Promise<User> {
-        const user = await userProvider.getProfile()
+    async loadProfile(): Promise<User | undefined> {
+        try {
+            const response = await userProvider.getProfile()
 
-        this._currentUser = user
-        localStorage.setItem('currentUser', JSON.stringify(user))
+            if (!response.success || !response.data?.user) {
+                showGlobalMessage(
+                    response.message || 'Error cargando perfil',
+                    false
+                )
+                return undefined
+            }
 
-        return user
+            this._currentUser = response.data.user
+            localStorage.setItem(
+                'currentUser',
+                JSON.stringify(this._currentUser)
+            )
+
+            return this._currentUser
+        } catch (error: any) {
+            showGlobalMessage(
+                error.message || 'Error de conexión al servidor',
+                false
+            )
+            return undefined
+        }
     }
 
-    async updateProfile(data: Partial<User>): Promise<User> {
-        const updatedUser = await userProvider.updateProfile(data)
+    async updateProfile(
+        data: Partial<User> | FormData
+    ): Promise<User | undefined> {
+        try {
+            const response = await userProvider.updateProfile(data)
 
-        this._currentUser = updatedUser
-        localStorage.setItem('currentUser', JSON.stringify(updatedUser))
+            if (!response.success || !response.data?.user) {
+                showGlobalMessage(
+                    response.message || 'Error actualizando perfil',
+                    false
+                )
+                return undefined
+            }
 
-        return updatedUser
+            this._currentUser = response.data.user
+            localStorage.setItem(
+                'currentUser',
+                JSON.stringify(this._currentUser)
+            )
+
+            return this._currentUser
+        } catch (error: any) {
+            showGlobalMessage(
+                error.message || 'Error de conexión al servidor',
+                false
+            )
+            return undefined
+        }
     }
 
     /** Restaura la sesión desde localStorage si existe */
@@ -157,10 +248,10 @@ class UserController {
     // La función principal que el formulario llamará al hacer Submit
     // Usamos 'async' porque llamaremos a una Promesa (el Provider)
     async handleRegister(formData: FormData) {
-        clearValidationErrors() // Limpia errores anteriores (llama a la vista)
-        disableForm(true) // Desactuva el formulario mientras trabaja (llama a la vista)
+        clearValidationErrors()
+        disableForm(true)
 
-        const data: RegisterData = {
+        const data: RegisterPayload = {
             nickname: formData.get('nickname') as string,
             name: formData.get('name') as string,
             lastname: formData.get('lastname') as string,
@@ -171,6 +262,7 @@ class UserController {
             ) as string,
             birthdate: formData.get('birthdate') as string,
         }
+
         let hasError = false
         if (data.password !== data.password_confirmation) {
             showValidationError(
@@ -197,28 +289,36 @@ class UserController {
         }
 
         if (hasError) {
-            disableForm(false) // Vuelve a activar el formulario si falló la validación local
-            return // Detiene el proceso
+            disableForm(false)
+            return
         }
 
         try {
-            // Llama al Provider (el Mensajero) y espera (await) la respuesta
-            const authResponse = await registerUser(formData)
-            console.log('Usuario Registrado exitosamente: ', authResponse)
-            this._currentUser = authResponse
+            const response = await userProvider.registerUser(formData)
+
+            if (!response.success) {
+                showGlobalMessage(
+                    response.message || 'Error desconocido del servidor',
+                    false
+                )
+                disableForm(false)
+                return
+            }
+
+            // Registro exitoso
+            this._currentUser = response.data?.user
             localStorage.setItem(
                 'currentUser',
                 JSON.stringify(this._currentUser)
             )
 
-            showGlobalMessage('¡Registro Exitoso! Redirigiendo...', true)
-            // Aqui iria la redireccion a la pantalla del perfil del usuario o del lobby
-            // o donde se diriga despues
+            showGlobalMessage('¡Registro exitoso! Redirigiendo...', true)
         } catch (error: any) {
             showGlobalMessage(
-                `Error: ${error.message || 'Error desconocido del servidor.'}`,
+                error.message || 'Error desconocido del servidor',
                 false
             )
+        } finally {
             disableForm(false)
         }
     }
