@@ -167,3 +167,10 @@ Content-Type: {{contentType}}
     },
     "gameId": 1
 }
+
+###  Enviar eventos a canal de lobos  1
+
+GET {{baseUrl}}/games/1/participants
+Authorization: Bearer 3|VMpbO5ouRFaSEg41yTN2NOI85r6dB6v83S945BCF51b68f89
+
+

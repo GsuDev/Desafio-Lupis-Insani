@@ -1,6 +1,7 @@
 import type { User } from '../models/models'
 import apiClient from '../services/apiClient'
 import type { ApiErrorResponse } from '../types/api.types'
+import type { AnonymousRegisterPayload } from '../types/payload.types'
 import type {
     AuthResponse,
     UserResponse,
@@ -259,6 +260,43 @@ export async function updateProfile(
                 error instanceof Error
                     ? error.message
                     : 'Error inesperado actualizando perfil',
+            data: null,
+        }
+    }
+}
+
+/**registra un usuario anonimo en el sistema
+ * nickname es opcional el nombre que quiere el usuario
+ */
+
+export async function registerAnonymous(
+    nickname?: string,
+    profileUrl?: string
+): Promise<AuthResponse | ApiErrorResponse> {
+    try {
+        //si hay nickname lo ponemos si no, enviamos un objeto vacio
+        const payload: AnonymousRegisterPayload = {}
+        if (nickname) payload.nickname = nickname
+        if (profileUrl) payload.profile_url = profileUrl
+
+        const { data } = await apiClient.post<AuthResponse>(
+            '/register/anonymous',
+            payload
+        )
+
+        if (data?.data?.token) {
+            localStorage.setItem('token', data.data.token)
+        }
+
+        return data
+    } catch (error) {
+        console.error('❌ Error en registerAnonymous:', error)
+        return {
+            success: false,
+            message:
+                error instanceof Error
+                    ? error.message
+                    : 'Error inesperado durante el registro anónimo',
             data: null,
         }
     }

@@ -1,6 +1,6 @@
+import { userController } from '../../controllers/UserController'
 import JoinGameModal from '../joinGameModal/JoinGameModal'
 import UserProfileContainer from '../userProfileContainer/userProfileContainer'
-import { loadWaitingRoom } from '../waitingRoom/waitingRoomView.mock'
 import './anonymousPlayer.css'
 
 /**
@@ -45,11 +45,6 @@ export interface CharacterOption {
     colorClass: string
 }
 
-/**
- * Clase principal del selector de "Anónimo".
- * Se instancia con un contenedor destino, se llama a `render()` y el
- * componente se encarga del DOM y eventos.
- */
 export class AnonymousSelectorComponent {
     private container: HTMLElement
     private rootElement!: HTMLDivElement
@@ -79,12 +74,6 @@ export class AnonymousSelectorComponent {
         ]
     }
 
-    /**
-     * Renderiza toda la tarjeta dentro del contenedor indicado en el constructor.
-     * - Limpia el contenedor
-     * - Crea la estructura (header, grid, input, botón)
-     * - Registra los listeners de interacción
-     */
     render(): void {
         // 2) Contenedor principal de la tarjeta
         const anonymousContainer = document.createElement('div')
@@ -165,12 +154,6 @@ export class AnonymousSelectorComponent {
         this.setupEventListeners()
     }
 
-    /**
-     * Crea un "circulito" del grid (una opción de personaje).
-     * Si `character.imagePath` existe, mete un <img> que se recorta con `object-fit: cover`.
-     * @param character Opción a pintar
-     * @returns Div con clases y contenido listos para insertar
-     */
     private createCharacterCircle(character: CharacterOption): HTMLDivElement {
         const circle = document.createElement('div')
         circle.className = `character-circle ${character.colorClass}`
@@ -223,10 +206,9 @@ export class AnonymousSelectorComponent {
             })
         }
 
-        // Click en crear sala
         if (createButton) {
             createButton.addEventListener('click', () =>
-                this.handleJoinRoom(nicknameInput)
+                this.handleJoin(nicknameInput)
             )
         }
 
@@ -234,7 +216,7 @@ export class AnonymousSelectorComponent {
         if (nicknameInput) {
             nicknameInput.addEventListener('keypress', (event) => {
                 if (event.key === 'Enter') {
-                    this.handleJoinRoom(nicknameInput)
+                    this.handleJoin(nicknameInput)
                 }
             })
         }
@@ -268,31 +250,45 @@ export class AnonymousSelectorComponent {
      * - Valida que haya personaje seleccionado y apodo válido
      * - Si todo va bien, aquí llamaríamos al controlador que cree la sala
      */
-    private handleJoinRoom(nicknameInput: HTMLInputElement): void {
+    private async handleJoin(nicknameInput: HTMLInputElement): Promise<void> {
         const nickname = nicknameInput.value.trim()
-
-        // Limpiar error previo
         this.clearError()
 
-        // Validar que haya personaje seleccionado
         if (!this.selectedCharacterId) {
-            this.showError('Por favor, selecciona una foto ')
+            this.showError('Por favor, selecciona una foto')
             return
         }
 
-        // Validar nickname
-        if (!nickname) {
-            this.showError('Por favor, ingresa un apodo')
-            nicknameInput.focus()
-            return
+        // Buscamos en nuestro array de personajes el que tenga el ID seleccionado
+        const selectedChar = this.characters.find(
+            (c) => c.id === this.selectedCharacterId
+        )
+        const profileUrl = selectedChar?.imagePath || ''
+
+        // 2. Bloqueo de botón (UX)
+        const btn = this.rootElement.querySelector(
+            '#create-room-button'
+        ) as HTMLButtonElement
+        if (btn) {
+            btn.disabled = true
+            btn.textContent = 'Entrando...'
         }
 
-        if (nickname.length < 3) {
-            this.showError('El apodo debe tener al menos 3 caracteres')
-            nicknameInput.focus()
-            return
+        try {
+            const user = await userController.registerAnonymous(
+                nickname,
+                profileUrl
+            )
+        } catch (error) {
+            console.error(error)
+            this.showError('Error inesperado en la aplicación')
+        } finally {
+            // 4. Desbloqueamos el botón siempre
+            if (btn) {
+                btn.disabled = false
+                btn.textContent = 'Unirse a partida'
+            }
         }
-
         // En una integración real, delegaríamos la acción al controlador o provider
         console.log('Crear sala:', {
             character: this.selectedCharacterId,

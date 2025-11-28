@@ -20,3 +20,12 @@ export interface LoginPayload {
     email: string
     password: string
 }
+
+/**Payload para el registro de usuarios anonimos
+ * el nickname es opcional si no se envia, el backend genera uno
+ */
+
+export interface AnonymousRegisterPayload {
+    nickname?: string
+    profile_url?: string
+}

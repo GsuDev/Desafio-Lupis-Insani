@@ -342,6 +342,7 @@ class GameController extends Controller
                     'isHost' => (bool) $participant->is_host,
                     'nickname' => $participant->nickname,
                     'characterId' => $participant->character_id,
+                    'profileUrl' => $participant->user->profile_url,
                 ];
             });
 

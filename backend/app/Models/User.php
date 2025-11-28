@@ -19,6 +19,7 @@ class User extends Authenticatable
         'password',
         'birthdate',
         'profile_url',
+        'is_anonymous',
     ];
 
     protected $hidden = [
@@ -31,6 +32,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'birthdate' => 'date',
+        'is_anonymous' => 'boolean',
     ];
 
     /**
@@ -47,5 +49,11 @@ class User extends Authenticatable
     public function hasRole(string $roleName): bool
     {
         return $this->roles()->pluck('name')->contains($roleName);
+    }
+
+    /**helper para saber si el usuario es anonimo */
+    public function isAnonymous(): bool
+    {
+        return $this->is_anonymous;
     }
 }
