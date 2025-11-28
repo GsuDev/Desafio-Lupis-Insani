@@ -34,6 +34,7 @@ export type Participant = {
     isHost: boolean
     nickname: string
     characterId: number | null
+    profileUrl: string | null
 }
 
 export type GameData = {
