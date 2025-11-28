@@ -1,6 +1,13 @@
 import './userProfile.css'
 import { userController } from '../../controllers/UserController'
 import type { User } from '../../models/models'
+import UserSettingsComponent from '../userSettings/userSettings'
+import { gameController } from '../../controllers/GameController'
+import { renderWaitingRoom } from '../waitingRoom/waiting-room'
+import JoinGameModal from '../joinGameModal/JoinGameModal'
+import AccessContainer from '../accessContainer/AccessContainer'
+import { LoginFormComponent } from '../loginForm/loginForm'
+import UserProfileContainer from '../userProfileContainer/userProfileContainer'
 
 /**
  * Componente que muestra la tarjeta del perfil del usuario
@@ -66,7 +73,10 @@ export class UserProfileComponent {
         configBtn.className = 'config-btn-mini'
         configBtn.textContent = '⚙️ Config'
         // Al hacer click, por ahora solo mostramos un log
-        configBtn.onclick = () => console.log('Ir a editar perfil...')
+        configBtn.onclick = () => {
+            const userSettings = new UserSettingsComponent(this.container)
+            userSettings.render()
+        }
 
         // se añade el titulo y el boton al div de info
         infoDiv.append(nickTitle, configBtn)
@@ -80,11 +90,39 @@ export class UserProfileComponent {
         const createBtn = document.createElement('button')
         createBtn.className = 'btn-action primary'
         createBtn.textContent = 'Crear Sala'
+        createBtn.onclick = async () => {
+            // TODO: Crear sala
+            // gameController.createGame()
+            await gameController.handleLoadGame(1)
+            const app = document.getElementById('app')
+            const game = gameController.currentGame
+            if (app && game) {
+                gameController.connectGameChannel(game.id)
+                renderWaitingRoom(app, game.id)
+            } else {
+                window.alert('no hay partida')
+                console.log('partida: ', game)
+            }
+        }
 
         // boton para unirse a la partida
         const joinBtn = document.createElement('button')
         joinBtn.className = 'btn-action secondary'
         joinBtn.textContent = 'Unirse a Sala'
+        joinBtn.onclick = async () => {
+            const app = document.getElementById('app')
+
+            if (app) {
+                const modal = new JoinGameModal(app, () => {
+                    console.log('El usuario canceló o cerró el modal')
+                    app.innerHTML = ''
+                    const accessContainer = new UserProfileContainer(app)
+                    accessContainer.render()
+                })
+
+                modal.render()
+            }
+        }
 
         // se añaden los botones
         actionsDiv.append(createBtn, joinBtn)

@@ -138,37 +138,41 @@ class GameController extends Controller
     }
 
     // addMensajeByPartida
-    public function addMessageByGame(Request $req, $gameId)
+    public static function addMessageByGame($data, $type)
     {
         $messages = [
-            'type.required' => 'El campo "type" es requerido.',
-            'user_id.integer' => 'El campo "user_id" debe ser un ID de usuario válido.',
+            'gameId.required' => 'El campo "gameId" es requerido.',
+            'userId.integer' => 'El campo "userId" debe ser un ID de usuario válido.',
             'message.required' => 'El campo "message" es requerido.',
         ];
 
         $rules = [
-            'type' => 'required|string',
-            'user_id' => 'nullable|integer|exists:users,id',
+            'gameId' => 'required|integer',
+            'userId' => 'nullable|integer|exists:users,id',
             'message' => 'required|string',
         ];
 
-        $validator = Validator::make($req->all(), $rules, $messages);
+        $validator = Validator::make($data, $rules, $messages);
         if ($validator->fails()) {
-            return response()->json([
+            return [
                 'success' => false,
                 'message' => $validator->errors(),
                 'data' => null,
-            ], 422);
+            ];
         }
 
         try {
-            $game = Game::findOrFail($gameId);
+            $game = Game::findOrFail($data['gameId']);
             // ¡Pasa el user_id, no el user!
-            $game->addMessage($req->type, $req->user_id, $req->message);
+            $createdMessage = $game->addMessage($type, $data['userId'], $data['message']);
 
-            return response()->json(['success' => true, 'message' => 'Mensaje añadido correctamente', 'data' => null], 200);
+            return [
+                'success' => true,
+                'message' => 'Mensaje añadido correctamente',
+                'data' => $createdMessage->toStructured(),
+            ];
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => "Error al añadir mensaje,{$e->getMessage()}", 'data' => null], 500);
+            return ['success' => false, 'message' => "Error al añadir mensaje,{$e->getMessage()}", 'data' => null];
         }
     }
 

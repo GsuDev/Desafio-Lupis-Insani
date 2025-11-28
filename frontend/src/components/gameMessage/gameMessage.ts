@@ -38,7 +38,7 @@ export class GameMessage {
             img.alt = this.data.nickname
             avatar.appendChild(img)
         } else {
-            avatar.textContent = this.data.nickname.charAt(0).toUpperCase()
+            avatar.textContent = 'A'.charAt(0).toUpperCase()
             avatar.style.backgroundColor = '#ccc'
         }
 
@@ -59,11 +59,12 @@ export class GameMessage {
         // burbuja dse texto
         const bubble = document.createElement('div')
         bubble.className = 'message-bubble'
+        console.log('mensajeeeeee ---->: ', this.data.message)
         bubble.textContent = this.data.message // usa el campo mensaje
 
         const time = document.createElement('span')
         time.className = 'message-time'
-        time.textContent = this.data.time
+        time.textContent = this.formatTime(this.data.time)
 
         contentSection.appendChild(bubble)
         contentSection.appendChild(time)
@@ -74,20 +75,18 @@ export class GameMessage {
         return this.container
     }
 
-    // DEPRECATED: Viene formateada ya
-
-    // /**
-    //  * Formatea la fecha string "2023-11-24T10:00:00" a "10:00"
-    //  */
-    // private formatTime(dateString: string): string {
-    //     try {
-    //         const date = new Date(dateString)
-    //         return date.toLocaleTimeString([], {
-    //             hour: '2-digit',
-    //             minute: '2-digit',
-    //         })
-    //     } catch (e) {
-    //         return ''
-    //     }
-    // }
+    /**
+     * Formatea la fecha string "2023-11-24T10:00:00" a "10:00"
+     */
+    private formatTime(dateString: string): string {
+        try {
+            const date = new Date(dateString)
+            return date.toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+            })
+        } catch (e) {
+            return ''
+        }
+    }
 }

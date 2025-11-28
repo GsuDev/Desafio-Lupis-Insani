@@ -4,6 +4,7 @@
  * para la Sala de Espera (WaitingRoom) y otras vistas relacionadas con el juego.
  */
 
+import { GameChannel } from '../channels/GameChannel'
 import type { Game, Message } from '../models/models'
 import { getGame, joinGameRequest } from '../providers/game.provider'
 
@@ -13,6 +14,8 @@ import { getGame, joinGameRequest } from '../providers/game.provider'
 
 class GameController {
     private static instance: GameController
+
+    private gameChannel: GameChannel | null = null
 
     //tengo que guardar el estado de la partida
     private _currentGame: Game | undefined
@@ -36,6 +39,23 @@ class GameController {
 
     get currentGame() {
         return this._currentGame
+    }
+
+    set currentGame(currentGame) {
+        localStorage.setItem('currentGame', JSON.stringify(currentGame))
+    }
+
+    /** Restaura la sesión desde localStorage si existe */
+    public restoreSession(): void {
+        const savedGame = localStorage.getItem('currentGame')
+        if (savedGame) {
+            try {
+                this._currentGame = JSON.parse(savedGame) as Game
+            } catch {
+                // Si hay error al parsear, limpiamos el localStorage
+                localStorage.removeItem('currentGame')
+            }
+        }
     }
 
     /**
@@ -138,12 +158,7 @@ class GameController {
             this._showLoading(false)
         }, 1000)
     }
-
-    public handleNewMessage(message: Message): void {
-        if (this._addChatMessage) {
-            this._addChatMessage(message)
-        }
-    }
+    public handleCreateGame() {}
 
     public async handleJoin(gameId: number): Promise<Game> {
         const response = await joinGameRequest(gameId)
@@ -154,6 +169,26 @@ class GameController {
         localStorage.setItem('currentGame', JSON.stringify(response.data.game))
 
         return response.data.game
+    }
+    public connectGameChannel(gameId: number): void {
+        try {
+            this.gameChannel = new GameChannel(gameId)
+            console.log(`✅ Game Channel conectado`, 'success')
+        } catch (error) {
+            console.log(`❌ Error: ${error}`, 'error')
+        }
+    }
+
+    public disconnectGameChannel(): void {
+        try {
+            if (this.gameChannel) {
+                this.gameChannel.leave()
+                this.gameChannel = null
+            }
+            console.log('👋 Game Channel desconectado', 'info')
+        } catch (error) {
+            console.log(`❌ Error: ${error}`, 'error')
+        }
     }
 }
 

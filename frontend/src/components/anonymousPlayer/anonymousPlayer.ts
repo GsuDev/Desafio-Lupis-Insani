@@ -1,4 +1,7 @@
 import { userController } from '../../controllers/UserController'
+import JoinGameModal from '../joinGameModal/JoinGameModal'
+import UserProfileContainer from '../userProfileContainer/userProfileContainer'
+import { loadWaitingRoom } from '../waitingRoom/waitingRoomView.mock'
 import './anonymousPlayer.css'
 
 /**
@@ -206,6 +209,7 @@ export class AnonymousSelectorComponent {
 
         if (createButton) {
             createButton.addEventListener('click', () =>
+                this.handleJoinRoom(nicknameInput)
                 this.handleJoin(nicknameInput)
             )
         }
@@ -214,6 +218,7 @@ export class AnonymousSelectorComponent {
         if (nicknameInput) {
             nicknameInput.addEventListener('keypress', (event) => {
                 if (event.key === 'Enter') {
+                    this.handleJoinRoom(nicknameInput)
                     this.handleJoin(nicknameInput)
                 }
             })
@@ -242,6 +247,7 @@ export class AnonymousSelectorComponent {
         // Aquí podríamos emitir un evento o callback si hiciera falta
     }
 
+    // TODO: Incorporar llamada para tener token
     /**
      * Maneja el click del botón principal (o Enter en el input):
      * - Valida que haya personaje seleccionado y apodo válido
@@ -285,6 +291,24 @@ export class AnonymousSelectorComponent {
                 btn.disabled = false
                 btn.textContent = 'Unirse a partida'
             }
+        }
+        // En una integración real, delegaríamos la acción al controlador o provider
+        console.log('Crear sala:', {
+            character: this.selectedCharacterId,
+            nickname: nickname,
+        })
+
+        const app = document.getElementById('app')
+
+        if (app) {
+            const modal = new JoinGameModal(app, () => {
+                console.log('El usuario canceló o cerró el modal')
+                app.innerHTML = ''
+                const accessContainer = new UserProfileContainer(app)
+                accessContainer.render()
+            })
+
+            modal.render()
         }
     }
 
