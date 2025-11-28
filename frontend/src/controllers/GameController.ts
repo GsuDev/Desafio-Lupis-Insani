@@ -161,6 +161,7 @@ class GameController {
     public handleCreateGame() {}
 
     public async handleJoin(gameId: number): Promise<Game> {
+        console.log('handleJoin en el GameController')
         const response = await joinGameRequest(gameId)
         if (!response.data) {
             throw new Error('Error al unirse a la partida.')

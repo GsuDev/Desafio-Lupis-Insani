@@ -22,7 +22,7 @@ class AuthController extends Controller
         $finalName = $validated['nickname'] ?? null;
 
         // si el nickname esta vacio generamos uno divertido
-        if (! $finalName) {
+        if (! $finalName || trim($finalName) == '') {
             $adjetivos_graciosos = [
                 'chirriante', 'despeinado', 'tambaleante', 'orejudo', 'cabezón',
                 'desgarbado', 'zarrapastroso', 'mocoso', 'patitieso', 'despatarrado',

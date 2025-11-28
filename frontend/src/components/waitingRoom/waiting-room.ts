@@ -102,7 +102,7 @@ export const renderWaitingRoom = async (
         }
         // Actualiza la lista de participantes con los datos del juego
         const participants = game.participants || []
-        participants.forEach((p) => console.log(p))
+        // participants.forEach((p) => console.log(p))
         participantList.updateParticipants(participants)
         participantList.disableButton(!participantController.isHost())
 
@@ -112,6 +112,7 @@ export const renderWaitingRoom = async (
             console.log('📩', game.messages)
             //game.messages.forEach((msg) => WaitingRoomChat.addMessage(msg))
         }
+        gameController.connectGameChannel(gameId)
     }
     await renderGameDetails(gameId)
 

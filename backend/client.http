@@ -154,7 +154,7 @@ Content-Type: {{contentType}}
 ###  Enviar eventos a canal de partida  1
 
 POST {{baseUrl}}/games/1/game/send
-Authorization: Bearer 144|NaT7sqbGkRSkNQmskeMpD3GzfmhXgVioLOjqV8IT026cc5a4
+Authorization: Bearer 2|7IDFfaNuSWSBsSEihvyxpLatt557FWYS7lyq79GP1dae803d
 Content-Type: {{contentType}}
 
 {
@@ -171,6 +171,6 @@ Content-Type: {{contentType}}
 ###  Enviar eventos a canal de lobos  1
 
 GET {{baseUrl}}/games/1/participants
-Authorization: Bearer 3|VMpbO5ouRFaSEg41yTN2NOI85r6dB6v83S945BCF51b68f89
+Authorization: Bearer 8|qXMOwSoxS6XU40YhaAaXDyPOhCBENJZedFBYf5I4e8c416e0
 
 

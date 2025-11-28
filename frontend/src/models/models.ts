@@ -39,7 +39,7 @@ export type Participant = {
 
 export type GameData = {
     id: number
-    state: boolean
+    state: string
     url: string
     createdAt: string
 }
