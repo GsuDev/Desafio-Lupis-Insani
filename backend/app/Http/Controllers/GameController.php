@@ -334,7 +334,6 @@ class GameController extends Controller
         try {
             $game = Game::findOrFail($gameId);
             $participants = $game->participants;
-            
 
             $participantsFormatted = $participants->map(function ($participant) {
                 return [
@@ -343,7 +342,7 @@ class GameController extends Controller
                     'isHost' => (bool) $participant->is_host,
                     'nickname' => $participant->nickname,
                     'characterId' => $participant->character_id,
-                    'profileUrl' => $participant->user->profile_url
+                    'profileUrl' => $participant->user->profile_url,
                 ];
             });
 
