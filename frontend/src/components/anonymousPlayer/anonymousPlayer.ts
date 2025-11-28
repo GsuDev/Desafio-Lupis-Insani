@@ -259,6 +259,10 @@ export class AnonymousSelectorComponent {
             return
         }
 
+        // Buscamos en nuestro array de personajes el que tenga el ID seleccionado
+        const selectedChar = this.characters.find(c => c.id === this.selectedCharacterId);
+        const profileUrl = selectedChar?.imagePath || '';
+
         // 2. Bloqueo de botón (UX)
         const btn = this.rootElement.querySelector('#create-room-button') as HTMLButtonElement
         if(btn) { 
@@ -267,7 +271,7 @@ export class AnonymousSelectorComponent {
         }
 
         try{
-            const user = await userController.registerAnonymous(nickname );
+            const user = await userController.registerAnonymous(nickname,profileUrl );
         }catch (error) {
             console.error(error);
             this.showError('Error inesperado en la aplicación');

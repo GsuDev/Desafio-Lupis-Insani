@@ -70,9 +70,9 @@ class UserController {
     }
 
     /**Registra un usuario anonimo  */
-    async registerAnonymous(nickname?: string): Promise<User | undefined> {
+    async registerAnonymous(nickname?: string, profileUrl?:string): Promise<User | undefined> {
         try{
-            const response = await userProvider.registerAnonymous(nickname)
+            const response = await userProvider.registerAnonymous(nickname,profileUrl)
 
             if (!response.success || !response.data?.user) {
                 if (showGlobalMessage) {

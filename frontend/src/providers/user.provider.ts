@@ -270,11 +270,14 @@ export async function updateProfile(
  */
 
 export async function registerAnonymous(
-    nickname?:string
+    nickname?:string,
+    profileUrl?: string
 ):Promise<AuthResponse | ApiErrorResponse>{
     try{
         //si hay nickname lo ponemos si no, enviamos un objeto vacio
-        const payload: AnonymousRegisterPayload = nickname ? { nickname } : {}
+        const payload: AnonymousRegisterPayload = {}
+        if (nickname) payload.nickname = nickname
+        if (profileUrl) payload.profile_url = profileUrl
 
         const { data } = await apiClient.post<AuthResponse>(
             '/register/anonymous',

@@ -16,6 +16,7 @@ class AuthController extends Controller
     {
         $validated = $request->validate([
             'nickname' => 'nullable|string|max:255',
+            'profile_url' => 'nullable|string',
         ]);
 
         $finalName = $validated['nickname'] ?? null;
@@ -49,6 +50,7 @@ class AuthController extends Controller
             'email' => null,
             'password' => null,
             'is_anonymous' => true,
+            'profile_url' => $validated['profile_url'] ?? null,
         ]);
 
         $roleAnonymous = Role::where('name', 'player_anonymous')->first();

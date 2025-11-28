@@ -26,5 +26,6 @@ export interface LoginPayload {
  */
 
 export interface AnonymousRegisterPayload{
-    nickname?:string
+    nickname?:string,
+    profile_url?: string
 }
