@@ -70,9 +70,15 @@ class UserController {
     }
 
     /**Registra un usuario anonimo  */
-    async registerAnonymous(nickname?: string, profileUrl?:string): Promise<User | undefined> {
-        try{
-            const response = await userProvider.registerAnonymous(nickname,profileUrl)
+    async registerAnonymous(
+        nickname?: string,
+        profileUrl?: string
+    ): Promise<User | undefined> {
+        try {
+            const response = await userProvider.registerAnonymous(
+                nickname,
+                profileUrl
+            )
 
             if (!response.success || !response.data?.user) {
                 if (showGlobalMessage) {
@@ -92,42 +98,24 @@ class UserController {
             )
 
             if (showGlobalMessage) {
-                showGlobalMessage('Has entrado como anónimo correctamente', true)
+                showGlobalMessage(
+                    'Has entrado como anónimo correctamente',
+                    true
+                )
             }
 
             return this._currentUser
-        } catch(error:any){
-                if (showGlobalMessage) {
-                    showGlobalMessage(
-                        error.message || 'Error de conexion al intentar entrar',
-                        false
-                    )
-                }
+        } catch (error: any) {
+            if (showGlobalMessage) {
+                showGlobalMessage(
+                    error.message || 'Error de conexion al intentar entrar',
+                    false
+                )
+            }
 
-                return undefined
+            return undefined
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     /**
      * Cierra sesión y elimina los datos locales

@@ -25,7 +25,7 @@ export interface LoginPayload {
  * el nickname es opcional si no se envia, el backend genera uno
  */
 
-export interface AnonymousRegisterPayload{
-    nickname?:string,
+export interface AnonymousRegisterPayload {
+    nickname?: string
     profile_url?: string
 }

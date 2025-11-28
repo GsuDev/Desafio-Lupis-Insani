@@ -43,7 +43,6 @@ export interface CharacterOption {
     colorClass: string
 }
 
-
 export class AnonymousSelectorComponent {
     private container: HTMLElement
     private rootElement!: HTMLDivElement
@@ -73,7 +72,6 @@ export class AnonymousSelectorComponent {
         ]
     }
 
-    
     render(): void {
         // 2) Contenedor principal de la tarjeta
         const anonymousContainer = document.createElement('div')
@@ -206,7 +204,6 @@ export class AnonymousSelectorComponent {
             })
         }
 
-        
         if (createButton) {
             createButton.addEventListener('click', () =>
                 this.handleJoin(nicknameInput)
@@ -250,7 +247,7 @@ export class AnonymousSelectorComponent {
      * - Valida que haya personaje seleccionado y apodo válido
      * - Si todo va bien, aquí llamaríamos al controlador que cree la sala
      */
-    private async handleJoin(nicknameInput: HTMLInputElement):Promise<void>{
+    private async handleJoin(nicknameInput: HTMLInputElement): Promise<void> {
         const nickname = nicknameInput.value.trim()
         this.clearError()
 
@@ -260,30 +257,35 @@ export class AnonymousSelectorComponent {
         }
 
         // Buscamos en nuestro array de personajes el que tenga el ID seleccionado
-        const selectedChar = this.characters.find(c => c.id === this.selectedCharacterId);
-        const profileUrl = selectedChar?.imagePath || '';
+        const selectedChar = this.characters.find(
+            (c) => c.id === this.selectedCharacterId
+        )
+        const profileUrl = selectedChar?.imagePath || ''
 
         // 2. Bloqueo de botón (UX)
-        const btn = this.rootElement.querySelector('#create-room-button') as HTMLButtonElement
-        if(btn) { 
-            btn.disabled = true; 
-            btn.textContent = "Entrando...";
+        const btn = this.rootElement.querySelector(
+            '#create-room-button'
+        ) as HTMLButtonElement
+        if (btn) {
+            btn.disabled = true
+            btn.textContent = 'Entrando...'
         }
 
-        try{
-            const user = await userController.registerAnonymous(nickname,profileUrl );
-        }catch (error) {
-            console.error(error);
-            this.showError('Error inesperado en la aplicación');
+        try {
+            const user = await userController.registerAnonymous(
+                nickname,
+                profileUrl
+            )
+        } catch (error) {
+            console.error(error)
+            this.showError('Error inesperado en la aplicación')
         } finally {
             // 4. Desbloqueamos el botón siempre
-            if(btn) { 
-                btn.disabled = false; 
-                btn.textContent = "Unirse a partida";
+            if (btn) {
+                btn.disabled = false
+                btn.textContent = 'Unirse a partida'
             }
         }
-
-
     }
 
     /**

@@ -270,10 +270,10 @@ export async function updateProfile(
  */
 
 export async function registerAnonymous(
-    nickname?:string,
+    nickname?: string,
     profileUrl?: string
-):Promise<AuthResponse | ApiErrorResponse>{
-    try{
+): Promise<AuthResponse | ApiErrorResponse> {
+    try {
         //si hay nickname lo ponemos si no, enviamos un objeto vacio
         const payload: AnonymousRegisterPayload = {}
         if (nickname) payload.nickname = nickname
@@ -289,7 +289,7 @@ export async function registerAnonymous(
         }
 
         return data
-    }catch (error){
+    } catch (error) {
         console.error('❌ Error en registerAnonymous:', error)
         return {
             success: false,
@@ -297,8 +297,7 @@ export async function registerAnonymous(
                 error instanceof Error
                     ? error.message
                     : 'Error inesperado durante el registro anónimo',
-                data:null, 
+            data: null,
         }
     }
 }
-
