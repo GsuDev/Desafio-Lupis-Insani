@@ -1,6 +1,8 @@
 import { GameChat } from '../components/gameChat/gameChat'
+import { WaitingRoomChat } from '../components/waitingRoomChat/waitingRoomChat'
+import type { Message } from '../models/models'
 import { emitGameEvent, emitWolvesEvent } from '../providers/event.provider'
-import type { ChatEvent, EventPayload } from '../types/events.types'
+import type { EventPayload } from '../types/events.types'
 import { gameController } from './GameController'
 import { userController } from './UserController'
 
@@ -15,24 +17,24 @@ export class ChatController {
      * Escucha los custom events que dispara ChatManager
      */
     static async addMessage(
-        chatEvent: ChatEvent,
+        chatEvent: Message,
         targetTab: 'game' | 'wolves' = 'game'
     ) {
         // Evento: mensaje recibido del canal wolves o game
         const user = userController.currentUser
 
-        if (!chatEvent.data || !user) {
+        if (!chatEvent || !user) {
             return
         }
-        const isMine = chatEvent.data.message.userId === user.id
+        const isMine = chatEvent.userId === user.id
+        if (gameController.currentGame?.state === 'waiting') {
+            WaitingRoomChat.addMessage(chatEvent)
+        } else {
+            // Añadir a la UI en la pestaña correcta
+            GameChat.addMessage(chatEvent, isMine, targetTab)
+        }
 
-        // Añadir a la UI en la pestaña correcta
-        GameChat.addMessage(chatEvent.data.message, isMine, targetTab)
-
-        console.log(
-            `📨 Mensaje recibido en ${targetTab}:`,
-            chatEvent.data.message
-        )
+        console.log(`📨 Mensaje recibido en ${targetTab}:`, chatEvent.message)
     }
 
     /**
@@ -42,6 +44,8 @@ export class ChatController {
         const game = gameController.currentGame
         const user = userController.currentUser
 
+        console.log('que pasa aqui', game)
+        console.log('que pasa aqui', user)
         if (!user || !game) {
             console.error(`❌ Error al enviar mensaje a Wolves`)
             // Mostrar alerta al usuario
@@ -58,7 +62,7 @@ export class ChatController {
         const success = await emitWolvesEvent(game.id, 'chat.message', payload)
 
         if (success) {
-            console.log(`✅ Mensaje enviado a Game correctamente`)
+            console.log(`✅ Mensaje enviado a Wolves correctamente`)
         } else {
             console.error(`❌ Error al enviar mensaje a Wolves`)
             // Mostrar alerta al usuario

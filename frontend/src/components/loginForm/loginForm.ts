@@ -1,5 +1,6 @@
 import { userController } from '../../controllers/UserController'
 import { loadRegister } from '../userForm/registerView.mock'
+import UserProfileContainer from '../userProfileContainer/userProfileContainer'
 import './loginForm.css'
 
 export class LoginFormComponent {
@@ -50,7 +51,8 @@ export class LoginFormComponent {
             'email',
             'Correo Electrónico',
             'tu@email.com',
-            'email'
+            'email',
+            'user@example.com' // TODO: QUITAR
         )
 
         // Input de contraseña
@@ -58,7 +60,8 @@ export class LoginFormComponent {
             'password',
             'Contraseña',
             '••••••••',
-            'password'
+            'password',
+            'password' // TODO: QUITAR
         )
 
         // Botón de submit
@@ -96,7 +99,8 @@ export class LoginFormComponent {
         id: string,
         labelText: string,
         placeholder: string,
-        inputType: string = 'text'
+        inputType: string = 'text',
+        devValue: string
     ): HTMLDivElement {
         const group = document.createElement('div')
         group.className = 'login-input-group'
@@ -111,6 +115,7 @@ export class LoginFormComponent {
         input.name = id
         input.placeholder = placeholder
         input.required = true
+        input.value = devValue
 
         // Autocomplete apropiado según el tipo de campo
         if (inputType === 'email') {
@@ -199,6 +204,12 @@ export class LoginFormComponent {
 
         // Hacemos login con el userController
         const user = await userController.login(email, password)
+
+        const app = document.getElementById('app')
+        if (app) {
+            const userProfileContainer = new UserProfileContainer(app)
+            userProfileContainer.render()
+        }
     }
 
     /**

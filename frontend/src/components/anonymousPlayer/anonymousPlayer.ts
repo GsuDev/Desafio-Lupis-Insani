@@ -1,3 +1,5 @@
+import JoinGameModal from '../joinGameModal/JoinGameModal'
+import UserProfileContainer from '../userProfileContainer/userProfileContainer'
 import { loadWaitingRoom } from '../waitingRoom/waitingRoomView.mock'
 import './anonymousPlayer.css'
 
@@ -224,7 +226,7 @@ export class AnonymousSelectorComponent {
         // Click en crear sala
         if (createButton) {
             createButton.addEventListener('click', () =>
-                this.handleCreateRoom(nicknameInput)
+                this.handleJoinRoom(nicknameInput)
             )
         }
 
@@ -232,7 +234,7 @@ export class AnonymousSelectorComponent {
         if (nicknameInput) {
             nicknameInput.addEventListener('keypress', (event) => {
                 if (event.key === 'Enter') {
-                    this.handleCreateRoom(nicknameInput)
+                    this.handleJoinRoom(nicknameInput)
                 }
             })
         }
@@ -260,12 +262,13 @@ export class AnonymousSelectorComponent {
         // Aquí podríamos emitir un evento o callback si hiciera falta
     }
 
+    // TODO: Incorporar llamada para tener token
     /**
      * Maneja el click del botón principal (o Enter en el input):
      * - Valida que haya personaje seleccionado y apodo válido
      * - Si todo va bien, aquí llamaríamos al controlador que cree la sala
      */
-    private handleCreateRoom(nicknameInput: HTMLInputElement): void {
+    private handleJoinRoom(nicknameInput: HTMLInputElement): void {
         const nickname = nicknameInput.value.trim()
 
         // Limpiar error previo
@@ -296,8 +299,18 @@ export class AnonymousSelectorComponent {
             nickname: nickname,
         })
 
-        // Aquí se conectaría con el controlador
-        loadWaitingRoom()
+        const app = document.getElementById('app')
+
+        if (app) {
+            const modal = new JoinGameModal(app, () => {
+                console.log('El usuario canceló o cerró el modal')
+                app.innerHTML = ''
+                const accessContainer = new UserProfileContainer(app)
+                accessContainer.render()
+            })
+
+            modal.render()
+        }
     }
 
     /**

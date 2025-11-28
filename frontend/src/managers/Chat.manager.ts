@@ -1,5 +1,7 @@
 import { ChatController } from '../controllers/GameChatController'
-import type { EventData } from '../types/events.types'
+import { gameController } from '../controllers/GameController'
+import type { Message } from '../models/models'
+import type { ChatEvent, Event } from '../types/events.types'
 
 /**
  * En el manager se separan los eventos que vienen del router
@@ -20,24 +22,22 @@ export class ChatManager {
     }
 
     static handleEvent(
-        event: string,
-        data: EventData,
+        eventName: string,
+        event: ChatEvent,
         channel: 'game' | 'wolves'
     ): void {
-        if (!data) {
+        if (!event.data) {
             console.warn(`⚠️ ChatManager: datos vacíos para ${event}`)
             return
         }
 
-        switch (event) {
+        switch (eventName) {
             case 'chat.message':
-                console.log(`📝 mensaje Recibido en ${channel}:`, data)
-
-                ChatController.addMessage(data, channel)
+                ChatController.addMessage(event.data.message, channel)
                 break
 
             case 'chat.deleted':
-                console.log(`🗑️ mensaje eliminado en ${channel}:`, data)
+                console.log(`🗑️ mensaje eliminado en ${channel}:`, event)
 
                 break
 

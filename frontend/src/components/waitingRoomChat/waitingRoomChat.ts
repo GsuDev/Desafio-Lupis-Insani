@@ -3,17 +3,21 @@ import { WaitingRoomMessage } from '../waitingRoomMessage/waitingRoomMessage'
 import type { Message } from '../../models/models'
 
 export class WaitingRoomChat {
-    //las propiedades
+    // propiedades de instancia
     private container: HTMLElement
     private messages: Message[]
 
-    //elementos del dom
+    // elementos del dom
     private chatListElement!: HTMLElement
     private inputElement!: HTMLInputElement
     private sendButton!: HTMLButtonElement
 
-    //callback para cuando un usuario envia el mensaje, esto tiene que hacer conexion a back
+    // callback
     private onSendMessage?: (message: string) => void
+
+    // referencias estáticas compartidas
+    private static globalMessages: Message[] = []
+    private static globalChatListElement: HTMLElement | null = null
 
     constructor(
         container: HTMLElement,
@@ -21,11 +25,11 @@ export class WaitingRoomChat {
         onSendMessage?: (message: string) => void
     ) {
         if (!container) {
-            // para controlar que se ha pasado correctamente
             throw new Error(`No se pudo encontrar el contenedor`)
         }
         this.container = container
         this.messages = initialMessages
+        WaitingRoomChat.globalMessages = initialMessages
         this.onSendMessage = onSendMessage
     }
 
@@ -36,23 +40,22 @@ export class WaitingRoomChat {
     }
 
     private initDOM(): void {
-        //limpio el contenedor vacio que le he pasado
         this.container.innerHTML = ''
 
         const section = document.createElement('section')
         section.className = 'wr-chat-area'
 
-        //header
         const header = document.createElement('header')
         header.className = 'wr-chat-header'
         header.textContent = 'General prepartida'
 
-        //aqui es donde van los mensajes
         this.chatListElement = document.createElement('div')
         this.chatListElement.className = 'wr-chat-messages-list'
         this.chatListElement.id = 'chat-messages-area'
 
-        //Area del input (que es el footer)
+        // guardo referencia estática
+        WaitingRoomChat.globalChatListElement = this.chatListElement
+
         const inputArea = document.createElement('footer')
         inputArea.className = 'wr-chat-input-area'
 
@@ -61,12 +64,10 @@ export class WaitingRoomChat {
         this.inputElement.placeholder = 'Escribe un mensaje...'
         this.inputElement.className = 'wr-chat-input'
 
-        //boton de enviar
         this.sendButton = document.createElement('button')
         this.sendButton.className = 'wr-chat-send-button'
-        this.sendButton.textContent = 'Enviar' // cambiar por un simbolo
+        this.sendButton.textContent = 'Enviar'
 
-        //montaje de todo
         inputArea.appendChild(this.inputElement)
         inputArea.appendChild(this.sendButton)
 
@@ -78,10 +79,7 @@ export class WaitingRoomChat {
     }
 
     private attachEventListeners(): void {
-        //controlo que pulsen boton
         this.sendButton.addEventListener('click', () => this.handleSend())
-
-        //controlo que pulsen enter
         this.inputElement.addEventListener('keypress', (event) => {
             if (event.key === 'Enter') {
                 this.handleSend()
@@ -91,29 +89,23 @@ export class WaitingRoomChat {
 
     private handleSend(): void {
         const message = this.inputElement.value.trim()
-
         if (message) {
-            //con esto envia el callback al controllador de que hay un mensaje
             if (this.onSendMessage) {
-                //const messageData = new Message....
-                //this.onSendMessage(messageData)
-                this.onSendMessage(message) //creo que esto lo tengo que cambiar para enviar los datos de la persona
+                this.onSendMessage(message)
             }
             this.inputElement.value = ''
         }
     }
 
     private updateView(): void {
-        //actualiza la vista iterando los datos, donde controlo que la vista baje automaticamente
         this.chatListElement.innerHTML = ''
 
         if (this.messages.length > 0) {
             this.messages.forEach((message) => {
                 const messageComponent = new WaitingRoomMessage(message)
-                const messageElement = messageComponent.getElement() //el render
+                const messageElement = messageComponent.getElement()
                 this.chatListElement.appendChild(messageElement)
             })
-            //hago el auto scroll
             this.scrollToBottom()
         } else {
             this.chatListElement.innerHTML =
@@ -125,9 +117,19 @@ export class WaitingRoomChat {
         this.chatListElement.scrollTop = this.chatListElement.scrollHeight
     }
 
-    //metodo para añadir un mensaje desde fuera
-    public addMessage(message: Message): void {
-        this.messages.push(message)
-        this.updateView()
+    // método estático para añadir mensajes sin instanciar
+    public static addMessage(message: Message): void {
+        this.globalMessages.push(message)
+
+        if (this.globalChatListElement) {
+            this.globalChatListElement.innerHTML = ''
+            this.globalMessages.forEach((msg) => {
+                const messageComponent = new WaitingRoomMessage(msg)
+                const messageElement = messageComponent.getElement()
+                this.globalChatListElement!.appendChild(messageElement)
+            })
+            this.globalChatListElement.scrollTop =
+                this.globalChatListElement.scrollHeight
+        }
     }
 }

@@ -1,6 +1,6 @@
 import { WolvesEventRouter } from '../eventRouters/WolvesEvent.router'
 import echo from '../services/echo'
-import type { EventData } from '../types/events.types'
+import type { Event } from '../types/events.types'
 
 /**
  * WolvesChannel gestiona la conexión al canal privado de lobos
@@ -37,7 +37,7 @@ export class WolvesChannel {
         echo.private(channelName)
             // .listenToAll() es una "antena universal" que escucha todos los eventos
             // del canal sin necesidad de especificar el nombre de cada uno
-            .listenToAll((eventName: string, data: EventData) => {
+            .listenToAll((eventName: string, data: Event) => {
                 // Limpiar el nombre del evento si viene con punto inicial
                 // A veces Laravel/Reverb añade un punto al inicio
                 let cleanEventName = eventName

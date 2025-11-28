@@ -1,6 +1,7 @@
 import { ParticipantComponent } from '../components/participant/participant'
 import type { Participant } from '../models/models'
 import { gameController } from './GameController'
+import { userController } from './UserController'
 
 class ParticipantController {
     private static instance: ParticipantController
@@ -55,24 +56,22 @@ class ParticipantController {
     }
 
     public isHost(): boolean {
-        const currentUser = JSON.parse(
-            localStorage.getItem('currentUser') || '{}'
-        )
-        const currentGame = JSON.parse(
-            localStorage.getItem('currentGame') || '{}'
-        )
-
+        const currentUser = userController.currentUser
+        const currentGame = gameController.currentGame
+        if (!currentUser || !currentGame) {
+            return false
+        }
         // Asegúrate de que 'participants' sea un array para evitar errores.
         const participants = currentGame.participants || []
-        let host_id = 0
+        let hostId = 0
         for (const participant of participants) {
-            if (participant.is_host) {
-                host_id = participant.id
+            if (participant.isHost) {
+                hostId = participant.id
             }
         }
 
         // Si no se encuentra un host, o el usuario actual no tiene ID, no puede ser el host.
-        return host_id !== 0 && currentUser.id === host_id
+        return hostId !== 0 && currentUser.id === hostId
     }
 }
 

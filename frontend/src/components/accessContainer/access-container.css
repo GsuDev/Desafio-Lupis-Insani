@@ -14,6 +14,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
 }
 
 /* Header */
@@ -70,7 +71,7 @@ body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     align-items: center;
-    gap: 3%;
+    gap: 5%;
     max-width: 1400px;
     padding: 0 2rem;
 }

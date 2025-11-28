@@ -21,11 +21,12 @@ class ParticipantFactory extends Factory
 
         return [
             // Por defecto, crea un jugador real (no un bot)
-            'game_id' => GameFactory::factory(),
+            'game_id' => 1,
             'user_id' => $user->id,
+            'is_host' => false,
             'is_bot' => false,
             'nickname' => $user->nickname, // Asigna el nickname del usuario creado
-            'character_id' => CharacterFactory::factory(),
+            'character_id' => null,
         ];
 
     }

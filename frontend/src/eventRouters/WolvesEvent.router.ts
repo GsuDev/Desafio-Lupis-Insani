@@ -1,6 +1,6 @@
 import { WolvesChannel } from '../channels/WolvesChannel'
 import { ChatManager } from '../managers/Chat.manager'
-import type { EventData } from '../types/events.types'
+import type { Event } from '../types/events.types'
 
 /**
  * En el Router se separan los eventos que vienen del channel por categoría
@@ -12,7 +12,7 @@ export class WolvesEventRouter {
         this.channel = channel
     }
 
-    routeEvent(event: string, data: EventData): void {
+    routeEvent(event: string, data: Event): void {
         const category = event.split('.')[0]
 
         switch (category) {
