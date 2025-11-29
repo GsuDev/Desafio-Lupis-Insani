@@ -25,25 +25,89 @@ class BotVoteService
     }
 
     /**
-     * Método PRINCIPAL.
-     * Recibe los votos actuales y añade los votos de los bots.
+     * Método PRINCIPAL: Orquesta la votación de los bots.
      *
-     * @param Collection $currentVotes  Votos realizados por humanos hasta el momento.
+     * @param Collection $currentVotes  Votos humanos ya emitidos (Input de HU25).
      * @param int        $gameId        ID de la partida.
      * @param string     $phase         'day' o 'night'.
-     * @return Collection               Colección extendida (Votos humanos + Votos bots).
+     * @param int        $cycle         Número de día/turno (corresponde a day_number).
+     * @return Collection               Colección extendida (Humanos + Bots).
      */
-    public function applyBotVotes(Collection $currentVotes, int $gameId, string $phase): Collection
+    public function applyBotVotes(Collection $currentVotes, int $gameId, string $phase, int $cycle): Collection
     {
-        // TODO: 1. Obtener bots vivos que pueden votar según la fase.
         
-        // TODO: 2. Calcular ranking de votos actuales.
+        // Leemos la dispersión del .env. si no existe, usamos 0.5 por default
+        $dispersion = (float) env('BOT_VOTE_DISPERSION', 0.5);
+
+        // Necesitamos saber cómo va la votación ahora para calcular probabilidades
+        // Transformamos la colección de votos en el formato que pide nuestra calculadora:
+        // [['id' => 5, 'votes' => 2], ['id' => 8, 'votes' => 1]...]
         
-        // TODO: 3. Obtener matriz de probabilidades (usando la calculadora).
+        // Agrupamos por el ID del votado (target_id) y contamos.
+        $votedParticipants = $currentVotes->groupBy('target_id')
+            ->map(function ($votes, $targetId) {
+                return ['id' => $targetId, 'votes' => count($votes)];
+            })
+            ->sortByDesc('votes') //el mas votado primero
+            ->values()            // Re-indexamos para quitar claves raras
+            ->toArray();
+
+        // tambien necesitamos la lista de todos los vivos para saber quiénes son los otros
+        // pluck('id') nos da solo los números y los ponemos en un array bonito
+        $allAliveIds = participant::where('game_id', $gameId)->alive()->pluck('id')->toArray();
+
+        // ahora se calculan las probabilidades globales
+        // la calculadora que se hizo nos muestra las probabilidades de nuestro candidato
+        $globalProbabilities = $this->calculator->calculateProbabilities(
+            $votedParticipants, 
+            $allAliveIds, 
+            $dispersion
+        );
+
+        // se obtienen los bots que van a votar
+        $bots = $this->getEligibleBots($gameId, $phase);
+
+        // ahora se inyectan los votos
+        foreach ($bots as $bot) {
+            
+            // filtramos a quienes no pueden votar este bot en especifico
+            // quita su propio id o id de los otros lobos
+            $validCandidates = $this->excludeCandidates($allAliveIds, $bot, $phase);
+
+            // se ajustan las probabilidades:
+            
+           
+            $botProbabilities = [];
+
+            
+            foreach ($globalProbabilities as $candidateId => $probability) {
+                
+                // Comprobamos si este candidato está en la lista de válidos
+                if (in_array($candidateId, $validCandidates)) {
+                    
+                    $botProbabilities[$candidateId] = $probability;
+                }
+            }
+            // buscamos el objetivo
+            $targetId = $this->selectTarget($botProbabilities);
+
+            //TODO:VICTOR
+            //se crea el Voto en memoria no persiste en bbdd
+            // Usamos $cycle para rellenar 'day_number'.
+            // se usa  la comparación ($phase === 'day') para rellenar 'is_day'.
+            $botVote = new Vote([
+                'game_id'        => $gameId,
+                'voter_id'       => $bot->id, 
+                'target_id'      => $targetId,
+                'is_day'         => ($phase === 'day'),
+                'day_number'     => $cycle,
+            ]);
+
+            
+            $currentVotes->push($botVote);
+        }
+
         
-        // TODO: 4. Generar votos falsos para cada bot.
-        
-        // Por ahora devolvemos lo mismo que entró para que no rompa nada.
         return $currentVotes;
     }
 
