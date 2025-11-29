@@ -34,6 +34,7 @@ export const getGame = async (
     gameId: number
 ): Promise<GameResponse | ApiErrorResponse> => {
     try {
+        console.log('Game Provider getGame()')
         // 1. Lanzamos las 3 peticiones en paralelo con Axios
         const requestGame = apiClient.get<GameDataResponse | ApiErrorResponse>(
             `/games/${gameId}`
@@ -70,6 +71,8 @@ export const getGame = async (
 
         const participantsData: Participant[] =
             participantsResponse?.data?.participants ?? []
+
+        console.log('Participantes en el provider: ', participantsData)
 
         const messagesData: Message[] = messagesResponse?.data?.messages ?? []
 
@@ -249,7 +252,7 @@ export async function joinGameRequest(
     const { data: joinResponse } = await apiClient.post<VoidResponse>(
         `/games/${gameId}/join`
     )
-    if (!joinResponse.success) {
+    if (joinResponse.success) {
         const gameResponse = await getGame(gameId)
         return gameResponse
     }

@@ -300,9 +300,6 @@ export class AnonymousSelectorComponent {
         if (app) {
             const modal = new JoinGameModal(app, () => {
                 console.log('El usuario canceló o cerró el modal')
-                app.innerHTML = ''
-                const accessContainer = new UserProfileContainer(app)
-                accessContainer.render()
             })
 
             modal.render()

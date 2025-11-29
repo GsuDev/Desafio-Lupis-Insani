@@ -279,16 +279,16 @@ export async function registerAnonymous(
         if (nickname) payload.nickname = nickname
         if (profileUrl) payload.profile_url = profileUrl
 
-        const { data } = await apiClient.post<AuthResponse>(
+        const { data: response } = await apiClient.post<AuthResponse>(
             '/register/anonymous',
             payload
         )
 
-        if (data?.data?.token) {
-            localStorage.setItem('token', data.data.token)
+        if (response?.data?.token) {
+            localStorage.setItem('token', response.data.token)
         }
 
-        return data
+        return response
     } catch (error) {
         console.error('❌ Error en registerAnonymous:', error)
         return {

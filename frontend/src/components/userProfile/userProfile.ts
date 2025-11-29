@@ -33,6 +33,7 @@ export class UserProfileComponent {
                 email: null,
                 birthdate: null,
                 profile_url: null,
+                is_anonymous: true,
             }
         }
         this.userData = user
@@ -97,7 +98,6 @@ export class UserProfileComponent {
             const app = document.getElementById('app')
             const game = gameController.currentGame
             if (app && game) {
-                gameController.connectGameChannel(game.id)
                 renderWaitingRoom(app, game.id)
             } else {
                 window.alert('no hay partida')
@@ -110,11 +110,12 @@ export class UserProfileComponent {
         joinBtn.className = 'btn-action secondary'
         joinBtn.textContent = 'Unirse a Sala'
         joinBtn.onclick = async () => {
+            await gameController.handleLoadGame(1)
             const app = document.getElementById('app')
+            const game = gameController.currentGame
 
-            if (app) {
+            if (app && game) {
                 const modal = new JoinGameModal(app, () => {
-                    console.log('El usuario canceló o cerró el modal')
                     app.innerHTML = ''
                     const accessContainer = new UserProfileContainer(app)
                     accessContainer.render()

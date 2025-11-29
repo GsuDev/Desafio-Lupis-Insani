@@ -195,8 +195,8 @@ class GameController extends Controller
 
                 return response()->json([
                     'success' => true,
-                    'message' => 'No se puede unir a la partida, el usuario ya está en la partida',
-                    'data' => ['game' => $game],
+                    'message' => 'El usuario ya está en la partida',
+                    'data' => null,
                 ], 200);
             }
 
@@ -225,7 +225,7 @@ class GameController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Usuario añadido correctamente',
-                'data' => ['game' => $game],
+                'data' => null,
             ], 200);
         } catch (ModelNotFoundException $e) {
 
