@@ -7,19 +7,18 @@ class BotVoteProbabilityCalculator
     /**
      * Calcula qué porcentaje de probabilidad tiene cada candidato de recibir un voto.
      *
-     * @param array $votedParticipants Lista de los que ya tienen votos 
-     * Viene ordenada: el primero es el que más votos tiene
-     * @param array $allParticipants   Lista de todos los IDs de jugadores vivos
-     * @param float $dispersion        Un número del 0.0 al 1.0
-     * 0.0 = Los bots (votan a lo mismo)
-     * 1.0 = Los bots (consideran a todos)
-     *
-     * @return array<int, float>       Devuelve [ID_JUGADOR => PORCENTAJE]. Ej: [1 => 0.50, 2 => 0.30...]
+     * @param  array  $votedParticipants  Lista de los que ya tienen votos
+     *                                    Viene ordenada: el primero es el que más votos tiene
+     * @param  array  $allParticipants  Lista de todos los IDs de jugadores vivos
+     * @param  float  $dispersion  Un número del 0.0 al 1.0
+     *                             0.0 = Los bots (votan a lo mismo)
+     *                             1.0 = Los bots (consideran a todos)
+     * @return array<int, float> Devuelve [ID_JUGADOR => PORCENTAJE]. Ej: [1 => 0.50, 2 => 0.30...]
      */
     public function calculateProbabilities(array $votedParticipants, array $allParticipants, float $dispersion): array
     {
         // PASO 1: Separar a los ya votados de los otros sin votos
-        
+
         // Sacamos solo los IDs de la lista de votados.
         $votedIds = array_column($votedParticipants, 'id');
 

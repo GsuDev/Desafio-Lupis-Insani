@@ -88,7 +88,7 @@ class participant extends Model
     {
         return $query->whereDoesntHave('states', function ($q) {
             // Si el grupo decide otro nombre, lo cambiamos aquí y listo
-            $q->where('name', 'DEAD'); 
+            $q->where('name', 'DEAD');
         });
     }
 
