@@ -14,12 +14,12 @@ class AuthController extends Controller
     // registro de un usuario anonimo (jugador anonimo)
     public function registerAnonymous(Request $request)
     {
-        $validated = $request->validate([
+        $validator = $request->validate([
             'nickname' => 'nullable|string|max:255',
             'profile_url' => 'nullable|string',
         ]);
 
-        $finalName = $validated['nickname'] ?? null;
+        $finalName = $validator['nickname'] ?? null;
 
         // si el nickname esta vacio generamos uno divertido
         if (! $finalName) {
@@ -50,7 +50,7 @@ class AuthController extends Controller
             'email' => null,
             'password' => null,
             'is_anonymous' => true,
-            'profile_url' => $validated['profile_url'] ?? null,
+            'profile_url' => $validator['profile_url'] ?? null,
         ]);
 
         $roleAnonymous = Role::where('name', 'player_anonymous')->first();
@@ -152,11 +152,11 @@ class AuthController extends Controller
 
     public function restorePassword(Request $request)
     {
-        $validated = $request->validate([
+        $validator = $request->validate([
             'email' => 'required|email',
         ]);
 
-        $user = User::where('email', $validated['email'])->first();
+        $user = User::where('email', $validator['email'])->first();
 
         if (! $user) {
             return response()->json([
@@ -184,7 +184,7 @@ class AuthController extends Controller
 
     public function resetPassword(Request $request)
     {
-        $validated = $request->validate([
+        $validator = $request->validate([
             'password' => 'required|string|min:8',
         ]);
 
@@ -200,7 +200,7 @@ class AuthController extends Controller
         }
 
         // 5. Cambiar contraseña
-        $user->password = Hash::make($validated['password']);
+        $user->password = Hash::make($validator['password']);
         $user->save();
 
         // 6. Borrar TODOS los tokens (logout global)
