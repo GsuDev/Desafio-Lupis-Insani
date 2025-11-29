@@ -77,4 +77,28 @@ class participant extends Model
     {
         return $this->states()->where('state_id', $stateId)->exists();
     }
+
+    /**
+     * he creado estos scopes para facilitar las consultas en los otros lados
+     * y en vez de hacer cada consulta en el controlador se centraliza qui
+     * así si  mañana cambiamos la lógica de estar muerto solo toco este método
+     * * Uso: participant::alive()->get(); por poner un ejemplo
+     */
+    public function scopeAlive($query)
+    {
+        return $query->whereDoesntHave('states', function ($q) {
+            // Si el grupo decide otro nombre, lo cambiamos aquí y listo
+            $q->where('name', 'DEAD'); 
+        });
+    }
+
+    /**
+     * Helper para filtrar rápidamente a los Lobos.
+     * Lo pongo aquí para evitar escribir el ID "2" en múltiples sitios (Service, Controller, etc)
+     * Así queda más limpio leer: participant::werewolves()->get();
+     */
+    public function scopeWerewolves($query)
+    {
+        return $query->where('character_id', 2);
+    }
 }
