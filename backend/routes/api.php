@@ -28,6 +28,8 @@ Route::post('/games/{game}/bots', [GameController::class, 'testAssignBots']);
 Route::post('/login', [AuthController::class, 'publicLogin']);
 Route::post('/users', [UserController::class, 'store']);
 Route::post('/register', [UserController::class, 'register']);
+// Registro de usuario anónimo
+Route::post('/register/anonymous', [AuthController::class, 'registerAnonymous']);
 // Solicitar recuperación de contraseña
 Route::post('/restore-password', [AuthController::class, 'restorePassword']);
 
@@ -142,7 +144,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::put('/', [GameController::class, 'updateGame']);
 
             // POST /api/games/{game}/join -> GameController@joinGame
-            Route::post('/join', [GameController::class, 'joinGame']);
+            Route::post('/join', [GameController::class, 'joinGame'])->middleware('ability:join-game');
 
             // DELETE /api/games/{game} -> GameController@deleteGame
             Route::delete('/', [GameController::class, 'deleteGame']);
@@ -164,8 +166,8 @@ Route::middleware('auth:sanctum')->group(function () {
             //
 
             // --RUTAS DE ENVIO DE EVENTOS POR WEBSOCKETS---
-            Route::post('/wolves/send', [WolvesChannelController::class, 'send']);
-            Route::post('/send', [GameChannelController::class, 'send']);
+            Route::post('/wolves/send', [WolvesChannelController::class, 'send'])->middleware('ability:send-events');
+            Route::post('/game/send', [GameChannelController::class, 'send'])->middleware('ability:send-events');
         }
     );
 

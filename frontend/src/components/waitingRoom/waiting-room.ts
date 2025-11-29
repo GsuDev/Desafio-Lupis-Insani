@@ -7,6 +7,8 @@ import { WaitingRoomChat } from '../waitingRoomChat/waitingRoomChat.ts'
 // 2. Importar el CSS
 import './waiting-room.css'
 import type { Game, Message } from '../../models/models.ts'
+import { emitGameEvent } from '../../providers/event.provider.ts'
+import { userController } from '../../controllers/UserController.ts'
 
 /**
  * Crea la columna derecha (Chat)
@@ -16,7 +18,10 @@ import type { Game, Message } from '../../models/models.ts'
 // Función principal de Renderizado
 // --------------------------------------------------
 
-export const renderWaitingRoom = (container: HTMLElement, gameId: number) => {
+export const renderWaitingRoom = async (
+    container: HTMLElement,
+    gameId: number
+) => {
     // 1. Limpiar el contenedor
     container.innerHTML = ''
 
@@ -48,11 +53,12 @@ export const renderWaitingRoom = (container: HTMLElement, gameId: number) => {
     const chatComponent = new WaitingRoomChat(
         chatContainerColumn,
         [],
-        (message) => {
-            //callback de un usuario escribiendo
-            console.log('Usuario quiere enviar esto: ', message)
-            //aqui deberia de llamar a gameController para enviar el mensaje
-            //lo dejo asi para ir solucionando fallos
+        (txt: string) => {
+            emitGameEvent(1, 'chat.message', {
+                gameId,
+                message: txt,
+                userId: userController.currentUser?.id,
+            })
         }
     )
 
@@ -89,29 +95,35 @@ export const renderWaitingRoom = (container: HTMLElement, gameId: number) => {
         }
     }
 
-    const renderGameDetails = (game: Game) => {
+    const renderGameDetails = (gameId: number) => {
+        const game = gameController.currentGame
+        if (!game) {
+            return
+        }
         // Actualiza la lista de participantes con los datos del juego
         const participants = game.participants || []
+        participants.forEach((p) => console.log(p))
         participantList.updateParticipants(participants)
         participantList.disableButton(!participantController.isHost())
 
         if (game.messages && game.messages.length > 0) {
             // chatComponent es la instancia que creamos antes
             // Ojo: Tendrás que exponer un método setMessages o iterar con addMessage
-
-            game.messages.forEach((msg) => chatComponent.addMessage(msg))
+            console.log('📩', game.messages)
+            //game.messages.forEach((msg) => WaitingRoomChat.addMessage(msg))
         }
     }
+    await renderGameDetails(gameId)
 
     // 5. Conectar la Vista con el Controlador
     gameController.init(
         showLoading,
         showGlobalError,
-        renderGameDetails,
+        () => {},
         (_isDisabled: boolean) => {
             participantList.disableButton(!participantController.isHost())
         },
-        (message: Message) => chatComponent.addMessage(message)
+        (message: Message) => WaitingRoomChat.addMessage(message)
     )
 
     // 6. Añadir Listeners de la Vista

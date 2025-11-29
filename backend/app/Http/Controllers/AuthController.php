@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\RestorePasswordMail;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -10,6 +11,58 @@ use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
+    // registro de un usuario anonimo (jugador anonimo)
+    public function registerAnonymous(Request $request)
+    {
+        $validated = $request->validate([
+            'nickname' => 'nullable|string|max:255',
+            'profile_url' => 'nullable|string',
+        ]);
+
+        $finalName = $validated['nickname'] ?? null;
+
+        // si el nickname esta vacio generamos uno divertido
+        if (! $finalName) {
+            $adjetivos_graciosos = [
+                'chirriante', 'despeinado', 'tambaleante', 'orejudo', 'cabezón',
+                'desgarbado', 'zarrapastroso', 'mocoso', 'patitieso', 'despatarrado',
+                'cabeza hueca', 'salvaje', 'alocado', 'estrafalario', 'ridículo',
+                'extravagante', 'chiflado', 'bocazas', 'torpe', 'memo',
+            ];
+
+            $sustantivos_graciosos = [
+                'moflete', 'bigotillo', 'tranco', 'zarrío', 'chisme', 'artilugio',
+                'cachivache', 'trasto', 'mameluco', 'zangolotino', 'mequetrefe',
+                'papanatas', 'zopenco', 'mendrugo', 'pringao', 'calamidad',
+                'desastre', 'esperpento', 'engendro', 'galimatías',
+            ];
+
+            $adj = $adjetivos_graciosos[array_rand($adjetivos_graciosos)];
+            $sust = $sustantivos_graciosos[array_rand($sustantivos_graciosos)];
+
+            $finalName = ucfirst($adj).' '.ucfirst($sust);
+        }
+
+        $user = User::create([
+
+            'name' => $finalName,
+            'nickname' => $finalName,
+            'email' => null,
+            'password' => null,
+            'is_anonymous' => true,
+            'profile_url' => $validated['profile_url'] ?? null,
+        ]);
+
+        $roleAnonymous = Role::where('name', 'player_anonymous')->first();
+
+        if ($roleAnonymous) {
+            $user->roles()->attach($roleAnonymous->id);
+        }
+
+        return response()->json($this->login($user), 201);
+
+    }
+
     // Login y creación de token
     public function publicLogin(Request $request)
     {
@@ -48,23 +101,40 @@ class AuthController extends Controller
         // En login NO se debe volver a checkear el hash
         // porque ya se hizo en publicLogin()
 
-        // Definir abilities según rol
+        // esto de las abilities está hecho asi por el tema de gestionar los accesos del jugador anonimo
+        $gameAbilities = [
+            'join-game',
+            'send-events',
+            'read-game-state',
+        ];
+
+        $userAbilities = [
+            'update-itself',
+            'view-itself',
+            'delete-itself',
+        ];
+
+        $adminAbilities = [
+            'list-users',
+            'view-user',
+            'update-user',
+            'delete-user',
+            'assign-roles',
+        ];
+
         $abilities = [];
 
         if ($user->hasRole('admin')) {
-            $abilities = [
-                'list-users',
-                'view-user',
-                'update-user',
-                'delete-user',
-                'assign-roles',
-            ];
+            // Admin: Todo el poder + Jugar
+            $abilities = array_merge($adminAbilities, $gameAbilities);
+
+        } elseif ($user->hasRole('player_anonymous')) {
+            // Anónimo: Solo jugar
+            $abilities = $gameAbilities;
+
         } else {
-            $abilities = [
-                'update-itself',
-                'view-itself',
-                'delete-itself',
-            ];
+            // Usuario Normal: Su perfil + Jugar
+            $abilities = array_merge($userAbilities, $gameAbilities);
         }
 
         $token = $user->createToken('auth-token', $abilities)->plainTextToken;

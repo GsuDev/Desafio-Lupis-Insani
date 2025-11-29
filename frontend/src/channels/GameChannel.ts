@@ -1,6 +1,6 @@
 import { GameEventRouter } from '../eventRouters/GameEvent.router'
 import echo from '../services/echo'
-import type { EventData } from '../types/events.types'
+import type { Event } from '../types/events.types'
 
 /**
  * GameChannel gestiona la conexión al canal público del juego
@@ -33,7 +33,7 @@ export class GameChannel {
         // .private() indica que es un canal privado
         // (todos pueden entrar, pero Laravel autentica que son jugadores del juego)
         echo.private(channelName).listenToAll(
-            (eventName: string, data: EventData) => {
+            (eventName: string, data: Event) => {
                 // Limpiar el nombre del evento si viene con punto inicial
                 // A veces Laravel/Reverb añade un punto al inicio
                 let cleanEventName = eventName

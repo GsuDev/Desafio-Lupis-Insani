@@ -69,6 +69,54 @@ class UserController {
         }
     }
 
+    /**Registra un usuario anonimo  */
+    async registerAnonymous(
+        nickname?: string,
+        profileUrl?: string
+    ): Promise<User | undefined> {
+        try {
+            const response = await userProvider.registerAnonymous(
+                nickname,
+                profileUrl
+            )
+
+            if (!response.success || !response.data?.user) {
+                if (showGlobalMessage) {
+                    showGlobalMessage(
+                        response.message || 'Error en el registro anónimo',
+                        false
+                    )
+                }
+                return undefined
+            }
+
+            this._currentUser = response.data.user
+
+            localStorage.setItem(
+                'currentUser',
+                JSON.stringify(this._currentUser)
+            )
+
+            if (showGlobalMessage) {
+                showGlobalMessage(
+                    'Has entrado como anónimo correctamente',
+                    true
+                )
+            }
+
+            return this._currentUser
+        } catch (error: any) {
+            if (showGlobalMessage) {
+                showGlobalMessage(
+                    error.message || 'Error de conexion al intentar entrar',
+                    false
+                )
+            }
+
+            return undefined
+        }
+    }
+
     /**
      * Cierra sesión y elimina los datos locales
      * @throws Error si falla el logout

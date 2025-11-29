@@ -23,6 +23,9 @@ export type User = {
 
     /** URL de la imagen de perfil */
     profile_url: string | null
+
+    /**Indica si el usuario es anonimo */
+    is_anonymous: boolean
 }
 
 export type Participant = {
@@ -31,6 +34,7 @@ export type Participant = {
     isHost: boolean
     nickname: string
     characterId: number | null
+    profileUrl: string | null
 }
 
 export type GameData = {
@@ -42,7 +46,7 @@ export type GameData = {
 
 export type Game = {
     id: number
-    state: boolean
+    state: string
     url: string
     messages: Message[]
     participants: Participant[]

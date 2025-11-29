@@ -2,6 +2,7 @@ import './userProfileContainer.css'
 import { userController } from '../../controllers/UserController'
 // se importamos el componente del cuadrado del perfil para poder usarlo y verlo claro
 import UserProfileComponent from '../userProfile/userProfile'
+import AccessContainer from '../accessContainer/AccessContainer'
 
 /**
  * clase principal del perfil de usuario.
@@ -43,7 +44,15 @@ class UserProfileContainer {
         logoutBtn.className = 'logout-btn'
         logoutBtn.textContent = 'Cerrar Sesión'
         // cuando hacen click llamamos a la funcion de logout
-        logoutBtn.onclick = () => this.handleLogout()
+        logoutBtn.onclick = () => {
+            userController.logout()
+            const app = document.getElementById('app')
+            if (app) {
+                app.innerHTML = ''
+                const accessContainer = new AccessContainer(app)
+                accessContainer.render()
+            }
+        }
 
         // metemos el título y el boton dentro del header
         header.append(title, logoutBtn)
