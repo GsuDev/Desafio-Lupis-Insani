@@ -17,7 +17,7 @@ export class ChatManager {
     ): 'general' | 'wolves' {
         // Los mensajes del canal wolves van a la pestaña de lobos
         if (channel === 'wolves') return 'wolves'
-        // Los del canal game van a general
+        // Los del canal game y global van a general
         return 'general'
     }
 
