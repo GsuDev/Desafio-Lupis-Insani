@@ -37,7 +37,8 @@ class WolvesChannelController extends Controller
             ], 403);
         }
 
-        $data = self::eventCategoryFilter($validator->validated()['event'], $validator->validated()['data']);
+        // GESTIÓN DE LAS ACCIONES DEL EVENTO
+        $data = EventController::eventCategoryFilter($validator->validated()['event'], $validator->validated()['data'], $gameId, $user);
 
         // se emite el evento al canal privado
         // usamos toOthers() para que no se le reenvie el mensaje al que lo escribó
@@ -53,24 +54,5 @@ class WolvesChannelController extends Controller
             'data' => null,
         ]);
 
-    }
-
-    public function eventCategoryFilter($event, $data)
-    {
-        $category = explode('.', $event);
-        switch ($category[0]) {
-
-            case 'chat':
-                return EventController::chatEventFilter($event, $data);
-                break;
-
-            case 'game':
-                // Mensajes del sistema
-                break;
-
-            default:
-
-                break;
-        }
     }
 }
