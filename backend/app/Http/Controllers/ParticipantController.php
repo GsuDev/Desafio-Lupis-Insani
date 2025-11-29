@@ -94,7 +94,7 @@ class ParticipantController extends Controller
                 ];
             }
         } else {
-            $data['nickname'] = null;
+            // $data['nickname'] = null;
             // La regla se rompe si:
             //  (empty($data['user_id']))   -> no nos han pasado un user_id para un jugador-> error
             //  (!empty($data['nickname'])) -> nos han pasado un nickname para un jugador -> error
