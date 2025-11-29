@@ -69,14 +69,6 @@ class BotVoteService
         return $query->get();
     }
 
-    /**
-     * Decide a quién va a votar un bot específico basándose en las probabilidades.
-     * Aquí aplicaremos la ruleta aleatoria.
-     */
-    private function selectTarget(array $probabilities, participant $bot): ?int
-    {
-        return null; // Retorno vacío temporal
-    }
 
     /**
      * Filtra la lista de candidatos excluyendo a los que el bot no puede votar.
@@ -107,5 +99,36 @@ class BotVoteService
         // Re-indexamos el array (array_values) para que los índices sean 0, 1, 2... 
         // y no queden huecos como 0, 3, 5... (esto evita bugs al iterar después)
         return array_values($validCandidates);
+    }
+
+    /**
+     * Elige a la víctima usando una "Ruleta Rusa" de probabilidades.
+     * Recibo un array tipo: [ID_JUGADOR => PROBABILIDAD]. Ej: [5 => 0.20, 8 => 0.80]
+     */
+    private function selectTarget(array $probabilities): ?int
+    {
+        // se genero un número aleatorio entre 0.0 y 1.0
+        // mt_rand() da un entero gigante al dividirlo por el máximo posible me da el decimal
+        $randomValue = mt_rand() / mt_getrandmax();
+
+        $accumulator = 0.0;
+
+        // se recorro los candidatos sumando sus probabilidades
+        foreach ($probabilities as $candidateId => $probability) {
+            $accumulator += $probability;
+
+            // Si mi número aleatorio (la bola) cae dentro del rango acumulado actual,
+            // significa que ha caído en la casilla de este candidato.
+            if ($randomValue <= $accumulator) {
+                return $candidateId; 
+            }
+        }
+
+        //esto es un salvaguardas
+        // A veces la suma de decimales en informática no da exacto
+        // Si el bucle termina sin elegir a nadie por ese error milimétrico
+        // devolvemos el último candidato de la lista para no romper el juego
+        //no se va a dar el caso espero pdro por si acaso
+        return array_key_last($probabilities);
     }
 }
