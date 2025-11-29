@@ -8,6 +8,8 @@ use Illuminate\Support\Collection;
 
 class BotVoteService
 {
+
+    private const WEREWOLF_CHARACTER_ID = 2;
     /**
      * Instancia nuestro calculadora
      */
@@ -103,7 +105,7 @@ class BotVoteService
         }
 
         // Re-indexamos el array (array_values) para que los índices sean 0, 1, 2... 
-        // y no queden huecos como 0, 3, 5... (esto evita bugs al iterar después).
+        // y no queden huecos como 0, 3, 5... (esto evita bugs al iterar después)
         return array_values($validCandidates);
     }
 }
