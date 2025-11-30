@@ -6,10 +6,24 @@ use App\Http\Controllers\GameController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WolvesChannelController;
+use App\Jobs\TestPhaseJob;
+use App\Services\GameEngine;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
 Broadcast::routes(['middleware' => ['auth:sanctum']]);
+
+Route::get('/test-job', function () {
+    TestPhaseJob::dispatch()->delay(now()->addSeconds(5));
+
+    return 'Job enviado a la cola!';
+});
+Route::get('/test-start-day', function () {
+    $engine = new GameEngine;
+    $engine->startDay(1);
+
+    return 'startDay ejecutado';
+});
 
 /*
 |--------------------------------------------------------------------------

@@ -1,16 +1,19 @@
 services:
+  # -----------------------------
+  # Laravel API (HTTP)
+  # -----------------------------
   laravel:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: laravel-app
     ports:       
-      - "8000:8000"  # Para ver la web (Laravel)
-      - "8080:8080"  # Para los WebSockets (Reverb)
+      - "8000:8000"  # HTTP Laravel
     volumes:
       - ./backend:/var/www/html
     depends_on:
       - mariadb
+      - redis
     environment:
       - DB_CONNECTION=mysql
       - DB_HOST=mariadb
@@ -18,12 +21,76 @@ services:
       - DB_DATABASE=laravel
       - DB_USERNAME=laravel
       - DB_PASSWORD=secret
-    command: >
-      sh -c "composer install --no-interaction --prefer-dist &&
-           php artisan migrate --force &&
-           php artisan serve --host=0.0.0.0 --port=8000"
+      - QUEUE_CONNECTION=redis
+      - BROADCAST_DRIVER=reverb
+      - REVERB_HOST=reverb
+      - REVERB_PORT=8080
+    command: php artisan serve --host=0.0.0.0 --port=8000
+
+  # -----------------------------
+  # Laravel Reverb (WebSockets)
+  # -----------------------------
+  reverb:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: laravel-reverb
+    working_dir: /var/www/html  
+    volumes:
+      - ./backend:/var/www/html
+    depends_on:
+      - laravel
+      - redis
+    environment:
+      - QUEUE_CONNECTION=redis
+      - BROADCAST_DRIVER=reverb
+      - REVERB_PORT=8080
+      - DB_CONNECTION=mysql
+      - DB_HOST=mariadb
+      - DB_PORT=3306
+      - DB_DATABASE=laravel
+      - DB_USERNAME=laravel
+      - DB_PASSWORD=secret
+    command: php artisan reverb:start
+
+  # -----------------------------
+  # Worker (Jobs, Game Engine)
+  # -----------------------------
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: laravel-worker
+    depends_on:
+      - laravel
+      - reverb
+      - redis
+    working_dir: /var/www/html        
+    volumes:
+      - ./backend:/var/www/html
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=mariadb
+      - DB_PORT=3306
+      - DB_DATABASE=laravel
+      - DB_USERNAME=laravel
+      - DB_PASSWORD=secret
+      - QUEUE_CONNECTION=redis
+    command: sh -c "sleep 5 && php artisan queue:work --sleep=1 --tries=3 --verbose"
 
 
+  # -----------------------------
+  # Redis (para colas y Reverb)
+  # -----------------------------
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  # -----------------------------
+  # MariaDB
+  # -----------------------------
   mariadb:
     image: mariadb:11
     container_name: mariadb
@@ -38,6 +105,10 @@ services:
     volumes:
       - mariadb_data:/var/lib/mysql
 
+
+  # -----------------------------
+  # Node / Vite Frontend
+  # -----------------------------
   node:
     image: node:22
     container_name: vite-client
@@ -52,6 +123,9 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING=true
 
+  # -----------------------------
+  # Nginx Proxy
+  # -----------------------------
   nginx:
     image: nginx:alpine
     container_name: nginx-proxy
