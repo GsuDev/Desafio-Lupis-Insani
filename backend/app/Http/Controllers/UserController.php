@@ -415,4 +415,46 @@ class UserController extends Controller
             'data' => null,
         ], 200);
     }
+
+    public function getStatistics(Request $request)
+    {
+        $user = $request->user();
+
+        
+        $finishedParticipations = $user->participants()
+            ->whereHas('game', function ($query) {
+                $query->where('state', 'finished');
+            })
+            ->with(['states']) // se cargan los estados para ver si murio
+            ->get();
+
+    
+        $gamesData = $finishedParticipations->map(function ($participant) {
+            
+            // si no tiene el estado dead esque gano
+            $isDead = $participant->states->contains('name', 'DEAD');
+            $won = !$isDead;
+
+            return [
+                'gameId' => $participant->game_id,
+                'characterId' => $participant->character_id,
+                'won' => $won,
+            ];
+        });
+
+        
+        $totalGames = $gamesData->count();
+        $totalWins = $gamesData->where('won', true)->count();
+
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Estadísticas recuperadas correctamente',
+            'data' => [
+                'totalGames' => $totalGames,
+                'totalWins' => $totalWins,
+                'games' => $gamesData->values(), // esto reindexa el array por si acaso
+            ],
+        ], 200);
+    }
 }
