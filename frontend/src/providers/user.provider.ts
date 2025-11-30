@@ -6,6 +6,7 @@ import type {
     AuthResponse,
     UserResponse,
     VoidResponse,
+    UserStatisticResponse,
 } from '../types/response.types'
 
 /**
@@ -297,6 +298,29 @@ export async function registerAnonymous(
                 error instanceof Error
                     ? error.message
                     : 'Error inesperado durante el registro anónimo',
+            data: null,
+        }
+    }
+}
+
+/**
+ * Obtiene las estadisticas de juego del usuario actual
+ * Endpoint: GET /users/statistics
+ *
+ */
+
+export async function getUserStatistics(): Promise<UserStatisticResponse | ApiErrorResponse>{
+    try{
+        const {data} = await apiClient.get<UserStatisticResponse>('/users/statistics')
+        return data
+    }catch(error){
+        console.error('❌ Error en getUserStatistics:', error)
+        return {
+            success: false,
+            message:
+                error instanceof Error
+                    ? error.message
+                    : 'Error inesperado obteniendo estadisticas',
             data: null,
         }
     }
