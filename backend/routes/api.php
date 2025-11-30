@@ -88,7 +88,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Estaisticas del usuario logueado
     Route::get('/users/statistics', [UserController::class, 'getStatistics']);
-    
+
     // Consultar usuario actual
     Route::get('/user', [UserController::class, 'showItself'])
         ->middleware('view-user');
