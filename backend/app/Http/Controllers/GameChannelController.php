@@ -57,7 +57,7 @@ class GameChannelController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al emitir el evento.',
+                'message' => 'Error al emitir el evento.'.$e,
                 'data' => null,
             ], 500);
         }

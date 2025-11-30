@@ -174,3 +174,5 @@ GET {{baseUrl}}/games/1/participants
 Authorization: Bearer 8|qXMOwSoxS6XU40YhaAaXDyPOhCBENJZedFBYf5I4e8c416e0
 
 
+### Probar game engine para votación
+GET {{baseUrl}}/test-start-day
