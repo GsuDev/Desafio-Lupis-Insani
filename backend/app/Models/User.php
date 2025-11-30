@@ -56,4 +56,14 @@ class User extends Authenticatable
     {
         return $this->is_anonymous;
     }
+
+    /**
+     * si un jugador juega 5 partidas por ejemplo
+     * tiene que tener 5 registros en la tabla participants
+     * de ahi esta relacion
+     */
+    public function participants()
+    {
+        return $this->hasMany(participant::class);
+    }
 }
