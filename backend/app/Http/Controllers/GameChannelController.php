@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\GameEvent;
-use App\Models\Participant;
+use App\Models\participant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -34,7 +34,7 @@ class GameChannelController extends Controller
             ], 401);
         }
 
-        $participant = Participant::where('user_id', $user->id)
+        $participant = participant::where('user_id', $user->id)
             ->where('game_id', $gameId)
             ->first();
 
@@ -45,8 +45,8 @@ class GameChannelController extends Controller
                 'data' => null,
             ], 403);
         }
-
-        $data = self::eventCategoryFilter($validator->validated()['event'], $validator->validated()['data']);
+        // GESTIÓN DE LAS ACCIONES DEL EVENTO
+        $data = EventController::eventCategoryFilter($validator->validated()['event'], $validator->validated()['data'], $gameId, $user);
 
         try {
             broadcast(new GameEvent(
@@ -67,24 +67,5 @@ class GameChannelController extends Controller
             'message' => 'Evento enviado correctamente.',
             'data' => null,
         ]);
-    }
-
-    public function eventCategoryFilter($event, $data)
-    {
-        $category = explode('.', $event);
-        switch ($category[0]) {
-
-            case 'chat':
-                return EventController::chatEventFilter($event, $data);
-                break;
-
-            case 'game':
-                // Mensajes del sistema
-                break;
-
-            default:
-
-                break;
-        }
     }
 }

@@ -55,7 +55,7 @@ export type Game = {
 
 export type Message = {
     id: number
-    gameId: number
+    gameId: number // TODO: (prioridad ultra baja) No hace falta, al enviar el evento va en la url
     type: string
     userId: number
     nickname: string

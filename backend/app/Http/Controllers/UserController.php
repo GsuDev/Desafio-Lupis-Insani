@@ -31,7 +31,7 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $validated = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'nickname' => 'required|string|max:255',
             'name' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
@@ -40,11 +40,11 @@ class UserController extends Controller
             'birthdate' => 'required|date',
             'profile_url' => 'nullable|string',
         ]);
-        if ($validated->fails()) {
+        if ($validator->fails()) {
 
             return response()->json([
                 'success' => false,
-                'message' => $validated->errors(),
+                'message' => $validator->errors(),
                 'data' => null,
             ], 422);
         }
@@ -212,7 +212,7 @@ class UserController extends Controller
             'profile_picture.max' => 'La imagen no puede pesar más de 2MB.',
         ];
 
-        $validated = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'nickname' => 'required|string|max:255|unique:users',
             'name' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
@@ -221,16 +221,16 @@ class UserController extends Controller
             // 'profile_picture' => 'nullable|file|image|max:2048',
         ], $messages);
 
-        if ($validated->fails()) {
+        if ($validator->fails()) {
 
             return response()->json([
                 'success' => false,
-                'message' => $validated->errors(),
+                'message' => $validator->errors(),
                 'data' => null,
             ], 422);
         }
 
-        $user->update($validated->validated());
+        $user->update($validator->validated());
 
         return response()->json([
             'success' => true,
@@ -261,7 +261,7 @@ class UserController extends Controller
             'profile_picture.max' => 'La imagen no puede pesar más de 2MB.',
         ];
 
-        $validated = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'nickname' => [
                 'required',
                 'string',
@@ -280,16 +280,16 @@ class UserController extends Controller
             'profile_picture' => 'nullable|image|max:2048',
         ], $messages);
 
-        if ($validated->fails()) {
+        if ($validator->fails()) {
 
             return response()->json([
                 'success' => false,
-                'message' => $validated->errors(),
+                'message' => $validator->errors(),
                 'data' => null,
             ], 422);
         }
 
-        $dataToUpdate = $validated->validated();
+        $dataToUpdate = $validator->validated();
 
         if ($request->hasFile('profile_picture')) {
 
@@ -361,12 +361,12 @@ class UserController extends Controller
                 'data' => null,
             ], 404);
         }
-        $validated = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'roles' => 'required|int',
         ]);
 
         try {
-            $user->roles()->attach($validated->validated()['roles']);
+            $user->roles()->attach($validator->validated()['roles']);
         } catch (Exception) {
             return response()->json(['success' => false, 'message' => 'No se ha podido añadir el rol', 'data' => null], 304);
         }
@@ -384,15 +384,15 @@ class UserController extends Controller
 
         $user = $request->user();
 
-        $validated = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'oldPassword' => 'required|string|min:8',
             'password' => 'required|string|min:8',
         ]);
-        if ($validated->fails()) {
+        if ($validator->fails()) {
 
             return response()->json([
                 'success' => false,
-                'message' => $validated->errors(),
+                'message' => $validator->errors(),
                 'data' => null,
             ], 422);
         }

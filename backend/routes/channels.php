@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Participant;
+use App\Models\participant;
 use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
 
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Broadcast;
 Broadcast::channel('wolves.{gameId}', function (User $user, int $gameId) {
 
     // detectamos el participante de si esta en la partida
-    $participant = Participant::where('user_id', $user->id)
+    $participant = participant::where('user_id', $user->id)
         ->where('game_id', $gameId)
         ->first();
 
@@ -36,7 +36,7 @@ Broadcast::channel('wolves.{gameId}', function (User $user, int $gameId) {
  */
 Broadcast::channel('game.{gameId}', function ($user, $gameId) {
     // detectamos el participante de si esta en la partida
-    $participant = Participant::where('user_id', $user->id)
+    $participant = participant::where('user_id', $user->id)
         ->where('game_id', $gameId)
         ->first();
 

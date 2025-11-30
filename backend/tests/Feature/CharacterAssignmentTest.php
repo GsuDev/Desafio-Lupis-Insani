@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Game;
-use App\Models\Participant;
+use App\Models\participant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -31,7 +31,7 @@ class CharacterAssignmentTest extends TestCase
         $users = User::factory(20)->create();
 
         foreach ($users as $user) {
-            Participant::create([
+            participant::create([
                 'game_id' => $game->id,
                 'user_id' => $user->id,
                 'is_bot' => false,
@@ -39,8 +39,8 @@ class CharacterAssignmentTest extends TestCase
         }
 
         // Crear bots
-        Participant::create(['game_id' => $game->id, 'is_bot' => true]);
-        Participant::create(['game_id' => $game->id, 'is_bot' => true]);
+        participant::create(['game_id' => $game->id, 'is_bot' => true]);
+        participant::create(['game_id' => $game->id, 'is_bot' => true]);
 
         $controller = new \App\Http\Controllers\CharacterController;
         $response = $controller->assignCharacters($game);
@@ -66,7 +66,7 @@ class CharacterAssignmentTest extends TestCase
         $game = Game::factory()->create();
 
         // Solo un bot
-        Participant::create(['game_id' => $game->id, 'is_bot' => true]);
+        participant::create(['game_id' => $game->id, 'is_bot' => true]);
 
         $controller = new \App\Http\Controllers\CharacterController;
         $response = $controller->assignCharacters($game);
@@ -97,13 +97,13 @@ class CharacterAssignmentTest extends TestCase
         $game = Game::factory()->create();
 
         // Bots
-        Participant::create(['game_id' => $game->id, 'is_bot' => true]);
-        Participant::create(['game_id' => $game->id, 'is_bot' => true]);
+        participant::create(['game_id' => $game->id, 'is_bot' => true]);
+        participant::create(['game_id' => $game->id, 'is_bot' => true]);
 
         // Humanos usando factory de User
         $users = User::factory(20)->create();
         foreach ($users as $user) {
-            Participant::create([
+            participant::create([
                 'game_id' => $game->id,
                 'user_id' => $user->id,
                 'is_bot' => false,
