@@ -70,3 +70,15 @@ export interface SlideData {
     description: string
     imageUrl: string
 }
+
+export type GameStatistic = {
+    gameId: number
+    characterId: number
+    won: boolean
+}
+
+export type UserStatisticsData = {
+    totalGames: number
+    totalWins: number
+    games: GameStatistic[]
+}
