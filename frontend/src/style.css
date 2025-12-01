@@ -1,6 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Walter+Turncoat&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@300;400;600;700&display=swap');
 :root {
+    /* Tipografías */
+    --font-heading: 'Fredoka One', cursive;
+    --font-body: 'Nunito', sans-serif;
     font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
     line-height: 1.5;
     font-weight: 400;
@@ -25,6 +29,8 @@ a:hover {
 }
 
 body {
+    font-family: var(--font-body);
+    font-weight: 400;
     margin: 0;
     display: flex;
     place-items: center;
@@ -32,10 +38,27 @@ body {
     min-height: 100vh;
     justify-content: center;
 }
-
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    letter-spacing: 0.5px;
+}
 h1 {
     font-size: 3.2em;
     line-height: 1.1;
+}
+
+button,
+input,
+textarea,
+select {
+    font-family: inherit; /* Hereda Nunito o Fredoka según donde esté */
+    font-weight: inherit;
 }
 
 #app {
