@@ -3,9 +3,10 @@
     flex-direction: column;
     width: 100%;
     height: 100%;
-    background-color: #f4f4f9; /* Color de fondo ejemplo */
-    padding: 1rem;
-    box-sizing: border-box;
+    background-color: #f4f4f9;
+    /* Color de fondo ejemplo */
+    background-image: url('../../assets/gameRenders/day_game_without_fire.png');
+    background-size: 100% 100%; 
 }
 
 .game-header {
@@ -15,13 +16,13 @@
 }
 
 .game-status {
-    background-color: #fff;
+    color:#333;
     padding: 0.5rem 1rem;
     border-radius: 8px;
     margin-bottom: 1rem;
     text-align: center;
     font-weight: bold;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+   
 }
 
 .game-participants-grid {
@@ -39,17 +40,18 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     transition: transform 0.2s;
 }
 
 .participant-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .participant-card.is-bot {
-    border: 2px solid #ccc; /* Diferenciar bots visualmente */
+    border: 2px solid #ccc;
+    /* Diferenciar bots visualmente */
 }
 
 .participant-avatar img {

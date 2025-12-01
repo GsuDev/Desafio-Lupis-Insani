@@ -78,7 +78,7 @@ export class GameComponent{
      */
     public update(game: Game, participants: Participant[]): void {
         // 1. Actualizar estado del juego
-        this.statusDisplay.textContent = `Estado: ${game.state}`
+        this.statusDisplay.textContent = `CAMBIAR POR BARRA DE TIEMPO (Componente)`
 
         // 2. Actualizar participantes
         // Nota: Aquí podría ser más sofisticado y no borrar todo cada vez,
