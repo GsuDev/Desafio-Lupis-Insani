@@ -1,4 +1,4 @@
-import type { User } from '../models/models'
+import type { User, UserStatisticsData } from '../models/models'
 import * as userProvider from '../providers/user.provider'
 import type { RegisterPayload } from '../types/payload.types'
 
@@ -320,6 +320,32 @@ class UserController {
             )
         } finally {
             disableForm(false)
+        }
+    }
+
+    /**
+     * Obtiene las estadísticas del usuario actual
+     */
+    async getStatistics(): Promise<UserStatisticsData | undefined> {
+        try {
+            const response = await userProvider.getUserStatistics()
+
+            if (!response.success || !response.data) {
+                if (showGlobalMessage) {
+                    showGlobalMessage(
+                        response.message || 'Error al cargar las estadísticas',
+                        false
+                    )
+                }
+                return undefined
+            }
+
+            return response.data
+        } catch (error: any) {
+            if (showGlobalMessage) {
+                showGlobalMessage(error.message || 'Error inesperado', false)
+            }
+            return undefined
         }
     }
 }
