@@ -57,10 +57,7 @@ export class UserProfileComponent {
         const avatarImg = document.createElement('img')
         avatarImg.className = 'avatar-img'
         // Si tiene foto la usamos  si no generamos un robot aleatorio con su nombre
-        avatarImg.src =
-            this.userData.profile_url ||
-            defaultAvatar
-            
+        avatarImg.src = this.userData.profile_url || defaultAvatar
 
         // info y configuracion
         // Un div para agrupar el nombre y el boton de configuracion

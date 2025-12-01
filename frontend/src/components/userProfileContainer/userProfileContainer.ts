@@ -4,6 +4,7 @@ import { userController } from '../../controllers/UserController'
 import UserProfileComponent from '../userProfile/userProfile'
 import AccessContainer from '../accessContainer/AccessContainer'
 import UserStatistics from '../userStatistics/UserStatistics'
+import bgVideo from '../../assets/Animación_de_Fondo_para_Videojuego.mp4'
 
 /**
  * clase principal del perfil de usuario.
@@ -24,6 +25,17 @@ class UserProfileContainer {
     render(): void {
         // limpiamos lo que hubiera antes para no duplicar cosas
         this.container.innerHTML = ''
+
+        //VIDEO FONDO
+        const videoBg = document.createElement('video')
+        videoBg.src = bgVideo
+        videoBg.className = 'video-background'
+        videoBg.autoplay = true
+        videoBg.loop = true
+        videoBg.muted = true
+        videoBg.playsInline = true
+
+        this.container.appendChild(videoBg)
 
         // fondo y header
         //  div principal que envuelve todo

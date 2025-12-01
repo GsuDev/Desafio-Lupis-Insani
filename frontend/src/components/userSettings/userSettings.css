@@ -1,17 +1,18 @@
 /* el fondo oscuo */
 .modal-overlay {
-    position: fixed; /* se queda fijo en la pantalla aunque hagas scroll */
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.85); /* fondo negro casi opaco */
+    background-color: rgba(0, 0, 0, 0.3); /* fondo negro casi opaco */
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 10; /* se pone por encima de todo lo demas */
-    backdrop-filter: blur(8px); /* difumina lo que hay detras */
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
     padding: 10px;
 }
 
@@ -46,18 +47,18 @@
 }
 
 .back-btn {
-    background: rgba(255, 255, 255, 0.5); /* fondo semitransparente */
-    border: 1px solid rgba(255, 255, 255, 0.1); /* borde sutil */
-    border-radius: 12px; /* bordes un poco redondeados */
-    padding: 8px 14px; /* relleno interno */
-    font-size: 1.2rem; /* tamaño de la flecha */
-    color: #fff; /* color blanco */
-    cursor: pointer; /* cambia el cursor a manita */
-    transition: all 0.2s; /* animacion suave al cambiar estado */
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 8px 14px;
+    font-size: 1.2rem;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 .back-btn:hover {
     background: rgba(255, 255, 255, 0.15);
-    transform: translateX(-3px); /* se mueve un pelin a la izquierda */
+    transform: translateX(-3px);
 }
 
 .settings-title {
@@ -68,7 +69,7 @@
     color: #ff8f29;
     letter-spacing: 1px;
     text-align: center;
-    text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
 }
 
 .settings-form {
@@ -88,7 +89,7 @@
     display: flex;
     flex-direction: column; /* columna por si metemos mas cosas */
     align-items: center;
-    position: relative; /* para posicionamiento relativo */
+    position: relative;
     flex-shrink: 0; /* evita que se encoja si falta espacio */
 }
 
@@ -113,7 +114,7 @@
     position: absolute;
     bottom: 5px;
     right: 5px;
-    background: #FF8F29;
+    background: #ff8f29;
     border-radius: 50%;
     width: 30px;
     height: 30px;
@@ -124,7 +125,25 @@
     border: 2px solid #1e1e2f;
     pointer-events: none;
 }
-
+/* OTRA OPCION CON CAMARA TRANSPARENTE
+.avatar-col::after {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: #FF8F29;
+    border: 2px solid #1e1e2f;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    background-image: url('../../assets/camera.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 60%;
+    pointer-events: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    
+}*/
 
 .info-col {
     flex: 1; /* ocupa todo el espacio restante */
@@ -153,7 +172,7 @@
     border: 2px solid rgba(255, 255, 255, 0.1);
     border-radius: 10px;
     padding: 12px 15px;
-    font-family: var(--font-body); /* hereda la fuente del padre */
+    font-family: var(--font-body);
     font-size: 1rem;
     color: #fff;
     transition: border 0.2s;
@@ -174,7 +193,7 @@
 .btn-change-pass {
     align-self: center; /* se centra a si mismo */
     background: rgba(220, 53, 69, 0.1);
-    border: 1px solid #DC3545;
+    border: 1px solid #dc3545;
     color: #ff6b6b;
     font-family: var(--font-body);
     border-radius: 10px;
@@ -190,12 +209,11 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-
 }
 .btn-change-pass:hover {
     background: rgba(220, 53, 69, 0.2);
     box-shadow: 0 0 15px rgba(220, 53, 69, 0.3);
-    color:white
+    color: white;
 }
 
 /* footer */
@@ -209,11 +227,12 @@
     flex-shrink: 0; /* no se encoge */
 }
 /* Estilo común de botones */
-.btn-cancel, .btn-save {
+.btn-cancel,
+.btn-save {
     flex: 1;
     padding: 14px;
     border-radius: 10px;
-    font-family: var(--font-heading); /* Fredoka */
+    font-family: var(--font-heading);
     font-size: 1.1rem;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -222,7 +241,8 @@
     transition: transform 0.2s;
 }
 
-.btn-cancel:active, .btn-save:active {
+.btn-cancel:active,
+.btn-save:active {
     transform: scale(0.98);
 }
 
@@ -238,9 +258,9 @@
 }
 
 .btn-save {
-    background-color: #FF8F29;
+    background-color: #ff8f29;
     color: #1a1a1a;
-    box-shadow: 0 4px 0 #cc6e1b; /* Efecto 3D */
+    box-shadow: 0 4px 0 #cc6e1b; /* efecto 3d */
 }
 .btn-save:hover {
     background-color: #ff9f4d;

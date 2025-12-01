@@ -64,9 +64,7 @@ export class UserSettingsComponent {
         const avatarCol = document.createElement('div')
         avatarCol.className = 'avatar-col'
         const avatarImg = document.createElement('img')
-        avatarImg.src =
-            this.userData.profile_url ||
-            defaultAvatar
+        avatarImg.src = this.userData.profile_url || defaultAvatar
         avatarImg.className = 'avatar-circle'
 
         const fileInput = document.createElement('input')
@@ -136,7 +134,7 @@ export class UserSettingsComponent {
         changePassBtn.type = 'button'
         changePassBtn.className = 'btn-change-pass'
         changePassBtn.textContent = '🔒 Cambiar contraseña'
-        changePassBtn.onclick = () =>{
+        changePassBtn.onclick = () => {
             const passwordContainer = document.createElement('div')
 
             document.body.appendChild(passwordContainer)
