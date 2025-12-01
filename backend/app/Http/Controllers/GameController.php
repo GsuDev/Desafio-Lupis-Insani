@@ -138,17 +138,13 @@ class GameController extends Controller
     }
 
     // addMensajeByPartida
-    public static function addMessageByGame($data, $type)
+    public static function addMessageByGame($data, $type, $gameId, $user)
     {
         $messages = [
-            'gameId.required' => 'El campo "gameId" es requerido.',
-            'userId.integer' => 'El campo "userId" debe ser un ID de usuario válido.',
             'message.required' => 'El campo "message" es requerido.',
         ];
 
         $rules = [
-            'gameId' => 'required|integer',
-            'userId' => 'nullable|integer|exists:users,id',
             'message' => 'required|string',
         ];
 
@@ -162,9 +158,9 @@ class GameController extends Controller
         }
 
         try {
-            $game = Game::findOrFail($data['gameId']);
+            $game = Game::findOrFail($gameId);
             // ¡Pasa el user_id, no el user!
-            $createdMessage = $game->addMessage($type, $data['userId'], $data['message']);
+            $createdMessage = $game->addMessage($type, $user->id, $data['message']);
 
             return [
                 'success' => true,

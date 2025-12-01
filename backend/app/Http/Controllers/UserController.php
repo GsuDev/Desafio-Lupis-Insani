@@ -31,7 +31,7 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $validated = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'nickname' => 'required|string|max:255',
             'name' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
@@ -40,11 +40,11 @@ class UserController extends Controller
             'birthdate' => 'required|date',
             'profile_url' => 'nullable|string',
         ]);
-        if ($validated->fails()) {
+        if ($validator->fails()) {
 
             return response()->json([
                 'success' => false,
-                'message' => $validated->errors(),
+                'message' => $validator->errors(),
                 'data' => null,
             ], 422);
         }
@@ -212,7 +212,7 @@ class UserController extends Controller
             'profile_picture.max' => 'La imagen no puede pesar más de 2MB.',
         ];
 
-        $validated = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'nickname' => 'required|string|max:255|unique:users',
             'name' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
@@ -221,16 +221,16 @@ class UserController extends Controller
             // 'profile_picture' => 'nullable|file|image|max:2048',
         ], $messages);
 
-        if ($validated->fails()) {
+        if ($validator->fails()) {
 
             return response()->json([
                 'success' => false,
-                'message' => $validated->errors(),
+                'message' => $validator->errors(),
                 'data' => null,
             ], 422);
         }
 
-        $user->update($validated->validated());
+        $user->update($validator->validated());
 
         return response()->json([
             'success' => true,
@@ -261,7 +261,7 @@ class UserController extends Controller
             'profile_picture.max' => 'La imagen no puede pesar más de 2MB.',
         ];
 
-        $validated = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'nickname' => [
                 'required',
                 'string',
@@ -280,16 +280,16 @@ class UserController extends Controller
             'profile_picture' => 'nullable|image|max:2048',
         ], $messages);
 
-        if ($validated->fails()) {
+        if ($validator->fails()) {
 
             return response()->json([
                 'success' => false,
-                'message' => $validated->errors(),
+                'message' => $validator->errors(),
                 'data' => null,
             ], 422);
         }
 
-        $dataToUpdate = $validated->validated();
+        $dataToUpdate = $validator->validated();
 
         if ($request->hasFile('profile_picture')) {
 
@@ -361,12 +361,12 @@ class UserController extends Controller
                 'data' => null,
             ], 404);
         }
-        $validated = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'roles' => 'required|int',
         ]);
 
         try {
-            $user->roles()->attach($validated->validated()['roles']);
+            $user->roles()->attach($validator->validated()['roles']);
         } catch (Exception) {
             return response()->json(['success' => false, 'message' => 'No se ha podido añadir el rol', 'data' => null], 304);
         }
@@ -384,15 +384,15 @@ class UserController extends Controller
 
         $user = $request->user();
 
-        $validated = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'oldPassword' => 'required|string|min:8',
             'password' => 'required|string|min:8',
         ]);
-        if ($validated->fails()) {
+        if ($validator->fails()) {
 
             return response()->json([
                 'success' => false,
-                'message' => $validated->errors(),
+                'message' => $validator->errors(),
                 'data' => null,
             ], 422);
         }
@@ -413,6 +413,45 @@ class UserController extends Controller
             'success' => true,
             'message' => 'La contraseña ha sido cambiada correctamente',
             'data' => null,
+        ], 200);
+    }
+
+    public function getStatistics(Request $request)
+    {
+        $user = $request->user();
+
+        $finishedParticipations = $user->participants()
+            ->whereHas('game', function ($query) {
+                $query->where('state', 'finished');
+            })
+            ->with(['states', 'character']) // se cargan los estados para ver si murio
+            ->get();
+
+        $gamesData = $finishedParticipations->map(function ($participant) {
+
+            // si no tiene el estado dead esque gano
+            $isDead = $participant->states->contains('name', 'DEAD');
+            $won = ! $isDead;
+
+            return [
+                'gameId' => $participant->game_id,
+                'characterId' => $participant->character_id,
+                'characterName' => $participant->character ? $participant->character->name : 'Desconocido',
+                'won' => $won,
+            ];
+        });
+
+        $totalGames = $gamesData->count();
+        $totalWins = $gamesData->where('won', true)->count();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Estadísticas recuperadas correctamente',
+            'data' => [
+                'totalGames' => $totalGames,
+                'totalWins' => $totalWins,
+                'games' => $gamesData->values(), // esto reindexa el array por si acaso
+            ],
         ], 200);
     }
 }

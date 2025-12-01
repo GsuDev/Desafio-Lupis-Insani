@@ -5,6 +5,7 @@ import type {
     Participant,
     SlideData,
     User,
+    UserStatisticsData,
 } from '../models/models'
 import type { ApiResponse } from './api.types'
 
@@ -18,3 +19,4 @@ export type JoinGameResponse = ApiResponse<{ game: Game } | null>
 export type ParticipantsResponse = ApiResponse<{ participants: Participant[] }>
 export type VoidResponse = ApiResponse<null>
 export type SlidesResponse = ApiResponse<{ slides: SlideData[] }>
+export type UserStatisticResponse = ApiResponse<UserStatisticsData>

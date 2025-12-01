@@ -55,7 +55,7 @@ export type Game = {
 
 export type Message = {
     id: number
-    gameId: number
+    gameId: number // TODO: (prioridad ultra baja) No hace falta, al enviar el evento va en la url
     type: string
     userId: number
     nickname: string
@@ -69,4 +69,17 @@ export interface SlideData {
     tittle: string
     description: string
     imageUrl: string
+}
+
+export type GameStatistic = {
+    gameId: number
+    characterId: number
+    characterName: string
+    won: boolean
+}
+
+export type UserStatisticsData = {
+    totalGames: number
+    totalWins: number
+    games: GameStatistic[]
 }
