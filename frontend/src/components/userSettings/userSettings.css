@@ -64,7 +64,7 @@
     text-transform: uppercase;
     margin: 0;
     font-size: 1.5rem;
-    color: #00b894;
+    color: #ff8f29;
     letter-spacing: 1px;
     text-align: center;
 }
@@ -94,7 +94,7 @@
     width: 110px;
     height: 110px;
     border-radius: 50%;
-    border: 3px solid #00b894;
+    border: 3px solid #ff8f29;
     object-fit: cover; /* la imagen cubre todo sin deformarse */
     cursor: pointer;
     box-shadow: 0 0 15px rgba(0, 184, 148, 0.3);
@@ -142,7 +142,7 @@
 } /* color del texto de ayuda */
 .input-field:focus {
     outline: none;
-    border-color: #00b894;
+    border-color: #ff8f29;
     background: rgba(0, 0, 0, 0.5);
 }
 
@@ -150,7 +150,7 @@
 .btn-change-pass {
     align-self: center; /* se centra a si mismo */
     background: transparent;
-    border: 1px dashed #e74c3c;
+    border: 1px solid #e74c3c;
     color: #e74c3c;
     border-radius: 8px;
     padding: 10px 20px;
@@ -198,7 +198,7 @@
 
 .btn-save {
     flex: 1; /* ocupa la otra mitad */
-    background-color: #00b894;
+    background-color: #ff8f29;
     border: none;
     border-radius: 8px;
     padding: 12px;

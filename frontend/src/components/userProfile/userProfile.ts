@@ -8,6 +8,7 @@ import JoinGameModal from '../joinGameModal/JoinGameModal'
 import AccessContainer from '../accessContainer/AccessContainer'
 import { LoginFormComponent } from '../loginForm/loginForm'
 import UserProfileContainer from '../userProfileContainer/userProfileContainer'
+import defaultAvatar from '../../assets/characters/werewolf.png'
 
 /**
  * Componente que muestra la tarjeta del perfil del usuario
@@ -58,7 +59,8 @@ export class UserProfileComponent {
         // Si tiene foto la usamos  si no generamos un robot aleatorio con su nombre
         avatarImg.src =
             this.userData.profile_url ||
-            `https://api.dicebear.com/7.x/bottts/svg?seed=${this.userData.nickname}`
+            defaultAvatar
+            
 
         // info y configuracion
         // Un div para agrupar el nombre y el boton de configuracion

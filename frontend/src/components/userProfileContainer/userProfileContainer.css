@@ -4,7 +4,7 @@
     --primary-blue: #24243e;
     --text-light: #ffffff;
     --card-bg: rgba(255, 255, 255, 0.1);
-    --accent-green: #00b894;
+    --accent-green: #ff8f29;
 }
 
 /*  asegura que el fondo cubra toda la pantalla detras del contenedor */
@@ -99,8 +99,9 @@
 .dashboard-section {
     height: 400px;
     background: rgba(255, 255, 255, 0.05);
-    border: 1px dashed rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 15px;
+    border-color: #ff8f29;
     padding: 2rem;
     display: flex;
     justify-content: center;
