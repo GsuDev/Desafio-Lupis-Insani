@@ -11,7 +11,7 @@
     justify-content: center;
     align-items: center;
     z-index: 10; /* se pone por encima de todo lo demas */
-    backdrop-filter: blur(5px); /* difumina lo que hay detras */
+    backdrop-filter: blur(8px); /* difumina lo que hay detras */
     padding: 10px;
 }
 
@@ -22,15 +22,15 @@
     max-width: 100%;
     max-height: 95vh;
     border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 1.5rem;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 143, 41, 0.3);
+    padding: 2rem;
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.7);
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.5rem;
     position: relative; /* para posicionar cosas dentro si hace falta */
     color: white;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: var(--font-body, sans-serif);
     overflow-y: auto; /* scroll para moviles */
 }
 
@@ -39,47 +39,49 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.5);
     padding-bottom: 1rem;
     margin-bottom: 0.5rem;
     flex-shrink: 0; /* el header no se aplasta al hacer scroll */
 }
 
 .back-btn {
-    background: rgba(255, 255, 255, 0.1); /* fondo semitransparente */
-    border: 1px solid rgba(255, 255, 255, 0.2); /* borde sutil */
-    border-radius: 8px; /* bordes un poco redondeados */
-    padding: 5px 12px; /* relleno interno */
+    background: rgba(255, 255, 255, 0.5); /* fondo semitransparente */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* borde sutil */
+    border-radius: 12px; /* bordes un poco redondeados */
+    padding: 8px 14px; /* relleno interno */
     font-size: 1.2rem; /* tamaño de la flecha */
     color: #fff; /* color blanco */
     cursor: pointer; /* cambia el cursor a manita */
-    transition: all 0.3s; /* animacion suave al cambiar estado */
+    transition: all 0.2s; /* animacion suave al cambiar estado */
 }
 .back-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.15);
     transform: translateX(-3px); /* se mueve un pelin a la izquierda */
 }
 
 .settings-title {
+    font-family: var(--font-heading, sans-serif);
     text-transform: uppercase;
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     color: #ff8f29;
     letter-spacing: 1px;
     text-align: center;
+    text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
 }
 
 .settings-form {
     display: flex;
     flex-direction: column;
-    gap: 1.2rem;
+    gap: 1.5rem;
 }
 
 /* seccion superior */
 .top-section {
     display: flex;
-    gap: 1.5rem;
-    align-items: center;
+    gap: 2rem;
+    align-items: flex-start;
 }
 
 .avatar-col {
@@ -94,15 +96,35 @@
     width: 110px;
     height: 110px;
     border-radius: 50%;
-    border: 3px solid #ff8f29;
+    border: 4px solid #ff8f29;
     object-fit: cover; /* la imagen cubre todo sin deformarse */
     cursor: pointer;
-    box-shadow: 0 0 15px rgba(0, 184, 148, 0.3);
+    box-shadow: 0 0 20px rgba(255, 143, 41, 0.3);
     transition: transform 0.2s;
+    background: rgba(0, 0, 0, 0.2);
 }
 .avatar-circle:hover {
     transform: scale(1.05);
+    filter: brightness(1.1);
 }
+/* icono cambiar foto del avatar */
+.avatar-col::after {
+    content: '📷';
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: #FF8F29;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    border: 2px solid #1e1e2f;
+    pointer-events: none;
+}
+
 
 .info-col {
     flex: 1; /* ocupa todo el espacio restante */
@@ -122,49 +144,58 @@
     flex: 1; /* se reparten el espacio equitativamente */
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 6px;
 }
 
 .input-field {
     width: 100%;
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    padding: 10px 12px;
-    font-family: inherit; /* hereda la fuente del padre */
-    font-size: 0.95rem;
+    background: rgba(0, 0, 0, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 12px 15px;
+    font-family: var(--font-body); /* hereda la fuente del padre */
+    font-size: 1rem;
     color: #fff;
-    transition: border 0.3s;
+    transition: border 0.2s;
     box-sizing: border-box;
 }
 .input-field::placeholder {
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.3);
+    font-style: italic;
 } /* color del texto de ayuda */
 .input-field:focus {
     outline: none;
     border-color: #ff8f29;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 10px rgba(255, 143, 41, 0.2);
 }
 
 /* boton password */
 .btn-change-pass {
     align-self: center; /* se centra a si mismo */
-    background: transparent;
-    border: 1px solid #e74c3c;
-    color: #e74c3c;
-    border-radius: 8px;
-    padding: 10px 20px;
+    background: rgba(220, 53, 69, 0.1);
+    border: 1px solid #DC3545;
+    color: #ff6b6b;
+    font-family: var(--font-body);
+    border-radius: 10px;
+    padding: 12px 24px;
     cursor: pointer;
-    font-weight: bold;
-    font-size: 0.9rem;
+    font-weight: 700;
+    font-size: 0.95rem;
     margin-top: 0.5rem;
-    transition: all 0.3s;
+    transition: all 0.2s;
     width: 100%;
     max-width: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
 }
 .btn-change-pass:hover {
-    background: rgba(231, 76, 60, 0.1);
-    box-shadow: 0 0 10px rgba(231, 76, 60, 0.2);
+    background: rgba(220, 53, 69, 0.2);
+    box-shadow: 0 0 15px rgba(220, 53, 69, 0.3);
+    color:white
 }
 
 /* footer */
@@ -172,23 +203,33 @@
     display: flex;
     justify-content: space-between;
     margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 1.5rem;
+    border-top: 2px solid rgba(255, 255, 255, 0.05);
     gap: 1rem;
     flex-shrink: 0; /* no se encoge */
 }
+/* Estilo común de botones */
+.btn-cancel, .btn-save {
+    flex: 1;
+    padding: 14px;
+    border-radius: 10px;
+    font-family: var(--font-heading); /* Fredoka */
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.2s;
+}
+
+.btn-cancel:active, .btn-save:active {
+    transform: scale(0.98);
+}
 
 .btn-cancel {
-    flex: 1;
-    background-color: #e74c3c;
-    border: 1px solid #aaa;
-    color: #0f0c29;
-    border-radius: 8px;
-    padding: 12px;
-    font-weight: bold;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s;
+    background-color: transparent;
+    border: 2px solid #6c757d;
+    color: #adb5bd;
 }
 .btn-cancel:hover {
     border-color: #fff;
@@ -197,49 +238,39 @@
 }
 
 .btn-save {
-    flex: 1; /* ocupa la otra mitad */
-    background-color: #ff8f29;
-    border: none;
-    border-radius: 8px;
-    padding: 12px;
-    font-weight: bold;
-    font-size: 1rem;
-    color: #0f0c29;
-    cursor: pointer;
-    transition: transform 0.2s;
+    background-color: #FF8F29;
+    color: #1a1a1a;
+    box-shadow: 0 4px 0 #cc6e1b; /* Efecto 3D */
 }
 .btn-save:hover {
-    filter: brightness(1.1);
+    background-color: #ff9f4d;
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
+    box-shadow: 0 6px 0 #cc6e1b;
 }
 
+/* RESPONSIVE */
 @media (max-width: 600px) {
     .user-settings-card {
-        padding: 1rem;
+        padding: 1.5rem;
+        width: 100%;
         height: 100%;
         max-height: 100vh;
         border-radius: 0;
+        border: none;
     }
 
-    /* apilar avatar arriba y datos abajo */
     .top-section {
         flex-direction: column;
-        gap: 1rem;
+        align-items: center;
+        gap: 1.5rem;
     }
 
-    /* apilar nombre y apellido */
     .name-row {
         flex-direction: column;
         gap: 1rem;
     }
 
     .settings-title {
-        font-size: 1.2rem;
-    }
-
-    /* ajustar botones */
-    .settings-footer {
-        margin-top: auto; /* empuja el footer al final si sobra espacio */
+        font-size: 1.4rem;
     }
 }
