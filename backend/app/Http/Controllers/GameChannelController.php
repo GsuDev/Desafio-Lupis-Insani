@@ -15,6 +15,7 @@ class GameChannelController extends Controller
             'event' => 'required|string',
             'data' => 'nullable|array',
         ]);
+        echo json_encode('hola');
 
         if ($validator->fails()) {
             return response()->json([

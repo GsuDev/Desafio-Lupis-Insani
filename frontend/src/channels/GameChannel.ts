@@ -32,6 +32,7 @@ export class GameChannel {
 
         // .private() indica que es un canal privado
         // (todos pueden entrar, pero Laravel autentica que son jugadores del juego)
+
         echo.private(channelName).listenToAll(
             (eventName: string, data: Event) => {
                 // Limpiar el nombre del evento si viene con punto inicial

@@ -1,9 +1,8 @@
 <#
 .SYNOPSIS
-    Script de administración del proyecto (Equivalente al Makefile para Windows)
+    Script de administración del proyecto (Versión Corregida para Windows)
 .EXAMPLE
     .\manage.ps1 start
-    .\manage.ps1 stop
 #>
 
 param (
@@ -26,9 +25,13 @@ $DB_CONTAINER = "mariadb"
 function Wait-DB {
     Write-Host "⏳ Esperando a MySQL..." -ForegroundColor Cyan
     $ready = $false
+    # Definimos el código PHP en una variable limpia, escapando solo la variable $e
+    $phpCode = "<?php try { new PDO('mysql:host=mariadb;dbname=laravel','laravel','secret'); exit(0); } catch (Exception `$e) { exit(1); }"
+
     do {
-        # Intentamos conectar via PHP dentro del contenedor
-        docker exec $APP_CONTAINER php -r 'try { new PDO("mysql:host=mariadb;dbname=laravel","laravel","secret"); exit(0); } catch (Exception $e) { exit(1); }' 2>$null
+        # TRUCO: Enviamos el código por 'tubería' (|) directamente a la entrada de PHP.
+        # Esto evita que PowerShell intente leer las comillas o los punto y coma.
+        $phpCode | docker exec -i $APP_CONTAINER php 2>$null
         
         if ($LASTEXITCODE -eq 0) {
             $ready = $true
@@ -42,7 +45,8 @@ function Wait-DB {
 function Wait-Node {
     Write-Host "⏳ Esperando a Node/Vite..." -ForegroundColor Cyan
     do {
-        $status = docker inspect -f '{{.State.Running}}' vite-client 2>$null
+        # CORRECCIÓN: Comillas dobles para el formato de Go
+        $status = docker inspect -f "{{.State.Running}}" vite-client 2>$null
         if ($status -ne 'true') { Start-Sleep -Seconds 1 }
     } until ($status -eq 'true')
     Write-Host "🚀 Node está listo." -ForegroundColor Green

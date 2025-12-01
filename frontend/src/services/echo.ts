@@ -1,5 +1,6 @@
 import Echo from 'laravel-echo'
 import Pusher from 'pusher-js'
+import axios from 'axios'
 
 // Necesario para que TypeScript reconozca Pusher en la ventana global
 declare global {
@@ -31,12 +32,33 @@ const echo = new Echo({
     encrypted: true,
     disableStats: true,
     enabledTransports: ['ws', 'wss'],
-    authEndpoint: `${BACKEND_URL}/broadcasting/auth`,
-    auth: {
-        headers: {
-            // Token para empezar la comunicación ws
-            Authorization: 'Bearer ' + localStorage.getItem('token'),
-        },
+    // authEndpoint: `${BACKEND_URL}/broadcasting/auth`,
+    // auth: {
+    //     headers: {
+    //         // Token para empezar la comunicación ws
+    //         Authorization: 'Bearer ' + localStorage.getItem('token'),
+    //     },
+    // },
+    authorizer: (channel, options) => {
+        return {
+            authorize: (socketId, callback) => {
+                axios.post(`${BACKEND_URL}/broadcasting/auth`, {
+                    socket_id: socketId,
+                    channel_name: channel.name
+                }, {
+                    headers: {
+                        // AQUÍ ESTÁ LA CLAVE: Leemos el token EN EL MOMENTO de la petición
+                        Authorization: 'Bearer ' + localStorage.getItem('token')
+                    }
+                })
+                .then(response => {
+                    callback(null, response.data);
+                })
+                .catch(error => {
+                    callback(error instanceof Error ? error : new Error(String(error)), null);
+                });
+            }
+        };
     },
 })
 

@@ -63,7 +63,14 @@ class EventController extends Controller
                 break;
 
             case 'result':
-                // TODO VICTOR: Aquí tu función de calcular resultado
+               
+                $result = VoteController::resolveVoting($gameId, $data['phase'], $data['cycle']);
+                if (! $result['success']) {
+                    // TODO: manejar error
+                }
+
+                return ['message' => $result['data']];
+
                 break;
 
             default:
