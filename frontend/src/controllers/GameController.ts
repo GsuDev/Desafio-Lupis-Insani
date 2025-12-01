@@ -6,7 +6,7 @@
 
 import { GameChannel } from '../channels/GameChannel'
 import type { Game, Message } from '../models/models'
-import { getGame, joinGameRequest } from '../providers/game.provider'
+import { getGame, joinGameRequest, assignBots, updateGameState } from '../providers/game.provider'
 
 // import { joinGameRequest } from '../providers/joinGame.provider'
 // Importamos el provider REAL
@@ -148,15 +148,62 @@ class GameController {
     /**
      * La Vista llama a este método cuando se pulsa "Iniciar"
      */
-    public handleStartGame(): void {
+    public async handleStartGame(): Promise<void> {
+        // Comprobaciones de seguridad
+        if (!this._currentGame) return
+        
+        // Evitar doble click
+        this._disableStartButton(true)
         this._showLoading(true) // O mostrar un mensaje "Iniciando..."
 
-        // ej: await updateGame() y actualizar en servidor el boolean de comenzada
+       try {
+            const gameId = this._currentGame.id
+            const MIN_PLAYERS = 15 // Mínimo necesario según tus reglas
+            
+            // 1. Comprobar participantes y Generar Bots si es necesario
+            // (Asumimos que participants ya está cargado en _currentGame)
+            const currentPlayersCount = this._currentGame.participants.length
 
-        // Simulamos que tarda 1 segundo
-        setTimeout(() => {
+            if (currentPlayersCount < MIN_PLAYERS) {
+                console.log(`Faltan jugadores (${currentPlayersCount}/${MIN_PLAYERS}). Añadiendo bots...`)
+                
+                const botResponse = await assignBots(gameId)
+                
+                if (!botResponse.success) {
+                   throw new Error(botResponse.message || 'Error al generar bots')
+                }
+                
+                // Recarga el juego aquí para ver los bots antes de cambiar de fase
+                await this.handleLoadGame(gameId)
+            }
+
+            // 2. Iniciar la Partida (Cambiar estado)
+            // on_course
+            const startResponse = await updateGameState(gameId, 'on_course')
+
+            if (!startResponse.success || !startResponse.data) {
+                throw new Error(startResponse.message || 'Error al iniciar la partida')
+            }
+
+            console.log('✅ Partida iniciada correctamente')
+            
+            // 3. Actualizar el estado local
+            this.setGameData(startResponse.data.game)
+            
+            // Aquí la vista (WaitingRoom) debería detectar el cambio de estado 
+            // en el callback _renderGameDetails y cambiar la pantalla al componente de Juego.
+            this._renderGameDetails(startResponse.data.game)
+
+
+
+        } catch (error: any) {
+            console.error(error)
+            this._showGlobalError(error.message || 'Error desconocido al iniciar')
+            this._disableStartButton(false) // Reactivar botón si falló
+        } finally {
             this._showLoading(false)
-        }, 1000)
+        }
+
     }
     public handleCreateGame() {}
 

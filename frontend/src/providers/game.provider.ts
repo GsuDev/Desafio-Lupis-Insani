@@ -274,3 +274,48 @@ const formatTime = (dateString: string): string => {
         return ''
     }
 }
+
+/**
+ * Llama al endpoint para generar y asignar bots a la partida
+ * Ruta: POST /api/games/{gameId}/bots
+ */
+export const assignBots = async (
+    gameId: number
+): Promise<VoidResponse | ApiErrorResponse> => {
+    try {
+        const response = await apiClient.post<VoidResponse>(
+            `/games/${gameId}/bots`
+        )
+        return response.data
+    } catch (error) {
+        return {
+            success: false,
+            message: error instanceof Error ? error.message : 'Error asignando bots',
+            data: null,
+        }
+    }
+}
+
+/**
+ * Actualiza el estado de la partida (ej. para iniciarla)
+ * Ruta: PUT /api/games/{gameId}
+ */
+export const updateGameState = async (
+    gameId: number,
+    newState: string
+): Promise<GameResponse | ApiErrorResponse> => {
+    try {
+        const payload = { state: newState }
+        const response = await apiClient.put<GameResponse>(
+            `/games/${gameId}`,
+            payload
+        )
+        return response.data
+    } catch (error) {
+        return {
+            success: false,
+            message: error instanceof Error ? error.message : 'Error actualizando estado',
+            data: null,
+        }
+    }
+}
