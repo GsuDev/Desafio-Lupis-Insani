@@ -4,17 +4,17 @@
     height: 100%;
     width: 100%;
     color: #fff;
-    padding: 1rem; 
+    padding: 1rem;
     box-sizing: border-box;
     overflow: hidden; /* Evita que el contenedor padre tenga scroll doble */
 }
 
 .stats-title {
-    margin: 0 0 0.5rem 0; 
-    font-size: 1.4rem; 
+    margin: 0 0 0.5rem 0;
+    font-size: 1.4rem;
     text-align: center;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding-bottom: 0.5rem; 
+    padding-bottom: 0.5rem;
     letter-spacing: 1px;
     flex-shrink: 0; /* Que no se aplaste si falta espacio */
 }
@@ -25,9 +25,9 @@
     justify-content: space-around;
     align-items: center;
     background-color: rgba(0, 0, 0, 0.3);
-    padding: 0.8rem; 
+    padding: 0.8rem;
     border-radius: 10px;
-    margin-bottom: 0.8rem; 
+    margin-bottom: 0.8rem;
     width: 100%;
     box-sizing: border-box;
     border: 1px solid rgba(255, 255, 255, 0.05);
@@ -38,7 +38,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.2rem; 
+    gap: 0.2rem;
 }
 
 .stat-label {
@@ -49,9 +49,9 @@
 }
 
 .stat-value {
-    font-size: 1.5rem; 
+    font-size: 1.5rem;
     font-weight: 800;
-    line-height: 1; 
+    line-height: 1;
 }
 
 .stat-value.highlight {
@@ -61,11 +61,11 @@
 
 /*lista de partidas*/
 .games-list {
-    flex: 1; 
+    flex: 1;
     overflow-y: auto; /* Scroll activado */
     display: flex;
     flex-direction: column;
-    gap: 0.5rem; 
+    gap: 0.5rem;
     width: 100%;
     padding-right: 5px;
 }
@@ -84,7 +84,7 @@
     justify-content: space-between;
     align-items: center;
     background-color: rgba(255, 255, 255, 0.03);
-    padding: 0.8rem 1rem; 
+    padding: 0.8rem 1rem;
     border-radius: 6px;
     border-left: 4px solid transparent;
     transition: all 0.2s ease;
@@ -101,12 +101,20 @@
 /* Bordes de color según resultado */
 .game-item.won {
     border-left-color: #4ade80;
-    background: linear-gradient(90deg, rgba(74, 222, 128, 0.05) 0%, transparent 100%);
+    background: linear-gradient(
+        90deg,
+        rgba(74, 222, 128, 0.05) 0%,
+        transparent 100%
+    );
 }
 
 .game-item.lost {
     border-left-color: #f87171;
-    background: linear-gradient(90deg, rgba(248, 113, 113, 0.05) 0%, transparent 100%);
+    background: linear-gradient(
+        90deg,
+        rgba(248, 113, 113, 0.05) 0%,
+        transparent 100%
+    );
 }
 
 .game-info {
@@ -132,11 +140,13 @@
     font-weight: 600;
     padding: 0.2rem 0.6rem;
     border-radius: 20px;
-    background-color: rgba(0,0,0,0.2);
+    background-color: rgba(0, 0, 0, 0.2);
 }
 
 /* Estados de carga y error */
-.loading-stats, .error-msg, .no-games {
+.loading-stats,
+.error-msg,
+.no-games {
     text-align: center;
     margin-top: 2rem;
     opacity: 0.7;

@@ -14,14 +14,14 @@ class UserStatistics {
      * Es async porque pedirá datos al controlador
      */
     async render(): Promise<void> {
-        console.log("🔥 ESTOY USANDO EL CÓDIGO NUEVO (SIN MOCK) 🔥")
         //muostrar estado de carga inicial
-        this.container.innerHTML = '<div class="loading-stats">Cargando estadísticas...</div>'
+        this.container.innerHTML =
+            '<div class="loading-stats">Cargando estadísticas...</div>'
 
         // se obtienen los datosdel backen realez
-        const stats: UserStatisticsData | undefined = await userController.getStatistics()
+        const stats: UserStatisticsData | undefined =
+            await userController.getStatistics()
 
-        
         this.container.innerHTML = ''
 
         // Si no hay datos (error o fallo de conexión), mostramos error
@@ -41,13 +41,11 @@ class UserStatistics {
         const root = document.createElement('div')
         root.className = 'statistics-panel'
 
-       
         const title = document.createElement('h2')
         title.className = 'stats-title'
         title.textContent = 'Historial'
         root.appendChild(title)
 
-      
         const summary = document.createElement('div')
         summary.className = 'stats-summary'
         summary.innerHTML = `
@@ -67,10 +65,10 @@ class UserStatistics {
         listContainer.className = 'games-list'
 
         if (stats.games.length === 0) {
-            listContainer.innerHTML = '<p class="no-games">No hay partidas registradas.</p>'
+            listContainer.innerHTML =
+                '<p class="no-games">No hay partidas registradas.</p>'
         } else {
-          
-            stats.games.forEach(game => {
+            stats.games.forEach((game) => {
                 const item = this.createGameItem(game)
                 listContainer.appendChild(item)
             })
@@ -100,9 +98,9 @@ class UserStatistics {
         return item
     }
 
-
     private renderError(): void {
-        this.container.innerHTML = '<p class="error-msg">No se pudieron cargar las estadísticas.</p>'
+        this.container.innerHTML =
+            '<p class="error-msg">No se pudieron cargar las estadísticas.</p>'
     }
 }
 

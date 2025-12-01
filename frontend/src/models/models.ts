@@ -74,6 +74,7 @@ export interface SlideData {
 export type GameStatistic = {
     gameId: number
     characterId: number
+    characterName: string
     won: boolean
 }
 

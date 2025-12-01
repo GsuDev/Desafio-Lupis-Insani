@@ -420,33 +420,30 @@ class UserController extends Controller
     {
         $user = $request->user();
 
-        
         $finishedParticipations = $user->participants()
             ->whereHas('game', function ($query) {
                 $query->where('state', 'finished');
             })
-            ->with(['states']) // se cargan los estados para ver si murio
+            ->with(['states', 'character']) // se cargan los estados para ver si murio
             ->get();
 
-    
         $gamesData = $finishedParticipations->map(function ($participant) {
-            
+
             // si no tiene el estado dead esque gano
             $isDead = $participant->states->contains('name', 'DEAD');
-            $won = !$isDead;
+            $won = ! $isDead;
 
             return [
                 'gameId' => $participant->game_id,
                 'characterId' => $participant->character_id,
+                'characterName' => $participant->character ? $participant->character->name : 'Desconocido',
                 'won' => $won,
             ];
         });
 
-        
         $totalGames = $gamesData->count();
         $totalWins = $gamesData->where('won', true)->count();
 
-        
         return response()->json([
             'success' => true,
             'message' => 'Estadísticas recuperadas correctamente',

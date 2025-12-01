@@ -3,6 +3,7 @@ import { userController } from '../../controllers/UserController'
 // se importamos el componente del cuadrado del perfil para poder usarlo y verlo claro
 import UserProfileComponent from '../userProfile/userProfile'
 import AccessContainer from '../accessContainer/AccessContainer'
+import UserStatistics from '../userStatistics/UserStatistics'
 
 /**
  * clase principal del perfil de usuario.
@@ -73,7 +74,9 @@ class UserProfileContainer {
         const statsSection = document.createElement('div')
         statsSection.id = 'stats-section'
         statsSection.className = 'dashboard-section'
-        statsSection.innerHTML = '<p>Estadísticas próximamente...</p>'
+        //statsSection.innerHTML = '<p>Estadísticas próximamente...</p>'
+        const userStats = new UserStatistics(statsSection)
+        userStats.render()
 
         // instanciamos el componente del perfil
         // Creamos el componente de perfil pasándole el div donde queremos que se pinte

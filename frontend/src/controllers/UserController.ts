@@ -330,7 +330,6 @@ class UserController {
         try {
             const response = await userProvider.getUserStatistics()
 
-           
             if (!response.success || !response.data) {
                 if (showGlobalMessage) {
                     showGlobalMessage(
@@ -341,15 +340,10 @@ class UserController {
                 return undefined
             }
 
-            
             return response.data
-
         } catch (error: any) {
             if (showGlobalMessage) {
-                showGlobalMessage(
-                    error.message || 'Error inesperado',
-                    false
-                )
+                showGlobalMessage(error.message || 'Error inesperado', false)
             }
             return undefined
         }

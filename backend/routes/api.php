@@ -67,6 +67,9 @@ Route::middleware('auth:sanctum')->post('/reset-password', [AuthController::clas
 
 Route::middleware('auth:sanctum')->group(function () {
 
+    // Estaisticas del usuario logueado
+    Route::get('/users/statistics', [UserController::class, 'getStatistics']);
+
     // ---------------------
     // Solo para rol 'admin'
     // ---------------------
@@ -99,9 +102,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // --------------------------------
     // Solo para roles 'user' y 'admin'
     // --------------------------------
-
-    // Estaisticas del usuario logueado
-    Route::get('/users/statistics', [UserController::class, 'getStatistics']);
 
     // Consultar usuario actual
     Route::get('/user', [UserController::class, 'showItself'])

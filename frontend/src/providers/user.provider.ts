@@ -309,11 +309,14 @@ export async function registerAnonymous(
  *
  */
 
-export async function getUserStatistics(): Promise<UserStatisticResponse | ApiErrorResponse>{
-    try{
-        const {data} = await apiClient.get<UserStatisticResponse>('/users/statistics')
+export async function getUserStatistics(): Promise<
+    UserStatisticResponse | ApiErrorResponse
+> {
+    try {
+        const { data } =
+            await apiClient.get<UserStatisticResponse>('/users/statistics')
         return data
-    }catch(error){
+    } catch (error) {
         console.error('❌ Error en getUserStatistics:', error)
         return {
             success: false,
