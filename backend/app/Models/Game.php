@@ -88,4 +88,15 @@ class Game extends Model
             return $messages->toStructured();
         });
     }
+
+    public function votations()
+    {
+        return $this->hasMany(Votation::class);
+    }
+
+    // Para acceder a los votros
+    public function allVotes()
+    {
+        return $this->hasManyThrough(Vote::class, Votation::class);
+    }
 }

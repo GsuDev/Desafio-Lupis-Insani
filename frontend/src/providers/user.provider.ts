@@ -130,6 +130,16 @@ export async function getProfile(): Promise<UserResponse | ApiErrorResponse> {
  * Comprueba si hay un token de sesión válido
  */
 export function isLoggedIn(): boolean {
+    //comprobar si el usuario asociado al token tiene email null 
+    //ya que si tiene campo a null indentifica si es anonimo
+    const currentUser = localStorage.getItem('currentUser')
+    if (currentUser) {
+        const user: User = JSON.parse(currentUser)
+        if (user.email === null) {
+            return false
+        }
+    }
+    
     return Boolean(localStorage.getItem('token'))
 }
 

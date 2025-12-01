@@ -15,8 +15,7 @@ class Vote extends Model
         'game_id',
         'voter_id',
         'target_id',
-        'is_day',
-        'day_number',
+        'votation_id',
     ];
 
     public function game()
@@ -40,5 +39,10 @@ class Vote extends Model
     public function target()
     {
         return $this->belongsTo(participant::class, 'target_id');
+    }
+
+    public function votation()
+    {
+        return $this->belongsTo(Votation::class);
     }
 }
