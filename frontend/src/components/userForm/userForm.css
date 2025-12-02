@@ -1,46 +1,122 @@
-@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;700&family=Lato:wght@400;700&display=swap');
-
-:root {
-    --color-noche: #1a1a2e;
-    --color-sombra: #2a2a4e;
-    --color-hueso: #e0e0e0;
-    --color-sangre: #9b2226;
-    --color-luna: #fca311;
-    --color-verde: #7dd3c0;
-
-    --font-titulo: 'Crimson Text', serif;
-    --font-cuerpo: 'Lato', sans-serif;
-}
-
+/* Overlay de fondo para el modal */
 #register-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    font-family: var(--font-cuerpo);
-    color: var(--color-hueso);
+    z-index: 1000;
     padding: 1rem;
+    box-sizing: border-box;
+    animation: fadeIn 0.3s ease;
 }
 
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Card modal principal */
 .card {
-    background-color: var(--color-sombra);
-    padding: 2rem;
-    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    border: 2px solid #ff8f29;
+    border-radius: 15px;
+    padding: 2.5rem;
     width: 100%;
-    max-width: 550px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.03);
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.7),
+        0 0 40px rgba(255, 143, 41, 0.2);
+    position: relative;
+    animation: slideUp 0.3s ease;
 }
 
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Botón de cerrar (X) en la esquina superior derecha */
+.close-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.close-button:hover {
+    background: rgba(255, 107, 107, 0.2);
+    border-color: #ff6b6b;
+    color: #ff6b6b;
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+}
+
+.close-button:active {
+    transform: scale(1.05);
+}
+
+/* Scrollbar personalizado para el modal */
+.card::-webkit-scrollbar {
+    width: 8px;
+}
+
+.card::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.card::-webkit-scrollbar-thumb {
+    background: rgba(255, 143, 41, 0.4);
+    border-radius: 4px;
+}
+
+.card::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 143, 41, 0.6);
+}
+
+/* Formulario */
 #registration-form {
     display: flex;
     flex-direction: column;
-    gap: 2.2rem;
+    gap: 1.8rem;
     position: relative;
     padding-top: 56px;
 }
 
-/* perfil mas datos*/
+/* Sección superior: Perfil + Datos */
 .top-section {
     display: flex;
     gap: 1.5rem;
@@ -64,10 +140,11 @@
     align-items: center;
     width: 120px;
     height: 120px;
-    border: 2px solid var(--color-verde);
+    border: 3px solid #ff8f29;
     border-radius: 50%;
-    background-color: var(--color-verde);
-    color: var(--color-noche);
+    background-color: rgba(255, 143, 41, 0.2);
+    color: #ff8f29;
+    font-family: var(--font-body);
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -79,18 +156,21 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .profile-input-group label:hover {
     transform: scale(1.05);
+    border-color: #ff9f4d;
+    box-shadow: 0 0 25px rgba(255, 143, 41, 0.4);
 }
 
 /* Cuando no tiene imagen */
 .profile-input-group label:not(.has-image):hover {
-    background-color: rgba(125, 211, 192, 0.8);
+    background-color: rgba(255, 143, 41, 0.3);
 }
 
-/* Cuando tiene imagen,  overlay sutil al hacer hover */
+/* Cuando tiene imagen, overlay sutil al hacer hover */
 .profile-input-group label.has-image:hover::after {
     content: '📷';
     position: absolute;
@@ -98,7 +178,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 2rem;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.7);
     width: 100%;
     height: 100%;
     display: flex;
@@ -129,7 +209,7 @@
     gap: 1.5rem;
 }
 
-/* estilos generales inputs*/
+/* Estilos generales de inputs */
 .input-group {
     display: flex;
     flex-direction: column;
@@ -138,40 +218,42 @@
 }
 
 .input-group label {
-    margin-bottom: 0.35rem;
-    font-weight: bold;
-    font-family: var(--font-titulo);
-    color: var(--color-hueso);
-    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    font-family: var(--font-body);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .input-group input {
     width: 100%;
-    padding: 0.6rem 0.75rem;
-    border: 2px solid var(--color-verde);
-    border-radius: 6px;
-    background-color: var(--color-noche);
-    color: var(--color-hueso);
-    font-family: var(--font-cuerpo);
-    font-size: 0.85rem;
-    height: 40px;
+    padding: 0.85rem 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #ecede6;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 600;
     box-sizing: border-box;
     transition: all 0.3s ease;
 }
 
 .input-group input:focus {
     outline: none;
-    border-color: var(--color-luna);
-    box-shadow: 0 0 0 3px rgba(252, 163, 17, 0.2);
-    background-color: rgba(26, 26, 46, 0.8);
+    border-color: #ff8f29;
+    background-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 15px rgba(255, 143, 41, 0.2);
 }
 
 .input-group input::placeholder {
-    color: rgba(224, 224, 224, 0.65);
-    font-style: italic;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 400;
 }
 
-/* filas inputs*/
+/* Filas de inputs */
 .row-group {
     display: flex;
     gap: 1.5rem;
@@ -182,61 +264,64 @@
     min-width: 0;
 }
 
-/* boton submit*/
+/* Botón submit - estilo unificado */
 #submit-button {
     display: block;
-    margin: 2.5rem auto 0 auto;
-    width: 200px;
-    padding: 0.7rem 1.5rem;
+    margin: 1.5rem auto 0 auto;
+    width: 100%;
+    max-width: 300px;
+    padding: 14px 20px;
     border: none;
-    border-radius: 8px;
-    background-color: var(--color-verde);
-    color: var(--color-noche);
-    font-family: var(--font-titulo);
-    font-size: 1rem;
-    font-weight: 700;
+    border-radius: 12px;
+    background-color: #ff8f29;
+    color: #1a1a1a;
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(125, 211, 192, 0.3);
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 0 #cc6e1b;
 }
 
 #submit-button:hover {
+    background-color: #ff9f4d;
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(125, 211, 192, 0.4);
-    background-color: rgba(125, 211, 192, 0.9);
+    box-shadow: 0 6px 0 #cc6e1b;
 }
 
 #submit-button:active {
     transform: translateY(0);
+    box-shadow: 0 2px 0 #cc6e1b;
 }
 
 #submit-button:disabled {
-    background-color: #999;
+    background-color: #6b7280;
     cursor: not-allowed;
+    box-shadow: 0 4px 0 #4b5563;
+    opacity: 0.7;
     transform: none;
-    box-shadow: none;
 }
 
-/* mensajes de error*/
+/* Mensajes de error */
 .error-message {
-    color: var(--color-sangre);
-    font-size: 0.75rem;
-    margin-top: 0.25rem;
+    color: #ff6b6b;
+    font-size: 0.8rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+    margin-top: 0.3rem;
     min-height: 1rem;
-    line-height: 1rem;
 }
 
-/* Oculta los placeholders vacíos para evitar líneas rojas sin texto */
 .error-message:empty {
     visibility: hidden;
     height: 0;
     min-height: 0;
     margin: 0;
-    line-height: 0;
-    padding: 0;
 }
 
-/* mensajes globales*/
+/* Mensajes globales */
 .global-message {
     position: absolute;
     top: 8px;
@@ -244,14 +329,14 @@
     right: 0;
     margin: 0;
     font-size: 0.9rem;
-    padding: 0.6rem 0.8rem;
-    border-radius: 6px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    padding: 0.8rem 1rem;
+    border-radius: 10px;
     text-align: center;
     visibility: hidden;
     opacity: 0;
-    transition:
-        opacity 0.3s ease,
-        visibility 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 .global-message:not(:empty) {
@@ -260,19 +345,22 @@
 }
 
 .global-message.success {
-    background-color: var(--color-verde);
-    color: var(--color-noche);
+    background-color: rgba(52, 211, 153, 0.9);
+    color: #1a1a1a;
+    border: 2px solid #34d399;
 }
 
 .global-message.error {
-    background-color: var(--color-sangre);
-    color: var(--color-hueso);
+    background-color: rgba(255, 107, 107, 0.9);
+    color: white;
+    border: 2px solid #ff6b6b;
 }
 
-/* responsive*/
-@media (max-width: 600px) {
+/* Responsive */
+@media (max-width: 650px) {
     .card {
-        padding: 1.5rem;
+        padding: 2rem 1.5rem;
+        max-width: 95%;
     }
 
     .top-section {
@@ -302,6 +390,28 @@
     }
 
     #submit-button {
-        width: 100%;
+        max-width: 100%;
+    }
+
+    .close-button {
+        width: 36px;
+        height: 36px;
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #register-container {
+        padding: 0.5rem;
+    }
+
+    .card {
+        padding: 1.5rem 1rem;
+        border-radius: 12px;
+    }
+
+    #registration-form {
+        gap: 1.5rem;
+        padding-top: 48px;
     }
 }
