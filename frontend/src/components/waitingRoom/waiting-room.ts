@@ -131,7 +131,7 @@ export const renderWaitingRoom = async (
 
             // B) Actualizar los datos del componente de juego
             if (gameComponent) {
-                // Asumiendo que tu GameComponent tiene un método update(game, participants)
+              
                 console.log('Participantes: '+game.participants)
                 gameComponent.update(game, game.participants || []);
             }

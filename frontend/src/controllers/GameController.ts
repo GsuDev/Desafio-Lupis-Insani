@@ -6,7 +6,7 @@
 
 import { GameChannel } from '../channels/GameChannel'
 import type { Game, Message } from '../models/models'
-import { getGame, joinGameRequest, assignBots, updateGameState } from '../providers/game.provider'
+import { getGame, joinGameRequest, assignBots, updateGameState, getParticipants } from '../providers/game.provider'
 
 // import { joinGameRequest } from '../providers/joinGame.provider'
 // Importamos el provider REAL
@@ -196,7 +196,19 @@ class GameController {
             const updatedGame = startResponse.data.game;
             // Si la respuesta no trae participantes, usamos los que ya teníamos en memoria
             if (!updatedGame.participants || updatedGame.participants.length === 0) {
-                updatedGame.participants = this._currentGame?.participants || [];
+                console.log('🔄 Recuperando participantes actualizados desde la API...');
+
+                // Llamamos a la nueva función
+                const participantsRes = await getParticipants(gameId);
+
+                if (participantsRes.success && participantsRes.data) {
+                    // ¡Éxito! Asignamos los participantes reales (bots incluidos)
+                    updatedGame.participants = participantsRes.data.participants;
+                } else {
+                    // Fallback: Si falla la petición, usamos los que teníamos en memoria
+                    console.warn('⚠️ No se pudieron cargar participantes nuevos. Usando caché.');
+                    updatedGame.participants = this._currentGame?.participants || [];
+                }
             }
             // 3. Actualizar el estado local
             this.setGameData(updatedGame)

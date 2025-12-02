@@ -115,6 +115,29 @@ export const getGame = async (
     }
 }
 
+export const getParticipants = async (
+    gameId: number
+): Promise<ParticipantsResponse | ApiErrorResponse> => {
+    try {
+        const response = await apiClient.get<ParticipantsResponse>(
+            `/games/${gameId}/participants`
+        )
+        
+        // Devolvemos el cuerpo de la respuesta (success, data, message)
+        return response.data
+    } catch (error) {
+        return {
+            success: false,
+            message:
+                error instanceof Error
+                    ? error.message
+                    : 'Error inesperado al obtener participantes',
+            data: null,
+        }
+    }
+}
+
+
 /**
  * Carga los slides de tips desde tipSlides.json
  * Devuelve un objeto tipado al estilo de los otros endpoints

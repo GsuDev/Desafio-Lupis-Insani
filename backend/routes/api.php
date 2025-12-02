@@ -37,7 +37,7 @@ Route::get('/test-start-day', function () {
 
 // Ruta temporal para probar la asignacion de bots
 // Debug
-Route::post('/games/{game}/bots', [GameController::class, 'testAssignBots']);
+Route::post('/games/{game}/bots', [GameController::class, 'assignBots']);
 
 Route::post('/login', [AuthController::class, 'publicLogin']);
 Route::post('/users', [UserController::class, 'store']);
