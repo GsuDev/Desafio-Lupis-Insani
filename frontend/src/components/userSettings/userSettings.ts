@@ -1,6 +1,8 @@
 import './userSettings.css'
 import { userController } from '../../controllers/UserController'
 import type { User } from '../../models/models'
+import defaultAvatar from '../../assets/characters/werewolf.png'
+import ChangePasswordModal from '../changePasswordModal/changePasswordModal'
 
 export class UserSettingsComponent {
     private container: HTMLElement
@@ -62,9 +64,7 @@ export class UserSettingsComponent {
         const avatarCol = document.createElement('div')
         avatarCol.className = 'avatar-col'
         const avatarImg = document.createElement('img')
-        avatarImg.src =
-            this.userData.profile_url ||
-            `https://api.dicebear.com/7.x/bottts/svg?seed=${this.userData.nickname}`
+        avatarImg.src = this.userData.profile_url || defaultAvatar
         avatarImg.className = 'avatar-circle'
 
         const fileInput = document.createElement('input')
@@ -134,7 +134,14 @@ export class UserSettingsComponent {
         changePassBtn.type = 'button'
         changePassBtn.className = 'btn-change-pass'
         changePassBtn.textContent = '🔒 Cambiar contraseña'
-        changePassBtn.onclick = () => console.log('Abrir modal contraseña')
+        changePassBtn.onclick = () => {
+            const passwordContainer = document.createElement('div')
+
+            document.body.appendChild(passwordContainer)
+
+            const passwordModal = new ChangePasswordModal(passwordContainer)
+            passwordModal.render()
+        }
 
         form.append(topSection, emailGroup, birthGroup, changePassBtn)
 

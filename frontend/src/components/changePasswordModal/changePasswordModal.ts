@@ -106,7 +106,7 @@ export class ChangePasswordModal {
         const toggleBtn = document.createElement('button')
         toggleBtn.type = 'button' // para no enviar el form
         toggleBtn.className = 'toggle-password-btn'
-        toggleBtn.innerHTML = '👁️' // icono inicial
+        toggleBtn.innerHTML = '🙉' // icono inicial
         toggleBtn.title = 'Mostrar contraseña'
 
         // la logica del click
@@ -116,7 +116,7 @@ export class ChangePasswordModal {
                 toggleBtn.innerHTML = '🙈' // icono de "ocultar"
             } else {
                 input.type = 'password' // vuelve a ocultarse
-                toggleBtn.innerHTML = '👁️'
+                toggleBtn.innerHTML = '🙉'
             }
         }
 

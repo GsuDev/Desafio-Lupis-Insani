@@ -57,6 +57,25 @@ export class ParticipantList {
         return btnIniciar
     }
 
+    setLoading(isLoading: boolean): void {
+        if (isLoading) {
+            // Guardamos el ancho original para que el botón no "baile" al cambiar texto
+            const width = this.btnIniciar.offsetWidth
+            this.btnIniciar.style.width = `${width}px`
+
+            this.btnIniciar.textContent = 'CARGANDO...'
+            this.btnIniciar.disabled = true
+            this.btnIniciar.style.cursor = 'wait'
+            this.btnIniciar.classList.add('btn-loading') // Por si queremos estilos extra luego
+        } else {
+            this.btnIniciar.textContent = 'INICIAR'
+            this.btnIniciar.style.width = ''
+            this.btnIniciar.style.cursor = 'pointer'
+            this.btnIniciar.classList.remove('btn-loading')
+            // Nota: El controlador decidirá luego si debe seguir disabled o no según si es Host
+        }
+    }
+
     /**
      * Actualiza la lista de participantes
      */

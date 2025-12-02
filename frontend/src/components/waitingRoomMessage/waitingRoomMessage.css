@@ -46,15 +46,15 @@
     height: 38px;
     border-radius: 50%; /* Redonda */
     object-fit: cover; /* Evita que la imagen se deforme */
-    border: 2px solid #4facfe; /* Un borde de color "gaming" (azul neón) */
-    box-shadow: 0 0 5px rgba(79, 172, 254, 0.4); /* Pequeño brillo */
+    border: 2px solid #ff8f29;
+    box-shadow: 0 0 5px rgba(255, 143, 41, 0.2);
 }
 
 /* --- El Nombre de Usuario --- */
 .chat-user {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-weight: 700;
-    color: #4facfe; /* Mismo color que el borde o un color destacado */
+    color: #ff8f29; /* Mismo color que el borde o un color destacado */
     margin-right: 6px;
     white-space: nowrap; /* El nombre nunca se parte en dos líneas */
     font-size: 0.95rem;

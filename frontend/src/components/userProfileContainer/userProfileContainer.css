@@ -1,33 +1,66 @@
-:root {
-    --primary-dark: #0f0c29;
-    --primary-purple: #302b63;
-    --primary-blue: #24243e;
-    --text-light: #ffffff;
-    --card-bg: rgba(255, 255, 255, 0.1);
-    --accent-green: #00b894;
-}
-
 /*  asegura que el fondo cubra toda la pantalla detras del contenedor */
 #app {
+    position: relative;
     width: 100vw;
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: radial-gradient(
-        circle at center,
-        #2b32b2,
-        #141e30
-    ); /* Un degradado circular chulo de azul a oscuro */
     margin: 0;
     padding: 0;
     overflow: hidden; /* parano salgan barras de scroll */
+    z-index: 1;
 }
+
+.video-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover; /* Para que cubra toda la pantalla sin deformarse */
+    z-index: -2;
+    filter: blur(8px);
+    transform: scale(1.05);
+}
+
+#app::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    background: linear-gradient(rgba(15, 12, 41, 0.6), rgba(15, 12, 41, 0.8));
+}
+
+/*Otra forma con imagen en vez de video*/
+/*#app::before {
+    content: ""; 
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0; 
+    z-index: -1; 
+
+   
+    background-image: 
+        linear-gradient(rgba(15, 12, 41, 0.5), rgba(15, 12, 41, 0.5)),
+        url('../../assets/fondoJuego.png'); 
+    
+    background-size: cover;
+    background-position: center;
+
+    
+    filter: blur(8px); 
+
+    
+    transform: scale(1.02);
+}*/
 
 /* el contenedor principal dashboard */
 .user-profile-container {
-    display: flex; /*  para organizar header y contenido verticalmente */
-    flex-direction: column; /* para que los hijos se pilen uno debajo otro */
+    display: flex;
+    flex-direction: column;
 
     width: 85%;
     height: 85%;
@@ -45,7 +78,6 @@
     font-family: 'Segoe UI', sans-serif;
 }
 
-/* header dentro del contenedor */
 .dashboard-header {
     display: flex;
     justify-content: space-between;
@@ -69,20 +101,28 @@
 
 .logout-btn {
     padding: 0.6rem 1.5rem;
-    background-color: #e74c3c;
+    background-color: #ff6b6b;
+    font-family: var(--font-heading, sans-serif);
     color: white;
     border: none;
     border-radius: 50px;
     cursor: pointer;
     font-weight: bold;
     transition:
-        transform 0.2s,
+        transform 0.3s,
         box-shadow 0.2s;
+    box-shadow: 0 4px 0 #c0392b;
 }
 
 .logout-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 10px rgba(231, 76, 60, 0.6);
+    transform: translateY(-10%) scale(1.05);
+    box-shadow: 0 6px 0 #c0392b;
+    filter: brightness(1.1);
+}
+
+.logout-btn:active {
+    transform: translateY(-10%) translateY(2px);
+    box-shadow: 0 2px 0 #c0392b;
 }
 
 /*  grid para los huecos de derecha   */
@@ -99,8 +139,9 @@
 .dashboard-section {
     height: 400px;
     background: rgba(255, 255, 255, 0.05);
-    border: 1px dashed rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 15px;
+    border-color: #ff8f29;
     padding: 2rem;
     display: flex;
     justify-content: center;

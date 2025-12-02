@@ -9,7 +9,6 @@ use App\Models\State;
 use App\Models\Votation;
 use App\Models\Vote;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\JsonResponse;
 use Tests\TestCase;
 
 class ResolveVotingTest extends TestCase
@@ -17,7 +16,9 @@ class ResolveVotingTest extends TestCase
     // use RefreshDatabase; // Borra la BD después de cada test
 
     protected $game;
+
     protected $votation;
+
     protected $alcaldeState;
 
     protected function setUp(): void
@@ -46,7 +47,7 @@ class ResolveVotingTest extends TestCase
             'game_id' => $this->game->id,
             'is_day' => true,
             'day_number' => 1,
-            'is_closed' => false
+            'is_closed' => false,
         ]);
 
         // Votos: 2 votos para la victima, 1 para el superviviente
@@ -55,7 +56,7 @@ class ResolveVotingTest extends TestCase
         Vote::create(['votation_id' => $votation->id, 'voter_id' => $victim->id, 'target_id' => $survivor->id]);
 
         // EJECUTAR LA FUNCIÓN
-        $controller = new VoteController();
+        $controller = new VoteController;
         $response = $controller->resolveVoting($this->game->id, 'day', 1);
 
         // ASERCIONES
@@ -101,7 +102,7 @@ class ResolveVotingTest extends TestCase
         Vote::create(['votation_id' => $votation->id, 'voter_id' => $villager2->id, 'target_id' => $candidateB->id]);
 
         // Ejecutar
-        $controller = new VoteController();
+        $controller = new VoteController;
         $response = $controller->resolveVoting($this->game->id, 'day', 1);
         $data = $response->getData(true);
 
@@ -111,7 +112,7 @@ class ResolveVotingTest extends TestCase
     }
 
     /** @test */
-    public function mayor_vote_is_NOT_double_during_night()
+    public function mayor_vote_is_no_t_double_during_night()
     {
         // Escenario: Igual que el anterior, pero es DE NOCHE.
         // Alcalde vota A (1 voto). Aldeanos votan B (2 votos).
@@ -136,7 +137,7 @@ class ResolveVotingTest extends TestCase
         Vote::create(['votation_id' => $votation->id, 'voter_id' => $villager1->id, 'target_id' => $candidateB->id]);
         Vote::create(['votation_id' => $votation->id, 'voter_id' => $villager2->id, 'target_id' => $candidateB->id]);
 
-        $controller = new VoteController();
+        $controller = new VoteController;
         $response = $controller->resolveVoting($this->game->id, 'night', 1);
         $data = $response->getData(true);
 
@@ -155,7 +156,7 @@ class ResolveVotingTest extends TestCase
             'day_number' => 1,
         ]);
 
-        $controller = new VoteController();
+        $controller = new VoteController;
         $response = $controller->resolveVoting($this->game->id, 'day', 1);
 
         $this->assertEquals(404, $response->getStatusCode());
