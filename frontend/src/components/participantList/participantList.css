@@ -1,108 +1,122 @@
 .participant-list {
     display: flex;
     flex-direction: column;
-
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    border: 3px solid #fca311;
-    border-radius: 24px;
-
+    height: 100%;
     width: 100%;
-    max-width: 400px;
-    height: 600px;
+
+    background: rgba(30, 30, 47, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    border: 1px solid rgba(255, 143, 41, 0.3);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 
     padding: 1.5rem;
     gap: 1rem;
-
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    box-sizing: border-box;
+    overflow: hidden;
+    color: white;
+    font-family: var(--font-body, sans-serif);
 }
 
-/* Header con contador */
 .participant-list-header {
-    background: rgba(252, 163, 17, 0.1);
-    border: 2px solid rgba(252, 163, 17, 0.3);
-    border-radius: 16px;
-
-    padding: 1rem 1.5rem;
-
     text-align: center;
-    font-size: 1.3rem;
-    font-weight: bold;
-    color: #e0e0e0;
-    letter-spacing: 0.5px;
+    font-family: var(--font-heading, sans-serif);
+    font-size: 1.4rem;
+    color: #ff8f29;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+
+    padding-bottom: 1rem;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.05);
+    flex-shrink: 0;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
 }
 
-/* Contenedor scrolleable */
 .participant-list-body {
     flex: 1;
-
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
-
-    overflow-y: auto;
-    overflow-x: hidden;
-
-    padding-right: 0.5rem;
+    gap: 0.8rem;
+    padding-right: 5px;
 }
 
-/* Estilos del scrollbar */
 .participant-list-body::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
 }
-
-.participant-list-body::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-}
-
 .participant-list-body::-webkit-scrollbar-thumb {
-    background: rgba(252, 163, 17, 0.4);
-    border-radius: 10px;
+    background-color: rgba(255, 143, 41, 0.5);
+    border-radius: 4px;
+}
+.participant-list-body::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
 }
 
-.participant-list-body::-webkit-scrollbar-thumb:hover {
-    background: rgba(252, 163, 17, 0.6);
+.participant-list-body > div,
+.player-item {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.8rem 1rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s;
+    font-weight: 600;
+    color: #ecede6;
 }
 
-/* Botón Iniciar */
+.participant-list-body > div:hover,
+.player-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(3px);
+    border-color: rgba(255, 143, 41, 0.4);
+}
+
 .participant-list-footer {
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
     display: flex;
     justify-content: center;
-    padding-top: 0.5rem;
+    flex-shrink: 0;
 }
 
 .btn-iniciar {
-    background: linear-gradient(135deg, #38b000 0%, #2d8c00 100%);
-    color: white;
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
 
-    font-size: 1.2rem;
-    font-weight: bold;
+    font-family: var(--font-heading, sans-serif);
+    text-transform: uppercase;
     letter-spacing: 1px;
-
-    padding: 0.9rem 3rem;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    border-radius: 16px;
-
     cursor: pointer;
-    transition: all 0.3s ease;
 
-    box-shadow: 0 4px 12px rgba(56, 176, 0, 0.3);
+    background-color: #ff8f29;
+    color: #1a1a1a;
+    box-shadow: 0 4px 0 #cc6e1b; /* fecto 3d */
+    transition: all 0.1s;
 }
 
-.btn-iniciar:hover {
-    background: linear-gradient(135deg, #45d100 0%, #38b000 100%);
+.btn-iniciar:hover:not(:disabled) {
+    background-color: #ff9f4d;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(56, 176, 0, 0.5);
+    box-shadow: 0 6px 0 #cc6e1b;
 }
 
-.btn-iniciar:active {
+.btn-iniciar:active:not(:disabled) {
     transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(56, 176, 0, 0.3);
+    box-shadow: 0 2px 0 #cc6e1b;
 }
 
 .btn-iniciar:disabled {
-    background: linear-gradient(135deg, #555 0%, #444 100%);
+    background-color: #4a5568;
+    color: #a0aec0;
+    box-shadow: none;
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: 0.7;
     transform: none;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
