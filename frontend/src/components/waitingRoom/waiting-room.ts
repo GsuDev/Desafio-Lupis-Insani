@@ -1,14 +1,15 @@
-// 1. Importar modelos y el *Controlador*
 import { ParticipantList } from '../participantList/participantList'
 import { gameController } from '../../controllers/GameController.ts'
 import { participantController } from '../../controllers/ParticipantController'
 import { WaitingRoomChat } from '../waitingRoomChat/waitingRoomChat.ts'
 
-// 2. Importar el CSS
 import './waiting-room.css'
 import type { Game, Message } from '../../models/models.ts'
 import { emitGameEvent } from '../../providers/event.provider.ts'
 import { userController } from '../../controllers/UserController.ts'
+import UserProfileComponent from '../userProfile/userProfile.ts'
+import AccessContainer from '../accessContainer/AccessContainer.ts'
+import UserProfileContainer from '../userProfileContainer/userProfileContainer.ts'
 
 /**
  * Crea la columna derecha (Chat)
@@ -32,12 +33,34 @@ export const renderWaitingRoom = async (
     // Header
     const header = document.createElement('header')
     header.className = 'wr-header'
-    header.innerHTML = '<h1>Logo y Título</h1>'
+    //boton de salir
+    const exitBtn = document.createElement('button')
+    exitBtn.className = 'wr-exit-btn'
+    exitBtn.textContent = '<- SALIR'
+
+    exitBtn.onclick = () => {
+        const user = userController.currentUser
+        container.innerHTML = ''
+
+        if (user && user.email) {
+            const profile = new UserProfileContainer(container)
+            profile.render()
+        } else {
+            const access = new AccessContainer(container)
+            access.render()
+        }
+    }
+
+    const title = document.createElement('h1')
+    title.textContent = 'LOBBY DE PARTIDA'
+
+    header.append(exitBtn, title)
 
     // Contenedor de mensajes globales (error/loading)
-    const globalMessage = document.createElement('div')
-    globalMessage.className = 'global-message' // Estilos en CSS
-    globalMessage.id = 'global-message'
+    //const globalMessage = document.createElement('div')
+    //globalMessage.className = 'global-message' // Estilos en CSS
+    //globalMessage.id = 'global-message'
+    //container.appendChild(globalMessage)
 
     // Contenido principal
     const main = document.createElement('main')
@@ -68,30 +91,19 @@ export const renderWaitingRoom = async (
     main.append(chatContainerColumn)
 
     roomContainer.append(header)
-    roomContainer.append(globalMessage)
+    //roomContainer.append(globalMessage)
     roomContainer.append(main)
 
     container.append(roomContainer)
 
-    // 4. Definir los Callbacks que el Controlador usará
-    // (Estas funciones SÍ tocan el DOM)
-    //-----------
     const showLoading = (isLoading: boolean) => {
-        if (isLoading) {
-            globalMessage.textContent = 'Cargando datos de la partida...'
-
-            globalMessage.className = 'global-message is-loading'
-        } else {
-            globalMessage.className = 'global-message'
-        }
+        // En vez de mostrar un cartel, le decimos a la lista que cambie su botón
+        participantList.setLoading(isLoading)
     }
 
     const showGlobalError = (message: string) => {
         if (message) {
-            globalMessage.textContent = message
-            globalMessage.className = 'global-message is-error'
-        } else {
-            globalMessage.className = 'global-message'
+            window.alert(`Error: ${message}`) // Temporal
         }
     }
 
