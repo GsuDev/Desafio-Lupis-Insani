@@ -6,7 +6,7 @@
 
 import { GameChannel } from '../channels/GameChannel'
 import type { Game, Message } from '../models/models'
-import { getGame, joinGameRequest, assignBots, updateGameState, getParticipants } from '../providers/game.provider'
+import { getGame, joinGameRequest, assignBots, assignCharacters, updateGameState, getParticipants } from '../providers/game.provider'
 
 // import { joinGameRequest } from '../providers/joinGame.provider'
 // Importamos el provider REAL
@@ -184,7 +184,14 @@ class GameController {
                 await this.handleLoadGame(gameId)
             }
 
-            // 2. Iniciar la Partida (Cambiar estado)
+            // 2. Asignar personajes
+            console.log('🎭 Repartiendo cartas de personajes...')
+            const charsResponse = await assignCharacters(gameId)
+            
+            if (!charsResponse.success) {
+                throw new Error(charsResponse.message || 'Error al repartir personajes')
+            }
+            // 3. Iniciar la Partida (Cambiar estado)
             // on_course
             const startResponse = await updateGameState(gameId, 'on_course')
 
@@ -194,22 +201,34 @@ class GameController {
 
             console.log('✅ Partida iniciada correctamente')
             const updatedGame = startResponse.data.game;
-            // Si la respuesta no trae participantes, usamos los que ya teníamos en memoria
-            if (!updatedGame.participants || updatedGame.participants.length === 0) {
-                console.log('🔄 Recuperando participantes actualizados desde la API...');
-
-                // Llamamos a la nueva función
+            
+            if (charsResponse.data) {
+                console.log('⚡ Usando participantes devueltos por el reparto de cartas');
+                updatedGame.participants = charsResponse.data;
+            } else {
+                // Fallback por si acaso
                 const participantsRes = await getParticipants(gameId);
-
-                if (participantsRes.success && participantsRes.data) {
-                    // ¡Éxito! Asignamos los participantes reales (bots incluidos)
-                    updatedGame.participants = participantsRes.data.participants;
-                } else {
-                    // Fallback: Si falla la petición, usamos los que teníamos en memoria
-                    console.warn('⚠️ No se pudieron cargar participantes nuevos. Usando caché.');
-                    updatedGame.participants = this._currentGame?.participants || [];
-                }
+                updatedGame.participants = participantsRes.data?.participants || [];
             }
+            
+            
+            
+            // Si la respuesta no trae participantes, usamos los que ya teníamos en memoria
+            // if (!updatedGame.participants || updatedGame.participants.length === 0) {
+            //     console.log('🔄 Recuperando participantes actualizados desde la API...');
+
+            //     // Llamamos a la nueva función
+            //     const participantsRes = await getParticipants(gameId);
+
+            //     if (participantsRes.success && participantsRes.data) {
+              
+            //         updatedGame.participants = participantsRes.data.participants;
+            //     } else {
+            //         // Si falla la petición, usamos los que teníamos en memoria
+            //         console.warn('⚠️ No se pudieron cargar participantes nuevos. Usando caché.');
+            //         updatedGame.participants = this._currentGame?.participants || [];
+            //     }
+            // }
             // 3. Actualizar el estado local
             this.setGameData(updatedGame)
 

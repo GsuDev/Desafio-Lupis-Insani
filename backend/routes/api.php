@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CharacterController;
 use App\Http\Controllers\GameChannelController;
 use App\Http\Controllers\GameController;
+use App\Http\Controllers\GameEngineController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WolvesChannelController;
@@ -180,7 +182,8 @@ Route::middleware('auth:sanctum')->group(function () {
             // GET /api/games/{game}/players
             // (Necesitarás crear este método 'getPlayersByGame' en tu GameController)
             Route::get('/participants', [GameController::class, 'getParticipantsByGame']); // -> para introducir los jugadores en la sala pero esto pertenece a otra HU
-            //
+
+            Route::post('/assign-characters', [CharacterController::class, 'assignCharacters']);
 
             // --RUTAS DE ENVIO DE EVENTOS POR WEBSOCKETS---
             Route::post('/wolves/send', [WolvesChannelController::class, 'send'])->middleware('ability:send-events');

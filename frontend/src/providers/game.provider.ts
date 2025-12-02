@@ -342,3 +342,28 @@ export const updateGameState = async (
         }
     }
 }
+
+
+/**
+ * Llama al backend para repartir los roles/personajes a todos los participantes
+ * Ruta sugerida: POST /api/games/{gameId}/assign-characters
+ */
+export const assignCharacters = async (
+    gameId: number
+): Promise<VoidResponse | ApiErrorResponse> => {
+    try {
+        const response = await apiClient.post<VoidResponse>(
+            `/games/${gameId}/assign-characters` 
+        )
+        return response.data
+    } catch (error) {
+        return {
+            success: false,
+            message:
+                error instanceof Error
+                    ? error.message
+                    : 'Error al asignar personajes',
+            data: null,
+        }
+    }
+}

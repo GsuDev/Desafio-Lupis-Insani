@@ -83,7 +83,7 @@ export const renderWaitingRoom = async (
         chatContainerColumn,
         [],
         (txt: string) => {
-            emitGameEvent(1, 'chat.message', {
+            emitGameEvent(gameId, 'chat.message', {
                 gameId,
                 message: txt,
                 userId: userController.currentUser?.id,
