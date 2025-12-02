@@ -1,219 +1,132 @@
-/*
- * --- Guía de Estilos (Variables CSS) ---
- * 
- */
-:root {
-    /* Colores Primarios */
-    --color-primary: #df3f1f; /* Naranja */
-    --color-primary-accent: #e8ad3b; /* Amarillo */
-    --color-primary-light: #ecede6; /* Blanco */
-    --color-primary-dark: #111613; /* Negro */
-
-    /* Colores Secundarios */
-    --color-secondary-brown: #5d4037; /* Marrón Rústico */
-    --color-secondary-purple: #4a235a; /* Púrpura Místico */
-    --color-secondary-green: #386641; /* Verde Bosque */
-
-    /* Colores de Estado */
-    --color-status-success: #28a745;
-    --color-status-error: #dc3545;
-    --color-status-warning: #e8ad3b;
-    --color-status-info: #17a2b8;
-    --color-status-disabled: #6c757d;
-
-    /* Colores de Fondo y UI */
-    --color-bg-hud: #002d50; /* Fondo Noche / HUD */
-    --color-bg-day: #ecede6; /* Fondo Día */
-    --color-bg-card-dark: #212529; /* Fondo Cartas (Oscuro) */
-    --color-bg-card-light: #ffffff; /* Fondo Cartas (Claro) */
-    --color-border-separator: #ced4da; /* Bordes / Separadores */
-
-    /* Colores de Texto */
-    --color-text-dark: #111613; /* Sobre fondo claro */
-    --color-text-light: #ecede6; /* Sobre fondo oscuro */
-    --color-text-muted: #495057;
-    --color-text-server: #ff8fcc; /* Mensajes Sistema */
-    --color-text-nicks: #ff2525; /* Nicks de Usuarios */
-
-    /* Colores de Botones */
-    --color-btn-primary-bg: #df3f1f;
-    --color-btn-primary-text: #ecede6;
-    --color-btn-primary-hover: #c1351a;
-
-    --color-btn-danger-bg: #dc3545;
-    --color-btn-danger-text: #ecede6;
-    --color-btn-danger-hover: #b02a37;
-}
-
-/* --- Estilos Globales --- */
-html {
-    box-sizing: border-box;
-}
-
-*,
-*:before,
-*:after {
-    box-sizing: inherit;
-}
-
-/* --- Estilos del Componente WaitingRoom --- */
 .waiting-room-container {
     display: flex;
     flex-direction: column;
-    height: 90vh;
-    width: 90vw;
-    min-height: 450px;
-    margin: 5vh auto;
-    border-radius: 0.5rem;
 
-    /* Fondo principal (Día) */
-    background-color: var(--color-bg-day);
-    /* Texto principal (Sobre fondo claro) */
-    color: var(--color-text-dark);
-    padding: 1rem;
-    gap: 1rem;
-    font-family: Arial, sans-serif;
+    width: 90%;
+    height: 90%;
+    max-width: 1400px;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+
+    padding: 2rem;
+    gap: 1.5rem;
+    font-family: 'Segoe UI', sans-serif;
+    box-sizing: border-box;
 }
 
 .wr-header {
     width: 100%;
-    text-align: center;
-    padding: 1rem;
-    /* Usamos el Marrón Rústico para el header (como un letrero de madera) */
-    background-color: var(--color-secondary-brown);
-    border-radius: 0.5rem;
-    box-sizing: border-box;
-}
+    background: transparent;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 1rem;
 
+    position: relative;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
 .wr-header h1 {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: bold;
-    /* Texto claro sobre fondo oscuro */
-    color: var(--color-text-light);
+    color: var(--text-light);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: -webkit-linear-gradient(#eee, #aaa);
+    -webkit-background-clip: text; /* con esto el fondo se pone solo en el texto */
+    -webkit-text-fill-color: transparent;
+}
+
+.wr-exit-btn {
+    position: absolute;
+    right: 0;
+    top: 50%;
+
+    transform: translateY(-65%);
+
+    padding: 0.6rem 1.5rem;
+    background-color: #ff6b6b; /* Rojo suave */
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+
+    font-family: var(--font-heading, sans-serif); /* Fredoka */
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s;
+    box-shadow: 0 4px 0 #c0392b; /* Efecto 3D rojo oscuro */
+}
+
+.wr-exit-btn:hover {
+    transform: translateY(-65%) scale(1.05);
+    box-shadow: 0 6px 0 #c0392b;
+    filter: brightness(1.1);
+}
+
+.wr-exit-btn:active {
+    transform: translateY(-65%) translateY(2px);
+    box-shadow: 0 2px 0 #c0392b;
 }
 
 .wr-main {
     flex-grow: 1;
-    display: flex;
-    gap: 1rem;
-    min-height: 0; /* Permite que los hijos 'flex-grow' funcionen */
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 2rem;
+    min-height: 0; /* Clave para scroll */
+    overflow: hidden;
 }
 
-/* Columna Izquierda */
-.wr-players {
-    width: 33.33%;
+.wr-chat-column-container {
+    height: 100%;
     display: flex;
     flex-direction: column;
-    /* Fondo de Cartas (Claro) */
-    background-color: var(--color-bg-card-light);
-    border: 1px solid var(--color-border-separator);
-    border-radius: 0.5rem;
+    overflow: hidden;
+
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.wr-players-header {
-    padding: 0.5rem;
-    border-bottom: 1px solid var(--color-border-separator);
+@keyframes pulse {
+    0% {
+        opacity: 0.8;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.8;
+    }
 }
 
-.wr-players-header span {
-    font-weight: bold;
-}
+@media (max-width: 900px) {
+    .waiting-room-container {
+        width: 95%;
+        height: 95%;
+        padding: 1rem;
+    }
 
-.wr-players-list {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding: 0.5rem;
-    list-style: none;
-    margin: 0;
-}
-
-.player-item {
-    padding: 0.25rem 0.5rem;
-    /* Color de Nicks de Usuario */
-    color: var(--color-text-nicks);
-    font-weight: 500;
-}
-
-.wr-players-footer {
-    padding: 0.5rem;
-    border-top: 1px solid var(--color-border-separator);
-}
-
-.start-button {
-    width: 100%;
-    /* Estilo Botón Primario */
-    background-color: var(--color-btn-primary-bg);
-    color: var(--color-btn-primary-text);
-    border: none;
-    font-weight: bold;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.start-button:hover {
-    background-color: var(--color-btn-primary-hover);
-}
-
-.start-button:disabled {
-    background-color: var(--color-status-disabled);
-    color: var(--color-text-light);
-    cursor: not-allowed;
-}
-
-/* Columna Derecha */
-.wr-chat-area {
-    display: flex;
-}
-
-/* --- Estados Globales (Loading/Error) --- */
-
-.global-message {
-    padding: 1rem;
-    border-radius: 0.5rem;
-    display: none; /* Oculto por defecto, JS lo muestra */
-    text-align: center;
-    font-weight: bold;
-    transition:
-        background-color 0.3s ease,
-        color 0.3s ease;
-}
-
-.global-message.is-loading {
-    display: block;
-    /* Fondo oscuro (HUD) con texto claro */
-    background-color: var(--color-bg-hud);
-    color: var(--color-text-light);
-}
-
-.global-message.is-error,
-.error-message {
-    display: block;
-
-    background-color: var(--color-status-error);
-    color: var(--color-text-light);
-}
-
-/* --- Media Query para Responsividad --- */
-@media (max-width: 768px) {
     .wr-main {
-        /* Apila las columnas en vertical */
-        flex-direction: column;
-    }
-
-    .wr-players,
-    .wr-chat-area {
-        width: 100%;
-    }
-
-    .wr-players {
-        max-height: 40vh;
-    }
-
-    .wr-chat-area {
-        /* El chat ocupa el espacio restante */
-        flex-grow: 1;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr;
     }
 }

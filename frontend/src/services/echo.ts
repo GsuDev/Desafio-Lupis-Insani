@@ -42,23 +42,34 @@ const echo = new Echo({
     authorizer: (channel, options) => {
         return {
             authorize: (socketId, callback) => {
-                axios.post(`${BACKEND_URL}/broadcasting/auth`, {
-                    socket_id: socketId,
-                    channel_name: channel.name
-                }, {
-                    headers: {
-                        // AQUÍ ESTÁ LA CLAVE: Leemos el token EN EL MOMENTO de la petición
-                        Authorization: 'Bearer ' + localStorage.getItem('token')
-                    }
-                })
-                .then(response => {
-                    callback(null, response.data);
-                })
-                .catch(error => {
-                    callback(error instanceof Error ? error : new Error(String(error)), null);
-                });
-            }
-        };
+                axios
+                    .post(
+                        `${BACKEND_URL}/broadcasting/auth`,
+                        {
+                            socket_id: socketId,
+                            channel_name: channel.name,
+                        },
+                        {
+                            headers: {
+                                // AQUÍ ESTÁ LA CLAVE: Leemos el token EN EL MOMENTO de la petición
+                                Authorization:
+                                    'Bearer ' + localStorage.getItem('token'),
+                            },
+                        }
+                    )
+                    .then((response) => {
+                        callback(null, response.data)
+                    })
+                    .catch((error) => {
+                        callback(
+                            error instanceof Error
+                                ? error
+                                : new Error(String(error)),
+                            null
+                        )
+                    })
+            },
+        }
     },
 })
 

@@ -63,7 +63,7 @@ class EventController extends Controller
                 break;
 
             case 'result':
-               
+
                 $result = VoteController::resolveVoting($gameId, $data['phase'], $data['cycle']);
                 if (! $result['success']) {
                     // TODO: manejar error
