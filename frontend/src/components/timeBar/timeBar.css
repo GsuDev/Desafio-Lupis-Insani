@@ -1,0 +1,108 @@
+.time-bar-wrapper {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 800px;
+    height: 70px;
+    /*efecto cristl*/
+    background: rgba(30, 30, 47, 0.7);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 2px solid rgba(255, 143, 41, 0.3);
+    border-radius: 35px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 25px;
+    gap: 20px;
+    z-index: 120; /* voy poniendo asi los z indez porque tenemos mil capas*/
+    color: white;
+    font-family: var(--font-heading, sans-serif); /* Fredoka */
+    box-sizing: border-box;
+}
+
+.phase-indicator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.icon-glow {
+    font-size: 1.8rem;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+}
+
+.day-text {
+    color: #ff8f29;
+} /* Naranja */
+.night-text {
+    color: #4facfe;
+} /* Azul */
+
+/* --- LA BARRA DE PROGRESO CENTRAL --- */
+.progress-track {
+    flex-grow: 1; /* Ocupa todo el espacio central */
+    height: 24px;
+    background: rgba(0, 0, 0, 0.4); /* Fondo oscuro del carril */
+    border-radius: 12px;
+    overflow: hidden; /* con esto el relleno no se sale */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+}
+
+/* el truco del almendruco (la logica se metera luego)*/
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ff8f29, #ffd700);
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(255, 143, 41, 0.5);
+    /* La animación dura 60s, es lineal, y se repite infinitamente */
+    /*Esto esta falseado a muerte para mostrar ejemplo en sprint*/
+    /*La logica buena buena se hara en el futuro*/
+    animation: fakeTimeProgress 60s linear infinite;
+}
+
+/* Texto superpuesto en la barra opcional para mas realismo*/
+.progress-text-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+/* animacion falseada*/
+@keyframes fakeTimeProgress {
+    0% {
+        width: 0%;
+    }
+    100% {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .time-bar-wrapper {
+        top: 10px;
+        height: 60px;
+        padding: 0 15px;
+        width: 95%;
+    }
+    .phase-text {
+        display: none;
+    }
+    .icon-glow {
+        font-size: 1.5rem;
+    }
+}
