@@ -104,16 +104,16 @@ export class GameComponent {
         // 4. Calcular Radios (en % del tamaño menor de la pantalla para ser responsive)
         // Usamos unidades 'vmin' relativas o píxeles fijos si prefieres.
         // Aquí lo haré con % relativo al contenedor padre.
-        const width =  window.innerWidth;
-        const height =  window.innerHeight;
+        const width = window.innerWidth;
+        const height = window.innerHeight;
         // const width = this.participantsContainer.clientWidth || window.innerWidth;
         // const height = this.participantsContainer.clientHeight || window.innerHeight;
         const minDim = Math.min(width, height);
 
-        // Radio interior (ej. 22% del ancho/alto mínimo)
+        // Radio interior 
         const r1 = minDim * 0.1;
-        // Radio exterior (ej. 38% del ancho/alto mínimo)
-        const r2 = minDim * 0.2;
+        // Radio exterior 
+        const r2 = minDim * 0.18;
 
         // 5. Renderizar círculos
         this.renderCircle(innerCircleParticipants, r1, width / 2, height / 2);
@@ -145,9 +145,30 @@ export class GameComponent {
             // Calculamos el ángulo. Restamos PI/2 para empezar arriba (a las 12 en punto)
             const angle = index * angleStep - (Math.PI / 2);
 
-            const x = centerX + radius * Math.cos(angle);
-            const y = centerY + radius * Math.sin(angle);
+            let x = centerX + radius * Math.cos(angle);
+            let y = centerY + radius * Math.sin(angle);
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const midWidth = width / 2;
+            const midHeight = height / 2;
 
+            if(x> midWidth){
+                x += (x-midWidth)*1;
+            }else{
+                x -= (midWidth-x)*1;
+            }
+
+            if(y> midHeight){ //inverso al width para generar la elipse
+                y -= (y-midHeight)*0.1;
+            }else{
+                y += (midHeight-y)*0.1;
+            }
+            
+            const percentageX = x / width*100;// se calculan los porcentajes para que sea responsive
+            const percentageY = y / height *100;
+
+
+            console.log(`Angulo: ${angle}, x: ${x}, y: ${y}, width: ${width}, height: ${height}`)
             // Crear componente
             // Usar la logica en funcion del la posicion para cargar distintas imagenes
             const versionIndex = 1;
@@ -155,8 +176,8 @@ export class GameComponent {
             const pElement = pComponent.render();
 
             // Aplicar posición
-            pElement.style.left = `${x}px`;
-            pElement.style.top = `${y}px`;
+            pElement.style.left = `${percentageX}%`;
+            pElement.style.top = `${percentageY}%`;
 
             this.participantsContainer.appendChild(pElement);
         });
