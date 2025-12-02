@@ -26,25 +26,16 @@ class AccessContainer {
         titleContainer.className = 'title-container'
 
         // Logo SVG
-        const logo = document.createElement('div')
+        const logo = document.createElement('img')
         logo.className = 'logo'
-        logo.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/>
-            </svg>
-        `
+        logo.src = '/src/assets/icons/lupis-insani.png'
 
         const title = document.createElement('h1')
         title.textContent = 'LUPIS INSANI'
 
-        const subtitle = document.createElement('p')
-        subtitle.className = 'subtitle'
-        subtitle.textContent = 'Hombres lobo de Castronegro'
-
         titleContainer.appendChild(logo)
         titleContainer.appendChild(title)
         header.appendChild(titleContainer)
-        header.appendChild(subtitle)
 
         // Container de las tres tarjetas
         const cardsContainer = document.createElement('main')
