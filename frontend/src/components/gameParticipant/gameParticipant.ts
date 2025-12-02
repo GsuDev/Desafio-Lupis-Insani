@@ -54,18 +54,6 @@ export class GameParticipant {
             }
 
         }
-
-
-        //  Usamos una de las 5 versiones del personaje.
-        // Asume que tienes las imágenes en /public/assets/characters/ o importadas.
-        // Ajusta esta ruta al nombre real de tus archivos.
-        // Ejemplo: character_1.png, character_2.png...
-
-        // NOTA: Si usas Vite y las imágenes están en 'public', usa la ruta absoluta:
         return `/src/assets/charactersInGame/char_w_${this.version}.png`
-
-        // Si quieres usar las imágenes que ya tienes en el proyecto como placeholders:
-        // const variants = ['villager', 'seer', 'witch', 'hunter', 'werewolf'];
-        // return `/src/assets/characters/${variants[this.version - 1]}.png`; 
     }
 }

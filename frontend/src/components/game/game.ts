@@ -2,6 +2,8 @@ import './game.css'
 import type { Game, Participant } from '../../models/models'
 import { GameParticipant } from '../gameParticipant/gameParticipant'
 import { GameChat } from '../gameChat/gameChat'
+import { TimeBar } from '../timeBar/timeBar'
+import { RoleCard, type PlayerRole } from '../roleCard/roleCard'
 
 import campfireImg from '../../assets/gameRenders/night_game_fire.png'
 
@@ -13,19 +15,25 @@ import campfireImg from '../../assets/gameRenders/night_game_fire.png'
 
 export class GameComponent {
     private container: HTMLElement
-    private header: HTMLElement
     private statusDisplay: HTMLElement
     private participantsContainer: HTMLElement
     private chatContainer: HTMLElement
     private readonly WOLF_CHARACTER_ID = 2; //pasarlo al env
 
+    private timeBarContainer: HTMLElement;
+    private roleCardContainer: HTMLElement;
+
+
     //seguramente crezca en función de los elementos que necesite por ejemplo la carta, la barra de tiempo...
     constructor() {
         this.container = this.createContainer()
-        this.header = this.createHeader()
         this.statusDisplay = this.createStatusDisplay()
         this.participantsContainer = this.createParticipantsContainer()
         this.chatContainer = this.createChatContainer()
+
+        this.timeBarContainer = this.createTimeBarContainer()
+        this.roleCardContainer = this.createRoleCardContainer()
+
     }
 
     /**
@@ -38,15 +46,33 @@ export class GameComponent {
     }
 
     /**
-     * Crea el encabezado, TODO: Luego lo cambio al ID de la partida
-     */
-    private createHeader(): HTMLElement {
-        const header = document.createElement('header')
-        header.className = 'game-header'
-        header.innerHTML = '<h2>Partida en curso</h2>'
-        return header
+         * Crea el contenedor para la barra de tiempo (zona superior)
+         */
+    private createTimeBarContainer(): HTMLElement {
+        const div = document.createElement('div')
+        // Puedes darle una clase si necesitas posicionamiento extra en game.css,
+        // aunque TimeBar ya tiene sus estilos internos.
+        div.className = 'game-time-bar-wrapper'
+        div.style.position = 'absolute';
+        div.style.top = '0';
+        div.style.width = '100%';
+        div.style.zIndex = '50'; // Por encima de los participantes
+        return div
     }
 
+    /**
+     * Crea el contenedor para la carta de rol (zona inferior derecha usualmente)
+     */
+    private createRoleCardContainer(): HTMLElement {
+        const div = document.createElement('div')
+        div.className = 'game-role-card-wrapper'
+        // Ajusta posición si roleCard.css no lo hace (ej. bottom-right)
+        // div.style.position = 'absolute';
+        // div.style.bottom = '20px';
+        // div.style.right = '20px';
+        div.style.zIndex = '60';
+        return div
+    }
     /**
      * Crea un elemento para mostrar el estado del juego (ej. "Día", "Noche", "Votación") es la barra superior de la pantalla
      */
@@ -83,20 +109,63 @@ export class GameComponent {
      * Devuelve el HTMLElement listo para ser insertado en el DOM principal.
      */
     public render(): HTMLElement {
-        this.container.appendChild(this.header)
-        this.container.appendChild(this.statusDisplay)
-        this.container.appendChild(this.participantsContainer)
-        this.container.appendChild(this.chatContainer)
+        this.container.appendChild(this.participantsContainer) // Fondo/Tablero
+        this.container.appendChild(this.timeBarContainer)      // Barra Superior
+        this.container.appendChild(this.chatContainer)         // Chat (Izquierda)
+        this.container.appendChild(this.roleCardContainer)     // Carta (Derecha/Esquina)
 
+        //chat
         const isWolf = this.checkIfPlayerIsWolf();
-
-
         const gameChat = new GameChat(this.chatContainer, isWolf)
         gameChat.render()
 
+        // 2. Renderizar Barra de Tiempo
+        const timeBar = new TimeBar(this.timeBarContainer)
+        timeBar.render()
+
+        // 3. Renderizar Carta de Rol
+        // Obtenemos el rol real del usuario
+        const myRole = this.getMyRole(); 
+        const roleCard = new RoleCard(this.roleCardContainer, myRole)
+        roleCard.render()
         return this.container
     }
 
+/**
+     * Determina el rol del usuario actual para mostrar la carta correcta
+     */
+    private getMyRole(): PlayerRole {
+        try {
+            const userStr = localStorage.getItem('currentUser'); // Ojo: en tu código anterior usabas 'currentUser' o 'user', revisa cuál es el correcto
+            if (!userStr) return 'villager'; // Rol por defecto
+
+            const user = JSON.parse(userStr);
+            const gameStr = localStorage.getItem('currentGame');
+            if (!gameStr) return 'villager';
+
+            const game = JSON.parse(gameStr);
+            const participants = game.participants || [];
+            
+            const myParticipant = participants.find((p: any) => p.userId === user.id);
+
+            if (!myParticipant || !myParticipant.characterId) return 'villager';
+
+            // Mapeo de ID de BBDD a tipo PlayerRole
+            // Ajusta estos IDs según tu tabla de characters
+            const characterId = parseInt(myParticipant.characterId);
+            
+            if (characterId === this.WOLF_CHARACTER_ID) return 'wolf';
+            if (characterId === 1) return 'villager'; // Ejemplo ID aldeano
+            if (characterId === 3) return 'seer';     // Ejemplo ID vidente
+            if (characterId === 4) return 'hunter';   // Ejemplo ID cazador
+            
+            return 'villager'; // Fallback
+
+        } catch (e) {
+            console.error(e);
+            return 'villager';
+        }
+    }
     /**
      * Comprueba si el usuario actual tiene un personaje de tipo Lobo
      */
@@ -139,9 +208,8 @@ export class GameComponent {
      * @param participants Lista de participantes actualizada
      */
     public update(game: Game, participants: Participant[]): void {
-        // 1. Actualizar estado del juego
-        this.statusDisplay.textContent = `CAMBIAR POR BARRA DE TIEMPO (Componente)`
 
+       
         // 2. Actualizar participantes
         this.participantsContainer.innerHTML = ''
 
@@ -249,13 +317,13 @@ export class GameComponent {
 
     private getPoseImage(angle: number): number {
         // 1. Normalizar ángulo (0 a 360)
-        const normalizedAngle = angle+90;
+        const normalizedAngle = angle + 90;
         const poses = [1, 8, 7, 6, 5, 4, 3, 2] as const;
 
         // 2. Calcular índice
         // El Math.round ya nos da un entero, no hace falta (int)
         const index = Math.round(normalizedAngle / 45) % 8;
-        console.log(`Ángulo: ${angle} + 90 = ${angle+90} Angulo normalizado: ${normalizedAngle} Índice calculado: ${index} pose: ${poses[index]}`);
+        console.log(`Ángulo: ${angle} + 90 = ${angle + 90} Angulo normalizado: ${normalizedAngle} Índice calculado: ${index} pose: ${poses[index]}`);
         console.log(``);
         return poses[index];
     }
