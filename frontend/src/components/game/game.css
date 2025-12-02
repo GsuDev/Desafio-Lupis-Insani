@@ -98,3 +98,35 @@ La Hoguera Central
     object-fit: cover;
     margin-bottom: 0.5rem;
 }
+
+
+.game-chat-wrapper {
+    position: absolute;       
+    left: 20px;              
+    top: 50%;               
+    transform: translateY(-50%); 
+
+    width: 300px;            
+    height: 60vh;            
+    max-height: 600px;
+    
+    /* Asegurar que esté encima de los participantes/hoguera */
+    z-index: 100;
+    
+    /* Estética opcional para el contenedor si el componente no la trae */
+    overflow: hidden; /* Para que no se salga nada */
+    pointer-events: auto; /* Asegurar que se puede hacer clic en el chat */
+}
+
+/* Opcional: Ajustar en móviles */
+@media (max-width: 768px) {
+    .game-chat-wrapper {
+        left: 0;
+        bottom: 0;
+        top: auto;
+        transform: none;
+        width: 100%;
+        height: 30vh;
+        border-radius: 10px 10px 0 0;
+    }
+}

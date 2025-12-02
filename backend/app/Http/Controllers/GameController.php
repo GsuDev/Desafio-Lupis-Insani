@@ -346,6 +346,7 @@ class GameController extends Controller
             $participantsFormatted = $participants->map(function ($participant) {
                 return [
                     'id' => $participant->id,
+                    'userId' => $participant->user_id,
                     'isBot' => (bool) $participant->is_bot,
                     'isHost' => (bool) $participant->is_host,
                     'nickname' => $participant->nickname,

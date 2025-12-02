@@ -11,7 +11,7 @@
 }
 
 .game-participant-card:hover {
-    transform:  translate(-50%, -50%) scale(1.05);
+    transform:  translate(-50%, -50%) scale(1.15);
     z-index: 50;
 }
 

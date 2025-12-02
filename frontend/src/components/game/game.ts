@@ -1,6 +1,7 @@
 import './game.css'
 import type { Game, Participant } from '../../models/models'
 import { GameParticipant } from '../gameParticipant/gameParticipant'
+import { GameChat } from '../gameChat/gameChat'
 
 import campfireImg from '../../assets/gameRenders/night_game_fire.png'
 
@@ -15,6 +16,8 @@ export class GameComponent {
     private header: HTMLElement
     private statusDisplay: HTMLElement
     private participantsContainer: HTMLElement
+    private chatContainer: HTMLElement
+    private readonly WOLF_CHARACTER_ID = 2; //pasarlo al env
 
     //seguramente crezca en función de los elementos que necesite por ejemplo la carta, la barra de tiempo...
     constructor() {
@@ -22,6 +25,7 @@ export class GameComponent {
         this.header = this.createHeader()
         this.statusDisplay = this.createStatusDisplay()
         this.participantsContainer = this.createParticipantsContainer()
+        this.chatContainer = this.createChatContainer()
     }
 
     /**
@@ -63,6 +67,17 @@ export class GameComponent {
         return div
     }
 
+
+    /**
+     * Crea el contendedor del chat
+     */
+    private createChatContainer(): HTMLElement {
+        const div = document.createElement('div')
+        div.className = 'game-chat-wrapper'
+        return div
+
+    }
+
     /**
      * Método público para renderizar el componente por primera vez.
      * Devuelve el HTMLElement listo para ser insertado en el DOM principal.
@@ -71,8 +86,52 @@ export class GameComponent {
         this.container.appendChild(this.header)
         this.container.appendChild(this.statusDisplay)
         this.container.appendChild(this.participantsContainer)
+        this.container.appendChild(this.chatContainer)
+
+        const isWolf = this.checkIfPlayerIsWolf();
+
+
+        const gameChat = new GameChat(this.chatContainer, isWolf)
+        gameChat.render()
+
         return this.container
     }
+
+    /**
+     * Comprueba si el usuario actual tiene un personaje de tipo Lobo
+     */
+    private checkIfPlayerIsWolf(): boolean {
+        try {
+            // 1. Obtener usuario actual del localStorage
+            const userStr = localStorage.getItem('currentUser');
+            console.log(userStr)
+            if (!userStr) return false;
+
+            const user = JSON.parse(userStr);
+            const currentUserId = user.id;
+
+            const gameStr = localStorage.getItem('currentGame');
+            if (!gameStr) return false;
+
+            const game = JSON.parse(gameStr);
+            const participants = game.participants || [];
+
+            // 3. Buscar mi participante
+            const myParticipant = participants.find((p: any) => p.userId === currentUserId);
+
+            if (!myParticipant || !myParticipant.characterId) {
+                return false;
+            }
+
+            // 4. Comprobar si mi characterId está en la lista de lobos
+            return this.WOLF_CHARACTER_ID === parseInt(myParticipant.characterId);
+
+        } catch (error) {
+            console.error('Error verificando rol de lobo:', error);
+            return false;
+        }
+    }
+
 
     /**
      * Actualiza la interfaz con los datos más recientes del juego y participantes.
@@ -152,26 +211,31 @@ export class GameComponent {
             const midWidth = width / 2;
             const midHeight = height / 2;
 
-            if(x> midWidth){
-                x += (x-midWidth)*1;
-            }else{
-                x -= (midWidth-x)*1;
+            if (x > midWidth) {
+                x += (x - midWidth) * 1.1;
+            } else {
+                x -= (midWidth - x) * 1 - 1;
             }
 
-            if(y> midHeight){ //inverso al width para generar la elipse
-                y -= (y-midHeight)*0.1;
-            }else{
-                y += (midHeight-y)*0.1;
+            if (y > midHeight) { //inverso al width para generar la elipse
+                y -= (y - midHeight) * 0.1;
+            } else {
+                y += (midHeight - y) * 0.1;
             }
-            
-            const percentageX = x / width*100;// se calculan los porcentajes para que sea responsive
-            const percentageY = y / height *100;
 
+            const percentageX = x / width * 100;// se calculan los porcentajes para que sea responsive
+            const percentageY = y / height * 100;
 
-            console.log(`Angulo: ${angle}, x: ${x}, y: ${y}, width: ${width}, height: ${height}`)
             // Crear componente
             // Usar la logica en funcion del la posicion para cargar distintas imagenes
-            const versionIndex = 1;
+            let angleDeg = angle * (180 / Math.PI);
+
+
+
+
+
+
+            const versionIndex = this.getPoseImage(angleDeg);
             const pComponent = new GameParticipant(p, versionIndex);
             const pElement = pComponent.render();
 
@@ -181,6 +245,19 @@ export class GameComponent {
 
             this.participantsContainer.appendChild(pElement);
         });
+    }
+
+    private getPoseImage(angle: number): number {
+        // 1. Normalizar ángulo (0 a 360)
+        const normalizedAngle = angle+90;
+        const poses = [1, 8, 7, 6, 5, 4, 3, 2] as const;
+
+        // 2. Calcular índice
+        // El Math.round ya nos da un entero, no hace falta (int)
+        const index = Math.round(normalizedAngle / 45) % 8;
+        console.log(`Ángulo: ${angle} + 90 = ${angle+90} Angulo normalizado: ${normalizedAngle} Índice calculado: ${index} pose: ${poses[index]}`);
+        console.log(``);
+        return poses[index];
     }
 
 }

@@ -129,7 +129,7 @@ export const renderWaitingRoom = async (
             // A) Si el juego ha empezado y aún no hemos cambiado la vista:
             if (!isGameActive) {
                 console.log('🚀 La partida ha comenzado. Cambiando vista...');
-
+                //TODO: asignar roles
                 // 1. Limpiar el contenedor (borra la Waiting Room)
                 container.innerHTML = '';
 
