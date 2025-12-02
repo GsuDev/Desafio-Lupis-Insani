@@ -105,7 +105,7 @@ class GameController extends Controller
             $game->state = $req->input('state');
             $game->save();
 
-            return response()->json(['success' => true, 'message' => 'Partida obtenida', 'data' => ['games' => $game]], 200);
+            return response()->json(['success' => true, 'message' => 'Partida obtenida', 'data' => ['game' => $game]], 200);
         } catch (\Exception $e) {
             // Success| message | data
             return response()->json(['success' => false, 'message' => "Error al actualizar partida, {$e->getMessage()}", 'data' => null], 500);

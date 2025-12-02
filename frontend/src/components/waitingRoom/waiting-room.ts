@@ -101,15 +101,18 @@ export const renderWaitingRoom = async (
         }
     }
 
-    const renderGameDetails = (gameOrId: any) => {
-        const game = gameController.currentGame
-        if (!game) {
+    const renderGameDetails = (gameData: any) => {
+
+        const game = gameData;
+        
+        console.log('renderGameDetails recibió:', game)
+        
+        if (!game || game === undefined) {
             return
         }
 
         // SI LA PARTIDA YA NO ESTÁ EN ESPERA, CAMBIAR VISTA
-        const isGameStarted = game.state !== 'waiting' && game.state !== 'finished';
-
+        const isGameStarted = game.state !== 'waiting' && game.state !== 'finished' && game.state !== undefined;
         if (isGameStarted) {
             // A) Si el juego ha empezado y aún no hemos cambiado la vista:
             if (!isGameActive) {
@@ -129,6 +132,7 @@ export const renderWaitingRoom = async (
             // B) Actualizar los datos del componente de juego
             if (gameComponent) {
                 // Asumiendo que tu GameComponent tiene un método update(game, participants)
+                console.log('Participantes: '+game.participants)
                 gameComponent.update(game, game.participants || []);
             }
 
@@ -142,7 +146,7 @@ export const renderWaitingRoom = async (
             if (isGameActive) {
                 isGameActive = false;
                 // Aquí podrías recargar la página o volver a llamar a renderWaitingRoom
-                window.location.reload();
+                renderWaitingRoom(container, game.id);
                 return;
             }
 
@@ -154,12 +158,12 @@ export const renderWaitingRoom = async (
             // Conectar canal si no está conectado
             // (Nota: es mejor mover esto al controller o hacerlo solo una vez)
             if (!gameController['gameChannel']) {
-                gameController.connectGameChannel(gameId);
+                gameController.connectGameChannel(game.id);
             }
         }
 
     }
-    await renderGameDetails(gameId)
+    //await renderGameDetails(gameId)
 
     // 5. Conectar la Vista con el Controlador
     gameController.init(

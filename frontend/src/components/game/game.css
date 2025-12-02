@@ -6,48 +6,85 @@
     background-color: #f4f4f9;
     /* Color de fondo ejemplo */
     background-image: url('../../assets/gameRenders/day_game_without_fire.png');
-    background-size: 100% 100%; 
+    background-size: 100% 100%;
+    overflow: hidden;
+    /* Evitar scrollbars si algo sobresale un poco */
+    position: relative;
 }
 
 .game-header {
+    position: absolute;
+    top: 0;
+    width: 100%;
     text-align: center;
-    margin-bottom: 1rem;
     color: #333;
+    z-index: 20;
+    /* Por encima de todo */
+    pointer-events: none;
+    /* Dejar pasar clics si hay botones debajo */
 }
 
 .game-status {
-    color:#333;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-    text-align: center;
-    font-weight: bold;
-   
+    position: absolute;
+    top: 60px;
+    /* Debajo del header */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 5px 15px;
+    border-radius: 20px;
+    color: white;
+
 }
 
 .game-participants-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 1rem;
-    overflow-y: auto;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: block;
+   
 }
 
-.participant-card {
-    background: white;
-    border-radius: 8px;
-    padding: 0.8rem;
+/*
+Me queda ajustar esto
+La Hoguera Central 
+.campfire-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 150px;  Ajusta según tu imagen 
+    height: 150px;
+    z-index: 5;
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    text-align: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s;
 }
 
-.participant-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.campfire-img {
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 0 20px orange);  Efecto de brillo 
+    animation: flicker 2s infinite alternate;
 }
+
+@keyframes flicker {
+    0% { filter: drop-shadow(0 0 15px orange); transform: scale(1); }
+    100% { filter: drop-shadow(0 0 25px orangered); transform: scale(1.02); }
+}
+
+
+*/
+
+.game-participant-card {
+    position: absolute; /* ¡Clave! */
+    /* Centramos el punto de anclaje de la carta */
+    transform: translate(-50%, -50%); 
+    transition: all 0.5s ease-out;
+    z-index: 10;
+}
+
 
 .participant-card.is-bot {
     border: 2px solid #ccc;

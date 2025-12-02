@@ -1,5 +1,8 @@
 import './game.css'
 import type { Game, Participant } from '../../models/models'
+import { GameParticipant } from '../gameParticipant/gameParticipant'
+
+import campfireImg from '../../assets/gameRenders/night_game_fire.png'
 
 /**
  * Clase GameComponent
@@ -7,14 +10,14 @@ import type { Game, Participant } from '../../models/models'
  * Recibe datos del juego y de los participantes para renderizar el estado actual.
  */
 
-export class GameComponent{
-    private container:HTMLElement
+export class GameComponent {
+    private container: HTMLElement
     private header: HTMLElement
     private statusDisplay: HTMLElement
-    private participantsContainer : HTMLElement
+    private participantsContainer: HTMLElement
 
     //seguramente crezca en función de los elementos que necesite por ejemplo la carta, la barra de tiempo...
-    constructor(){
+    constructor() {
         this.container = this.createContainer()
         this.header = this.createHeader()
         this.statusDisplay = this.createStatusDisplay()
@@ -81,26 +84,82 @@ export class GameComponent{
         this.statusDisplay.textContent = `CAMBIAR POR BARRA DE TIEMPO (Componente)`
 
         // 2. Actualizar participantes
-        // Nota: Aquí podría ser más sofisticado y no borrar todo cada vez,
-        // pero para empezar, limpiar y redibujar es funcional.
         this.participantsContainer.innerHTML = ''
-        
-        participants.forEach(p => {
-            const pElement = document.createElement('div')
-            pElement.className = `participant-card ${p.isBot ? 'is-bot' : ''}`
-            
-            // Ejemplo de contenido: Avatar, Nickname y Rol (si es visible)
-            pElement.innerHTML = `
-                <div class="participant-avatar">
-                    ${p.profileUrl ? `<img src="${p.profileUrl}" alt="${p.nickname}" />` : '👤'}
-                </div>
-                <div class="participant-info">
-                    <span class="nickname">${p.nickname}</span>
-                   }
-                </div>
-            `
-            this.participantsContainer.appendChild(pElement)
-        })
+
+        //Esto tendría que ir cambiando entre la noche y el dia
+        // const campfireDiv = document.createElement('div')
+        // campfireDiv.className = 'campfire-container'
+        // campfireDiv.innerHTML = `<img src="${campfireImg}" alt="Hoguera" class="campfire-img" />`
+
+        // this.participantsContainer.appendChild(campfireDiv)
+
+        // 3. Separar participantes en anillos
+        const MAX_INNER = 10;
+
+        // Primeros 10 (o menos)
+        const innerCircleParticipants = participants.slice(0, MAX_INNER);
+        // El resto (del 11 en adelante)
+        const outerCircleParticipants = participants.slice(MAX_INNER, MAX_INNER + 20);
+
+        // 4. Calcular Radios (en % del tamaño menor de la pantalla para ser responsive)
+        // Usamos unidades 'vmin' relativas o píxeles fijos si prefieres.
+        // Aquí lo haré con % relativo al contenedor padre.
+        const width =  window.innerWidth;
+        const height =  window.innerHeight;
+        // const width = this.participantsContainer.clientWidth || window.innerWidth;
+        // const height = this.participantsContainer.clientHeight || window.innerHeight;
+        const minDim = Math.min(width, height);
+
+        // Radio interior (ej. 22% del ancho/alto mínimo)
+        const r1 = minDim * 0.1;
+        // Radio exterior (ej. 38% del ancho/alto mínimo)
+        const r2 = minDim * 0.2;
+
+        // 5. Renderizar círculos
+        this.renderCircle(innerCircleParticipants, r1, width / 2, height / 2);
+        this.renderCircle(outerCircleParticipants, r2, width / 2, height / 2);
+
+        // participants.forEach((p) => {
+        //     //aqui calcular la posición en función del numero en la lista
+
+        //     //calcula la imagen correcta en función de la posicion en el circulo
+        //     const versionIndex = 1;
+
+        //     // 3. Crear instancia del componente
+        //     const participantComponent = new GameParticipant(p, versionIndex)
+
+        //     // 4. Añadir al DOM
+        //     this.participantsContainer.appendChild(participantComponent.render())
+        // })
+    }
+
+    /**
+     * Función helper para colocar una lista de participantes en círculo
+     */
+    private renderCircle(list: Participant[], radius: number, centerX: number, centerY: number) {
+        if (list.length === 0) return;
+
+        const angleStep = (2 * Math.PI) / list.length;
+
+        list.forEach((p, index) => {
+            // Calculamos el ángulo. Restamos PI/2 para empezar arriba (a las 12 en punto)
+            const angle = index * angleStep - (Math.PI / 2);
+
+            const x = centerX + radius * Math.cos(angle);
+            const y = centerY + radius * Math.sin(angle);
+
+            // Crear componente
+            // Usar la logica en funcion del la posicion para cargar distintas imagenes
+            const versionIndex = 1;
+            const pComponent = new GameParticipant(p, versionIndex);
+            const pElement = pComponent.render();
+
+            // Aplicar posición
+            pElement.style.left = `${x}px`;
+            pElement.style.top = `${y}px`;
+
+            this.participantsContainer.appendChild(pElement);
+        });
     }
 
 }

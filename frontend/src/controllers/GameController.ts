@@ -21,13 +21,13 @@ class GameController {
     private _currentGame: Game | undefined
 
     // 1. Almacenamiento de Callbacks de la Vista
-    private _showLoading: (isLoading: boolean) => void = () => {}
-    private _showGlobalError: (message: string) => void = () => {}
-    private _renderGameDetails: (game: Game) => void = () => {}
-    private _disableStartButton: (isDisabled: boolean) => void = () => {}
-    private _addChatMessage: (message: Message) => void = () => {}
+    private _showLoading: (isLoading: boolean) => void = () => { }
+    private _showGlobalError: (message: string) => void = () => { }
+    private _renderGameDetails: (game: Game) => void = () => { }
+    private _disableStartButton: (isDisabled: boolean) => void = () => { }
+    private _addChatMessage: (message: Message) => void = () => { }
 
-    private constructor() {}
+    private constructor() { }
 
     //Este es lo que sería el getGame, si jesus quiere cambiarlo a getGame
     public static getInstance(): GameController {
@@ -42,7 +42,14 @@ class GameController {
     }
 
     set currentGame(currentGame) {
-        localStorage.setItem('currentGame', JSON.stringify(currentGame))
+
+        this._currentGame = currentGame;
+
+        if (currentGame) {
+            localStorage.setItem('currentGame', JSON.stringify(currentGame))
+        } else {
+            localStorage.removeItem('currentGame')
+        }
     }
 
     /** Restaura la sesión desde localStorage si existe */
@@ -151,28 +158,28 @@ class GameController {
     public async handleStartGame(): Promise<void> {
         // Comprobaciones de seguridad
         if (!this._currentGame) return
-        
+
         // Evitar doble click
         this._disableStartButton(true)
         this._showLoading(true) // O mostrar un mensaje "Iniciando..."
 
-       try {
+        try {
             const gameId = this._currentGame.id
             const MIN_PLAYERS = 15 // Mínimo necesario según tus reglas
-            
+
             // 1. Comprobar participantes y Generar Bots si es necesario
             // (Asumimos que participants ya está cargado en _currentGame)
             const currentPlayersCount = this._currentGame.participants.length
 
             if (currentPlayersCount < MIN_PLAYERS) {
                 console.log(`Faltan jugadores (${currentPlayersCount}/${MIN_PLAYERS}). Añadiendo bots...`)
-                
+
                 const botResponse = await assignBots(gameId)
-                
+
                 if (!botResponse.success) {
-                   throw new Error(botResponse.message || 'Error al generar bots')
+                    throw new Error(botResponse.message || 'Error al generar bots')
                 }
-                
+
                 // Recarga el juego aquí para ver los bots antes de cambiar de fase
                 await this.handleLoadGame(gameId)
             }
@@ -186,13 +193,17 @@ class GameController {
             }
 
             console.log('✅ Partida iniciada correctamente')
-            
+            const updatedGame = startResponse.data.game;
+            // Si la respuesta no trae participantes, usamos los que ya teníamos en memoria
+            if (!updatedGame.participants || updatedGame.participants.length === 0) {
+                updatedGame.participants = this._currentGame?.participants || [];
+            }
             // 3. Actualizar el estado local
-            this.setGameData(startResponse.data.game)
-            
+            this.setGameData(updatedGame)
+
             // Aquí la vista (WaitingRoom) debería detectar el cambio de estado 
             // en el callback _renderGameDetails y cambiar la pantalla al componente de Juego.
-            this._renderGameDetails(startResponse.data.game)
+            this._renderGameDetails(updatedGame)
 
 
 
@@ -205,7 +216,7 @@ class GameController {
         }
 
     }
-    public handleCreateGame() {}
+    public handleCreateGame() { }
 
     public async handleJoin(gameId: number): Promise<Game> {
         console.log('handleJoin en el GameController')
