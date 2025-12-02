@@ -1,98 +1,159 @@
-/* CAMBIAR A FUTURO ESTILO HECHO CON IA PARA VERLO */
-
-/* El fondo oscuro/transparente que cubre toda la pantalla */
 .join-game-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5); /* Transparencia */
+
+    background-color: rgba(0, 0, 0, 0.4);
+
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
-    backdrop-filter: blur(2px); /* Opcional: efecto borroso de fondo */
+    z-index: 20;
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+
+    animation: fadeIn 0.3s ease-out;
 }
 
-/* La caja blanca del modal */
 .join-game-modal-box {
-    background-color: #fff;
-    padding: 20px 30px;
-    border-radius: 15px;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    border: 2px solid #333; /* Estilo tipo 'sketch' o cómic si lo deseas */
-    font-family: sans-serif;
+    background-color: #1e1e2f;
+
+    border: 2px solid rgba(255, 143, 41, 0.3);
+
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);
+
+    width: 450px;
+    max-width: 90%;
+    padding: 2.5rem;
+    border-radius: 24px;
+
+    color: white;
+    font-family: var(--font-body, sans-serif);
+    position: relative;
+
+    animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Header */
 .modal-header h2 {
     margin-top: 0;
-    margin-bottom: 20px;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #333;
+    margin-bottom: 1.5rem;
+    text-align: center;
+
+    font-family: var(--font-heading, sans-serif);
+    font-size: 1.8rem;
+    color: #ff8f29;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
 }
 
-/* Input */
 .modal-input {
     width: 100%;
-    padding: 12px;
-    border: 2px solid #333;
-    border-radius: 8px;
+    padding: 14px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+
     text-align: center;
-    font-size: 1rem;
-    margin-bottom: 10px;
+    font-size: 1.1rem;
+    font-family: var(--font-body);
+    color: white;
+    margin-bottom: 1rem;
     box-sizing: border-box;
+    transition: all 0.2s;
+}
+
+.modal-input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+    font-style: italic;
 }
 
 .modal-input:focus {
     outline: none;
-    border-color: #666;
+    background: rgba(0, 0, 0, 0.4);
+    border-color: #ff8f29;
+    box-shadow: 0 0 15px rgba(255, 143, 41, 0.2);
 }
 
-/* Mensaje de error */
 .error-msg {
+    color: #dc3545;
     font-size: 0.9rem;
-    margin-bottom: 15px;
     font-weight: bold;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    background: rgba(220, 53, 69, 0.1);
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid rgba(220, 53, 69, 0.3);
 }
 
-/* Botones Container */
 .modal-actions {
     display: flex;
     justify-content: space-between;
-    gap: 15px;
-    margin-top: 20px;
+    gap: 1rem;
+    margin-top: 1rem;
 }
 
-/* Estilos comunes botones */
 .btn {
     flex: 1;
-    padding: 10px 0;
-    border: 2px solid #333;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
+    padding: 14px 0;
+    border-radius: 12px;
+    font-family: var(--font-heading);
     font-size: 1rem;
-    transition: transform 0.1s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    border: none;
+    transition:
+        transform 0.2s,
+        background-color 0.2s;
 }
 
 .btn:active {
-    transform: scale(0.95);
+    transform: scale(0.98);
 }
 
-/* Botón Cancelar (Rosado/Rojo pastel) */
 .btn-cancel {
-    background-color: #ffb6b6;
-    color: #333;
+    background-color: transparent;
+    border: 2px solid #6c757d;
+    color: #adb5bd;
+}
+.btn-cancel:hover {
+    border-color: #fff;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
 }
 
-/* Botón Unirse (Verde pastel) */
 .btn-join {
-    background-color: #98e898;
-    color: #333;
+    background-color: #ff8f29;
+    color: #1a1a1a;
+    box-shadow: 0 4px 0 #cc6e1b; /* Efecto 3D */
+}
+.btn-join:hover {
+    background-color: #ff9f4d;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #cc6e1b;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleUp {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
 }

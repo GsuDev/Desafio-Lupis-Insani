@@ -1,10 +1,10 @@
 import './userProfileContainer.css'
 import { userController } from '../../controllers/UserController'
-// se importamos el componente del cuadrado del perfil para poder usarlo y verlo claro
+
 import UserProfileComponent from '../userProfile/userProfile'
 import AccessContainer from '../accessContainer/AccessContainer'
 import UserStatistics from '../userStatistics/UserStatistics'
-import bgVideo from '../../assets/Animación_de_Fondo_para_Videojuego.mp4'
+//import bgVideo from '../../assets/Animación_de_Fondo_para_Videojuego.mp4'
 
 /**
  * clase principal del perfil de usuario.
@@ -27,7 +27,7 @@ class UserProfileContainer {
         this.container.innerHTML = ''
 
         //VIDEO FONDO
-        const videoBg = document.createElement('video')
+        /* const videoBg = document.createElement('video')
         videoBg.src = bgVideo
         videoBg.className = 'video-background'
         videoBg.autoplay = true
@@ -35,7 +35,7 @@ class UserProfileContainer {
         videoBg.muted = true
         videoBg.playsInline = true
 
-        this.container.appendChild(videoBg)
+        this.container.appendChild(videoBg)*/
 
         // fondo y header
         //  div principal que envuelve todo

@@ -21,7 +21,7 @@
     object-fit: cover; /* Para que cubra toda la pantalla sin deformarse */
     z-index: -2;
     filter: blur(8px);
-    transform: scale(1.05); /* Zoom para esconder bordes borrosos */
+    transform: scale(1.05);
 }
 
 #app::before {
@@ -59,8 +59,8 @@
 
 /* el contenedor principal dashboard */
 .user-profile-container {
-    display: flex; /*  para organizar header y contenido verticalmente */
-    flex-direction: column; /* para que los hijos se pilen uno debajo otro */
+    display: flex;
+    flex-direction: column;
 
     width: 85%;
     height: 85%;
@@ -101,20 +101,28 @@
 
 .logout-btn {
     padding: 0.6rem 1.5rem;
-    background-color: #e74c3c;
+    background-color: #ff6b6b;
+    font-family: var(--font-heading, sans-serif);
     color: white;
     border: none;
     border-radius: 50px;
     cursor: pointer;
     font-weight: bold;
     transition:
-        transform 0.2s,
+        transform 0.3s,
         box-shadow 0.2s;
+    box-shadow: 0 4px 0 #c0392b;
 }
 
 .logout-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 10px rgba(231, 76, 60, 0.6);
+    transform: translateY(-10%) scale(1.05);
+    box-shadow: 0 6px 0 #c0392b;
+    filter: brightness(1.1);
+}
+
+.logout-btn:active {
+    transform: translateY(-10%) translateY(2px);
+    box-shadow: 0 2px 0 #c0392b;
 }
 
 /*  grid para los huecos de derecha   */
