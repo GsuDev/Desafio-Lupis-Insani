@@ -1,94 +1,90 @@
-@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;700&family=Lato:wght@400;700&display=swap');
-
-:root {
-    --color-noche: #1a1a2e;
-    --color-sombra: #2a2a4e;
-    --color-hueso: #e0e0e0;
-    --color-sangre: #9b2226;
-    --color-luna: #fca311;
-
-    --font-titulo: 'Walter Turncoat';
-    --font-cuerpo: 'Lato', sans-serif;
-}
-
-/* Fondo general tipo "noche" */
-body {
-    background-color: var(--color-noche);
-    margin: 0;
-    padding: 0;
-}
-
-/* Contenedor principal */
+/* Contenedor principal del componente anónimo */
 .anonymous-container {
     width: 100%;
-    max-width: 380px;
-    margin: 0 auto;
-    padding: 4rem 1rem;
-    box-sizing: border-box;
+    height: 100%;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
 }
 
-/* Tarjeta del selector */
+/* Tarjeta del selector - similar a dashboard-section */
 .anonymous-card {
-    background-color: var(--color-sombra);
-    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    border: 2px solid #ff8f29;
+    border-radius: 15px;
     width: 100%;
-    min-height: 520px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(255, 143, 41, 0.15);
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     flex-direction: column;
+    transition: all 0.3s ease;
 }
 
-/* Header */
+.anonymous-card:hover {
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.6),
+        0 0 40px rgba(255, 143, 41, 0.25);
+}
+
+/* Header - estilo similar a dashboard-header */
 .anonymous-header {
-    background: linear-gradient(135deg, #34d399 0%, #14b8a6 100%);
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid rgba(255, 143, 41, 0.3);
     padding: 1.5rem;
     text-align: center;
 }
 
 .anonymous-header h2 {
-    color: #ffffff;
-    font-family: var(--font-titulo);
-    font-size: 1.45rem;
-    font-weight: 700;
+    font-family: var(--font-heading);
+    font-size: 1.6rem;
+    font-weight: 400;
     text-transform: uppercase;
     margin: 0;
     letter-spacing: 2px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(180deg, #fff 0%, #aaa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
 }
 
 /* Cuerpo */
 .anonymous-body {
     padding: 2rem 1.7rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .anonymous-description {
     text-align: center;
     margin-bottom: 1.8rem;
-    color: #a78bfa;
+    color: rgba(255, 255, 255, 0.7);
     font-size: 0.95rem;
-    font-family: var(--font-cuerpo);
+    font-family: var(--font-body);
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
 }
 
 /* Grid de personajes */
 .character-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem;
     margin-bottom: 1.8rem;
     justify-items: center;
 }
 
 /* Círculo de personaje */
 .character-circle {
-    width: 60px;
-    height: 60px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
-    border: 3px solid transparent;
+    border: 3px solid rgba(255, 255, 255, 0.2);
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
@@ -96,17 +92,21 @@ body {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .character-circle:hover {
     transform: scale(1.1);
-    border-color: var(--color-luna);
-    box-shadow: 0 4px 12px rgba(252, 163, 17, 0.4);
+    border-color: #ff8f29;
+    box-shadow: 0 0 20px rgba(255, 143, 41, 0.4);
 }
 
 .character-circle.selected {
-    border-color: var(--color-luna);
-    box-shadow: 0 0 0 3px rgba(252, 163, 17, 0.3);
+    border-color: #ff8f29;
+    border-width: 4px;
+    box-shadow:
+        0 0 25px rgba(255, 143, 41, 0.5),
+        0 4px 15px rgba(0, 0, 0, 0.4);
     transform: scale(1.05);
 }
 
@@ -115,20 +115,21 @@ body {
     position: absolute;
     bottom: -2px;
     right: -2px;
-    background-color: var(--color-luna);
-    color: var(--color-noche);
-    width: 22px;
-    height: 22px;
+    background-color: #ff8f29;
+    color: #1a1a1a;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: bold;
-    border: 2px solid var(--color-sombra);
+    border: 2px solid rgba(0, 0, 0, 0.6);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* Iconos de personaje por defecto */
+/* Colores por defecto (si no hay imagen) */
 .character-circle.char-1 {
     background-color: #ef8354;
 }
@@ -160,101 +161,91 @@ body {
 
 .nickname-input-group input {
     width: 100%;
-    background-color: #f3e8ff;
+    background-color: rgba(255, 255, 255, 0.05);
     padding: 0.85rem 1rem;
-    border: 2px solid #d8b4fe;
-    border-radius: 10px;
-    font-family: var(--font-cuerpo);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    font-family: var(--font-body);
     font-size: 0.95rem;
     text-align: center;
-    transition: border 0.2s ease;
-    color: #6b21a8;
+    transition: all 0.2s ease;
+    color: #ecede6;
     font-weight: 600;
     box-sizing: border-box;
 }
 
 .nickname-input-group input::placeholder {
-    color: #a78bfa;
-    opacity: 0.8;
+    color: rgba(255, 255, 255, 0.4);
 }
 
 .nickname-input-group input:focus {
     outline: none;
-    border-color: var(--color-luna);
-    color: #000;
+    border-color: #ff8f29;
+    background-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 15px rgba(255, 143, 41, 0.2);
 }
 
-/* Botón de crear sala */
+/* Botón de unirse - similar a btn-action primary */
 .create-room-button {
     width: 100%;
-    background: linear-gradient(135deg, #ef8354 0%, #fb923c 100%);
-    color: #ffffff;
+    background-color: #ff8f29;
+    color: #1a1a1a;
     border: none;
-    padding: 0.95rem;
-    border-radius: 10px;
-    font-family: var(--font-titulo);
-    font-weight: 700;
-    font-size: 1.05rem;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-family: var(--font-heading);
+    font-weight: 400;
+    font-size: 1.1rem;
     text-transform: uppercase;
     cursor: pointer;
     letter-spacing: 1px;
     transition: all 0.2s ease;
-    box-shadow: 0 4px 15px rgba(239, 131, 84, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
+    box-shadow: 0 4px 0 #cc6e1b;
+    position: relative;
+    overflow: hidden;
 }
 
 .create-room-button:hover {
+    background-color: #ff9f4d;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(239, 131, 84, 0.5);
+    box-shadow: 0 6px 0 #cc6e1b;
 }
 
 .create-room-button:active {
     transform: translateY(0);
+    box-shadow: 0 2px 0 #cc6e1b;
 }
 
 .create-room-button:disabled {
-    background: linear-gradient(135deg, #b8b8b8 0%, #9ca3af 100%);
+    background-color: #6b7280;
     cursor: not-allowed;
-    box-shadow: none;
+    box-shadow: 0 4px 0 #4b5563;
+    opacity: 0.7;
 }
 
-.create-room-button::before {
-    content: '▶';
-    font-size: 0.8rem;
-}
-
-/* Error */
+/* Mensaje de error */
 .anonymous-error-message {
-    color: var(--color-sangre);
-    font-size: 0.8rem;
-    font-family: var(--font-cuerpo);
-    margin-top: 0.5rem;
+    color: #ff6b6b;
+    font-size: 0.85rem;
+    font-family: var(--font-body);
+    margin: 0.5rem 0 0 0;
     text-align: center;
+    font-weight: 600;
+    min-height: 1.2rem;
 }
 
 /* Responsive */
 @media (max-width: 480px) {
-    .anonymous-container {
-        padding: 2rem 1rem;
-    }
-
-    .anonymous-card {
-        border-radius: 10px;
-    }
-
     .anonymous-body {
         padding: 1.5rem 1.25rem;
     }
 
     .character-grid {
-        gap: 0.8rem;
+        gap: 1rem;
     }
 
     .character-circle {
-        width: 55px;
-        height: 55px;
+        width: 60px;
+        height: 60px;
     }
 }

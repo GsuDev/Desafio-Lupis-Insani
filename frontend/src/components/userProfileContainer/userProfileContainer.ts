@@ -3,7 +3,7 @@ import { userController } from '../../controllers/UserController'
 
 import UserProfileComponent from '../userProfile/userProfile'
 import AccessContainer from '../accessContainer/AccessContainer'
-import UserStatistics from '../userStatistics/UserStatistics'
+import UserStatistics from '../userStatistics/userStatistics'
 //import bgVideo from '../../assets/Animación_de_Fondo_para_Videojuego.mp4'
 
 /**

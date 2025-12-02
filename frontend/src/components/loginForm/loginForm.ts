@@ -1,5 +1,6 @@
 import { userController } from '../../controllers/UserController'
-import { loadRegister } from '../userForm/registerView.mock'
+import AccessContainer from '../accessContainer/AccessContainer'
+import { renderUserForm } from '../userForm/userForm'
 import UserProfileContainer from '../userProfileContainer/userProfileContainer'
 import './loginForm.css'
 
@@ -223,8 +224,12 @@ export class LoginFormComponent {
             console.log('ERROR NO DOM')
             return
         }
+
         // Aquí se llamaría al router o controlador
-        loadRegister(app)
+        renderUserForm(app, () => {
+            const form = document.getElementById('register-container')
+            form?.remove()
+        })
     }
 
     /**
