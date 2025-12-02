@@ -1,7 +1,7 @@
 import AccessContainer from './components/accessContainer/AccessContainer'
 import UserProfileContainer from './components/userProfileContainer/userProfileContainer'
 import { userController } from './controllers/UserController'
-import bgVideo from './assets/Animación_de_Fondo_para_Videojuego.mp4'
+import bgVideo from './assets/background-animation.mp4'
 import './style.css'
 
 const app = document.getElementById('app')

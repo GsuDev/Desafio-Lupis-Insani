@@ -43,14 +43,45 @@ const createInputGroup = (
     return group
 }
 
-export const renderUserForm = (appContainer: HTMLElement) => {
-    appContainer.innerHTML = ''
-
+export const renderUserForm = (
+    appContainer: HTMLElement,
+    onClose?: () => void
+) => {
     const container = document.createElement('div')
     container.id = 'register-container'
 
     const card = document.createElement('div')
     card.className = 'card'
+
+    // Botón de cerrar (X)
+    const closeButton = document.createElement('button')
+    closeButton.className = 'close-button'
+    closeButton.innerHTML = '×'
+    closeButton.setAttribute('aria-label', 'Cerrar')
+    closeButton.type = 'button'
+
+    // Event listener para cerrar el modal
+    closeButton.addEventListener('click', () => {
+        if (onClose) {
+            onClose()
+        } else {
+            // Comportamiento por defecto: eliminar el modal
+            container.remove()
+        }
+    })
+
+    // También cerrar al hacer click en el overlay (fondo oscuro)
+    container.addEventListener('click', (e) => {
+        if (e.target === container) {
+            if (onClose) {
+                onClose()
+            } else {
+                container.remove()
+            }
+        }
+    })
+
+    card.appendChild(closeButton)
 
     const form = document.createElement('form')
     form.id = 'registration-form'
@@ -67,7 +98,7 @@ export const renderUserForm = (appContainer: HTMLElement) => {
     form.append(globalSuccess)
     form.append(globalError)
 
-    // Circulo perfil + nickname + nombre y apellidos
+    // Círculo perfil + nickname + nombre y apellidos
     const topSection = document.createElement('div')
     topSection.className = 'top-section'
 
@@ -86,7 +117,6 @@ export const renderUserForm = (appContainer: HTMLElement) => {
 
     const fileInput = profilePictureGroup.querySelector('input')!
     const profileLabel = profilePictureGroup.querySelector('label')!
-    // Form.appendChild(fileInput);
 
     if (fileInput) {
         fileInput.accept = 'image/png, image/jpeg'
@@ -135,7 +165,7 @@ export const renderUserForm = (appContainer: HTMLElement) => {
         'text',
         'nickname',
         true,
-        'Nombre o apodo del Héroe de castonegro'
+        'Nombre o apodo del Héroe de Castronegro'
     )
     rightSection.append(nicknameGroup)
 
@@ -251,7 +281,7 @@ export const renderUserForm = (appContainer: HTMLElement) => {
     const disableForm = (disabled: boolean) => {
         submitButton.disabled = disabled
         submitButton.textContent = disabled
-            ? 'Creando cuenta..'
+            ? 'Creando cuenta...'
             : 'Crear Cuenta'
     }
 
@@ -264,7 +294,7 @@ export const renderUserForm = (appContainer: HTMLElement) => {
 
     form.addEventListener('submit', (e) => {
         e.preventDefault()
-        console.log('VISTA: Submit detectado. Creando FormData..')
+        console.log('VISTA: Submit detectado. Creando FormData...')
 
         const formData = new FormData(form)
         const fileInput =

@@ -21,7 +21,7 @@ DB_CONTAINER=mariadb
 # 4. Levanta worker + reverb
 # 5. Levanta node (vite)
 # 6. Levanta nginx
-start: up-base wait-db composer fresh up-services node nginx
+start: up-base wait-db fresh up-services node nginx
 
 # ========================================
 # Levantar Node después de migraciones
@@ -68,7 +68,7 @@ wait-db:
 
 composer:
 	@echo "📦 Instalando dependencias Composer..."
-	docker exec $(APP_CONTAINER) composer install --no-interaction
+	docker exec $(APP_CONTAINER) composer update --no-interaction
 
 migrate:
 	@echo "🌱 Ejecutando migraciones..."
