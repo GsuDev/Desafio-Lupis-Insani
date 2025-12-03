@@ -95,7 +95,7 @@ export class ChatController {
         if (success) {
             console.log(`✅ Mensaje enviado a Game correctamente`)
         } else {
-            console.error(`❌ Error al enviar mensaje a Game`)
+            console.error(`❌ Error al enviar mensaje a Game ${success}`)
             // Mostrar alerta al usuario
             alert('Error al enviar el mensaje. Intenta de nuevo.')
         }

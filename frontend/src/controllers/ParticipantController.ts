@@ -61,15 +61,18 @@ class ParticipantController {
         if (!currentUser || !currentGame) {
             return false
         }
+       
         // Asegúrate de que 'participants' sea un array para evitar errores.
         const participants = currentGame.participants || []
         let hostId = 0
         for (const participant of participants) {
             if (participant.isHost) {
-                hostId = participant.id
+                if (participant.userId) {
+                    hostId = participant.userId
+                }
             }
         }
-
+       //console.log('Host ID:', hostId, 'Current User ID:', currentUser.id, 'funcion: ', hostId !== 0 && currentUser.id === hostId)
         // Si no se encuentra un host, o el usuario actual no tiene ID, no puede ser el host.
         return hostId !== 0 && currentUser.id === hostId
     }

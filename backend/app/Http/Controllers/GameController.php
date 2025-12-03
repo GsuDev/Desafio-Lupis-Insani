@@ -17,19 +17,19 @@ class GameController extends Controller
     {
 
         try {
-            // Metodo 1 url con id
-            // $game = new Game();
-            // $game->state = 'waiting';
-            // $game->save();
-            // $game->url = $game->id;
-            // $game->save();
+            //Metodo 1 url con id
+            $game = new Game();
+            $game->state = 'waiting';
+            $game->save();
+            $game->url = $game->id;
+            $game->save();
 
-            // Metodo 2 url con uuid
-            $uniqueUrl = (string) Str::uuid();
-            $game = Game::create([
-                'state' => 'waiting',
-                'url' => $uniqueUrl,
-            ]);
+            // // Metodo 2 url con uuid
+            // $uniqueUrl = (string) Str::uuid();
+            // $game = Game::create([
+            //     'state' => 'waiting',
+            //     'url' => $uniqueUrl,
+            // ]);
 
             return response()->json(['success' => true, 'message' => 'Partida creada', 'data' => ['game' => $game]], 201);
         } catch (\Exception $e) {

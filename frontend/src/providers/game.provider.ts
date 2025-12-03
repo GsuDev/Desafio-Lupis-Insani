@@ -367,3 +367,14 @@ export const assignCharacters = async (
         }
     }
 }
+
+
+export async function createGameRequest(
+): Promise<GameResponse | ApiErrorResponse> {
+
+    const { data: createResponse } = await apiClient.post<GameResponse|ApiErrorResponse>(
+        `/games`
+    )
+    //TODO: Manejar fallo creacion partida
+    return createResponse
+}

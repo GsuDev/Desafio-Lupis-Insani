@@ -92,8 +92,8 @@ export class UserProfileComponent {
         createBtn.textContent = 'Crear Sala'
         createBtn.onclick = async () => {
             // TODO: Crear sala
-            // gameController.createGame()
-            // await gameController.handleLoadGame(1)
+            const gameId = await gameController.handleCreateGame();
+            await gameController.handleLoadGame(gameId)
             const app = document.getElementById('app')
             const game = gameController.currentGame
             if (app && game) {

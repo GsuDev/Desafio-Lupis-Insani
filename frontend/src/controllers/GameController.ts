@@ -5,8 +5,9 @@
  */
 
 import { GameChannel } from '../channels/GameChannel'
+import { WolvesChannel } from '../channels/WolvesChannel'
 import type { Game, Message } from '../models/models'
-import { getGame, joinGameRequest, assignBots, assignCharacters, updateGameState, getParticipants } from '../providers/game.provider'
+import { getGame, joinGameRequest, assignBots, assignCharacters, updateGameState, getParticipants, createGameRequest } from '../providers/game.provider'
 
 // import { joinGameRequest } from '../providers/joinGame.provider'
 // Importamos el provider REAL
@@ -16,7 +17,7 @@ class GameController {
     private static instance: GameController
 
     private gameChannel: GameChannel | null = null
-
+    private wolvesChannel: WolvesChannel | null = null
     //tengo que guardar el estado de la partida
     private _currentGame: Game | undefined
 
@@ -187,7 +188,7 @@ class GameController {
             // 2. Asignar personajes
             console.log('🎭 Repartiendo cartas de personajes...')
             const charsResponse = await assignCharacters(gameId)
-            
+
             if (!charsResponse.success) {
                 throw new Error(charsResponse.message || 'Error al repartir personajes')
             }
@@ -201,7 +202,7 @@ class GameController {
 
             console.log('✅ Partida iniciada correctamente')
             const updatedGame = startResponse.data.game;
-            
+
             if (charsResponse.data) {
                 console.log('⚡ Usando participantes devueltos por el reparto de cartas');
                 updatedGame.participants = charsResponse.data;
@@ -210,9 +211,9 @@ class GameController {
                 const participantsRes = await getParticipants(gameId);
                 updatedGame.participants = participantsRes.data?.participants || [];
             }
-            
-            
-            
+
+
+
             // Si la respuesta no trae participantes, usamos los que ya teníamos en memoria
             // if (!updatedGame.participants || updatedGame.participants.length === 0) {
             //     console.log('🔄 Recuperando participantes actualizados desde la API...');
@@ -221,7 +222,7 @@ class GameController {
             //     const participantsRes = await getParticipants(gameId);
 
             //     if (participantsRes.success && participantsRes.data) {
-              
+
             //         updatedGame.participants = participantsRes.data.participants;
             //     } else {
             //         // Si falla la petición, usamos los que teníamos en memoria
@@ -247,7 +248,19 @@ class GameController {
         }
 
     }
-    public handleCreateGame() { }
+    public async handleCreateGame() { 
+        console.log('handleCreateGame en el GameController')
+        const response = await createGameRequest()
+        if (!response.data) {
+            throw new Error('Error al crear la partida.')
+        }
+        const game = this.handleJoin(response.data.game.id)
+        //TODO CONTROLAR ERROR
+        return response.data.game.id
+        //provider creategame -> mirar en back -> crea partida -> devolver contrato -> devolver game id 
+        //comprobacion de error
+
+    }
 
     public async handleJoin(gameId: number): Promise<Game> {
         console.log('handleJoin en el GameController')
@@ -268,6 +281,28 @@ class GameController {
             console.log(`❌ Error: ${error}`, 'error')
         }
     }
+
+    public connectWolvesChannel(gameId: number): void {
+        try {
+            this.wolvesChannel = new WolvesChannel(gameId)
+            console.log(`✅ Game Channel conectado`, 'success')
+        } catch (error) {
+            console.log(`❌ Error: ${error}`, 'error')
+        }
+    }
+
+    public disconnectWolvesChannel(): void {
+        try {
+            if (this.wolvesChannel) {
+                this.wolvesChannel.leave()
+                this.wolvesChannel = null
+            }
+            console.log('👋 Wolves Channel desconectado', 'info')
+        } catch (error) {
+            console.log(`❌ Error: ${error}`, 'error')
+        }
+    }
+
 
     public disconnectGameChannel(): void {
         try {

@@ -116,9 +116,9 @@ export const renderWaitingRoom = async (
     const renderGameDetails = (gameData: any) => {
 
         const game = gameData;
-        
+
         console.log('renderGameDetails recibió:', game)
-        
+
         if (!game || game === undefined) {
             return
         }
@@ -143,11 +143,13 @@ export const renderWaitingRoom = async (
 
             // B) Actualizar los datos del componente de juego
             if (gameComponent) {
-              
-                console.log('Participantes: '+game.participants)
+
+                // console.log('Participantes: '+game.participants)
                 gameComponent.update(game, game.participants || []);
             }
-
+            if (!gameController['gameChannel']) {
+                gameController.connectGameChannel(game.id);
+            }
             // Salimos para no ejecutar lógica de la Waiting Room
             return;
         }
@@ -183,7 +185,7 @@ export const renderWaitingRoom = async (
         showGlobalError,
         renderGameDetails,
         (_isDisabled: boolean) => {
-            participantList.disableButton(!participantController.isHost())
+            // participantList.disableButton(!participantController.isHost())
         },
         (message: Message) => WaitingRoomChat.addMessage(message)
     )

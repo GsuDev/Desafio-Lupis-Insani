@@ -15,7 +15,6 @@ import campfireImg from '../../assets/gameRenders/night_game_fire.png'
 
 export class GameComponent {
     private container: HTMLElement
-    private statusDisplay: HTMLElement
     private participantsContainer: HTMLElement
     private chatContainer: HTMLElement
     private readonly WOLF_CHARACTER_ID = 2; //pasarlo al env
@@ -27,7 +26,6 @@ export class GameComponent {
     //seguramente crezca en función de los elementos que necesite por ejemplo la carta, la barra de tiempo...
     constructor() {
         this.container = this.createContainer()
-        this.statusDisplay = this.createStatusDisplay()
         this.participantsContainer = this.createParticipantsContainer()
         this.chatContainer = this.createChatContainer()
 
@@ -73,15 +71,7 @@ export class GameComponent {
         div.style.zIndex = '60';
         return div
     }
-    /**
-     * Crea un elemento para mostrar el estado del juego (ej. "Día", "Noche", "Votación") es la barra superior de la pantalla
-     */
-    private createStatusDisplay(): HTMLElement {
-        const div = document.createElement('div')
-        div.className = 'game-status'
-        div.textContent = 'Estado: Cargando...'
-        return div
-    }
+
 
 
     /**
@@ -119,6 +109,8 @@ export class GameComponent {
         const gameChat = new GameChat(this.chatContainer, isWolf)
         gameChat.render()
 
+        
+
         // 2. Renderizar Barra de Tiempo
         const timeBar = new TimeBar(this.timeBarContainer)
         timeBar.render()
@@ -140,7 +132,7 @@ export class GameComponent {
             if (!userStr) return 'villager'; // Rol por defecto
 
             const user = JSON.parse(userStr);
-            const gameStr = localStorage.getItem('currentGame');
+            const gameStr = localStorage.getItem('currentGame');//TODO: cambiar por el getter de gameController
             if (!gameStr) return 'villager';
 
             const game = JSON.parse(gameStr);
@@ -323,8 +315,6 @@ export class GameComponent {
         // 2. Calcular índice
         // El Math.round ya nos da un entero, no hace falta (int)
         const index = Math.round(normalizedAngle / 45) % 8;
-        console.log(`Ángulo: ${angle} + 90 = ${angle + 90} Angulo normalizado: ${normalizedAngle} Índice calculado: ${index} pose: ${poses[index]}`);
-        console.log(``);
         return poses[index];
     }
 
