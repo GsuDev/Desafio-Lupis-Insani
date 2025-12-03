@@ -3,6 +3,8 @@ import { ChatController } from '../../controllers/GameChatController'
 import type { Message } from '../../models/models'
 import { GameMessage } from '../gameMessage/gameMessage'
 import type { ChatData } from '../../types/events.types'
+import { gameController } from '../../controllers/GameController'
+
 
 export class GameChat {
     private isWolf: boolean
@@ -89,6 +91,16 @@ export class GameChat {
         root.appendChild(footer)
 
         this.container.appendChild(root)
+
+        const game = gameController.currentGame
+        if (game) {
+            if (!gameController['gameChannel']) {
+                gameController.connectGameChannel(game.id);
+            }
+            if(this.isWolf){
+                gameController.connectWolvesChannel(game.id);
+            }
+        }
     }
 
     private async onSendMessage(inputElement: HTMLInputElement) {

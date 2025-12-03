@@ -34,9 +34,11 @@ class CharacterController extends Controller
      *    - message: mensaje de éxito o de error específico de cada fase
      *    - data: colección de participantes con su character_id asignado en caso de éxito, o null si hay error
      */
-    public function assignCharacters(Game $game)
+    public function assignCharacters($gameId)
     {
         try {
+            $game = Game::with('participants')->findOrFail($gameId);
+
             DB::transaction(function () use ($game) {
 
                 $humans = $game->participants->where('is_bot', false)->values();

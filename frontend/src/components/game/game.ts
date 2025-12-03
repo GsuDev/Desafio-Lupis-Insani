@@ -1,0 +1,321 @@
+import './game.css'
+import type { Game, Participant } from '../../models/models'
+import { GameParticipant } from '../gameParticipant/gameParticipant'
+import { GameChat } from '../gameChat/gameChat'
+import { TimeBar } from '../timeBar/timeBar'
+import { RoleCard, type PlayerRole } from '../roleCard/roleCard'
+
+import campfireImg from '../../assets/gameRenders/night_game_fire.png'
+
+/**
+ * Clase GameComponent
+ * Componente principal para visualizar la partida activa.
+ * Recibe datos del juego y de los participantes para renderizar el estado actual.
+ */
+
+export class GameComponent {
+    private container: HTMLElement
+    private participantsContainer: HTMLElement
+    private chatContainer: HTMLElement
+    private readonly WOLF_CHARACTER_ID = 2; //pasarlo al env
+
+    private timeBarContainer: HTMLElement;
+    private roleCardContainer: HTMLElement;
+
+
+    //seguramente crezca en función de los elementos que necesite por ejemplo la carta, la barra de tiempo...
+    constructor() {
+        this.container = this.createContainer()
+        this.participantsContainer = this.createParticipantsContainer()
+        this.chatContainer = this.createChatContainer()
+
+        this.timeBarContainer = this.createTimeBarContainer()
+        this.roleCardContainer = this.createRoleCardContainer()
+
+    }
+
+    /**
+     * Crea el contenedor principal del componente
+     */
+    private createContainer(): HTMLElement {
+        const container = document.createElement('div')
+        container.className = 'game-component'
+        return container
+    }
+
+    /**
+         * Crea el contenedor para la barra de tiempo (zona superior)
+         */
+    private createTimeBarContainer(): HTMLElement {
+        const div = document.createElement('div')
+        // Puedes darle una clase si necesitas posicionamiento extra en game.css,
+        // aunque TimeBar ya tiene sus estilos internos.
+        div.className = 'game-time-bar-wrapper'
+        div.style.position = 'absolute';
+        div.style.top = '0';
+        div.style.width = '100%';
+        div.style.zIndex = '50'; // Por encima de los participantes
+        return div
+    }
+
+    /**
+     * Crea el contenedor para la carta de rol (zona inferior derecha usualmente)
+     */
+    private createRoleCardContainer(): HTMLElement {
+        const div = document.createElement('div')
+        div.className = 'game-role-card-wrapper'
+        // Ajusta posición si roleCard.css no lo hace (ej. bottom-right)
+        // div.style.position = 'absolute';
+        // div.style.bottom = '20px';
+        // div.style.right = '20px';
+        div.style.zIndex = '60';
+        return div
+    }
+
+
+
+    /**
+     * Crea el contenedor donde se mostrarán los participantes (o sus avatares en el juego) ¿cambiarlo a un componente ? 
+     */
+    private createParticipantsContainer(): HTMLElement {
+        const div = document.createElement('div')
+        div.className = 'game-participants-grid'
+        return div
+    }
+
+
+    /**
+     * Crea el contendedor del chat
+     */
+    private createChatContainer(): HTMLElement {
+        const div = document.createElement('div')
+        div.className = 'game-chat-wrapper'
+        return div
+
+    }
+
+    /**
+     * Método público para renderizar el componente por primera vez.
+     * Devuelve el HTMLElement listo para ser insertado en el DOM principal.
+     */
+    public render(): HTMLElement {
+        this.container.appendChild(this.participantsContainer) // Fondo/Tablero
+        this.container.appendChild(this.timeBarContainer)      // Barra Superior
+        this.container.appendChild(this.chatContainer)         // Chat (Izquierda)
+        this.container.appendChild(this.roleCardContainer)     // Carta (Derecha/Esquina)
+
+        //chat
+        const isWolf = this.checkIfPlayerIsWolf();
+        const gameChat = new GameChat(this.chatContainer, isWolf)
+        gameChat.render()
+
+        
+
+        // 2. Renderizar Barra de Tiempo
+        const timeBar = new TimeBar(this.timeBarContainer)
+        timeBar.render()
+
+        // 3. Renderizar Carta de Rol
+        // Obtenemos el rol real del usuario
+        const myRole = this.getMyRole(); 
+        const roleCard = new RoleCard(this.roleCardContainer, myRole)
+        roleCard.render()
+        return this.container
+    }
+
+/**
+     * Determina el rol del usuario actual para mostrar la carta correcta
+     */
+    private getMyRole(): PlayerRole {
+        try {
+            const userStr = localStorage.getItem('currentUser'); // Ojo: en tu código anterior usabas 'currentUser' o 'user', revisa cuál es el correcto
+            if (!userStr) return 'villager'; // Rol por defecto
+
+            const user = JSON.parse(userStr);
+            const gameStr = localStorage.getItem('currentGame');//TODO: cambiar por el getter de gameController
+            if (!gameStr) return 'villager';
+
+            const game = JSON.parse(gameStr);
+            const participants = game.participants || [];
+            
+            const myParticipant = participants.find((p: any) => p.userId === user.id);
+
+            if (!myParticipant || !myParticipant.characterId) return 'villager';
+
+            // Mapeo de ID de BBDD a tipo PlayerRole
+            // Ajusta estos IDs según tu tabla de characters
+            const characterId = parseInt(myParticipant.characterId);
+            
+            if (characterId === this.WOLF_CHARACTER_ID) return 'wolf';
+            if (characterId === 1) return 'villager'; // Ejemplo ID aldeano
+            if (characterId === 3) return 'seer';     // Ejemplo ID vidente
+            if (characterId === 4) return 'hunter';   // Ejemplo ID cazador
+            
+            return 'villager'; // Fallback
+
+        } catch (e) {
+            console.error(e);
+            return 'villager';
+        }
+    }
+    /**
+     * Comprueba si el usuario actual tiene un personaje de tipo Lobo
+     */
+    private checkIfPlayerIsWolf(): boolean {
+        try {
+            // 1. Obtener usuario actual del localStorage
+            const userStr = localStorage.getItem('currentUser');
+            console.log(userStr)
+            if (!userStr) return false;
+
+            const user = JSON.parse(userStr);
+            const currentUserId = user.id;
+
+            const gameStr = localStorage.getItem('currentGame');
+            if (!gameStr) return false;
+
+            const game = JSON.parse(gameStr);
+            const participants = game.participants || [];
+
+            // 3. Buscar mi participante
+            const myParticipant = participants.find((p: any) => p.userId === currentUserId);
+
+            if (!myParticipant || !myParticipant.characterId) {
+                return false;
+            }
+
+            // 4. Comprobar si mi characterId está en la lista de lobos
+            return this.WOLF_CHARACTER_ID === parseInt(myParticipant.characterId);
+
+        } catch (error) {
+            console.error('Error verificando rol de lobo:', error);
+            return false;
+        }
+    }
+
+
+    /**
+     * Actualiza la interfaz con los datos más recientes del juego y participantes.
+     * @param game Datos actuales del objeto Game
+     * @param participants Lista de participantes actualizada
+     */
+    public update(game: Game, participants: Participant[]): void {
+
+       
+        // 2. Actualizar participantes
+        this.participantsContainer.innerHTML = ''
+
+        //Esto tendría que ir cambiando entre la noche y el dia
+        // const campfireDiv = document.createElement('div')
+        // campfireDiv.className = 'campfire-container'
+        // campfireDiv.innerHTML = `<img src="${campfireImg}" alt="Hoguera" class="campfire-img" />`
+
+        // this.participantsContainer.appendChild(campfireDiv)
+
+        // 3. Separar participantes en anillos
+        const MAX_INNER = 10;
+
+        // Primeros 10 (o menos)
+        const innerCircleParticipants = participants.slice(0, MAX_INNER);
+        // El resto (del 11 en adelante)
+        const outerCircleParticipants = participants.slice(MAX_INNER, MAX_INNER + 20);
+
+        // 4. Calcular Radios (en % del tamaño menor de la pantalla para ser responsive)
+        // Usamos unidades 'vmin' relativas o píxeles fijos si prefieres.
+        // Aquí lo haré con % relativo al contenedor padre.
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        // const width = this.participantsContainer.clientWidth || window.innerWidth;
+        // const height = this.participantsContainer.clientHeight || window.innerHeight;
+        const minDim = Math.min(width, height);
+
+        // Radio interior 
+        const r1 = minDim * 0.1;
+        // Radio exterior 
+        const r2 = minDim * 0.18;
+
+        // 5. Renderizar círculos
+        this.renderCircle(innerCircleParticipants, r1, width / 2, height / 2);
+        this.renderCircle(outerCircleParticipants, r2, width / 2, height / 2);
+
+        // participants.forEach((p) => {
+        //     //aqui calcular la posición en función del numero en la lista
+
+        //     //calcula la imagen correcta en función de la posicion en el circulo
+        //     const versionIndex = 1;
+
+        //     // 3. Crear instancia del componente
+        //     const participantComponent = new GameParticipant(p, versionIndex)
+
+        //     // 4. Añadir al DOM
+        //     this.participantsContainer.appendChild(participantComponent.render())
+        // })
+    }
+
+    /**
+     * Función helper para colocar una lista de participantes en círculo
+     */
+    private renderCircle(list: Participant[], radius: number, centerX: number, centerY: number) {
+        if (list.length === 0) return;
+
+        const angleStep = (2 * Math.PI) / list.length;
+
+        list.forEach((p, index) => {
+            // Calculamos el ángulo. Restamos PI/2 para empezar arriba (a las 12 en punto)
+            const angle = index * angleStep - (Math.PI / 2);
+
+            let x = centerX + radius * Math.cos(angle);
+            let y = centerY + radius * Math.sin(angle);
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const midWidth = width / 2;
+            const midHeight = height / 2;
+
+            if (x > midWidth) {
+                x += (x - midWidth) * 1.1;
+            } else {
+                x -= (midWidth - x) * 1 - 1;
+            }
+
+            if (y > midHeight) { //inverso al width para generar la elipse
+                y -= (y - midHeight) * 0.1;
+            } else {
+                y += (midHeight - y) * 0.1;
+            }
+
+            const percentageX = x / width * 100;// se calculan los porcentajes para que sea responsive
+            const percentageY = y / height * 100;
+
+            // Crear componente
+            // Usar la logica en funcion del la posicion para cargar distintas imagenes
+            let angleDeg = angle * (180 / Math.PI);
+
+
+
+
+
+
+            const versionIndex = this.getPoseImage(angleDeg);
+            const pComponent = new GameParticipant(p, versionIndex);
+            const pElement = pComponent.render();
+
+            // Aplicar posición
+            pElement.style.left = `${percentageX}%`;
+            pElement.style.top = `${percentageY}%`;
+
+            this.participantsContainer.appendChild(pElement);
+        });
+    }
+
+    private getPoseImage(angle: number): number {
+        // 1. Normalizar ángulo (0 a 360)
+        const normalizedAngle = angle + 90;
+        const poses = [1, 8, 7, 6, 5, 4, 3, 2] as const;
+
+        // 2. Calcular índice
+        // El Math.round ya nos da un entero, no hace falta (int)
+        const index = Math.round(normalizedAngle / 45) % 8;
+        return poses[index];
+    }
+
+}

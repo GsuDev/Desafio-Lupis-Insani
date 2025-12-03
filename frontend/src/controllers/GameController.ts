@@ -5,8 +5,9 @@
  */
 
 import { GameChannel } from '../channels/GameChannel'
+import { WolvesChannel } from '../channels/WolvesChannel'
 import type { Game, Message } from '../models/models'
-import { getGame, joinGameRequest } from '../providers/game.provider'
+import { getGame, joinGameRequest, assignBots, assignCharacters, updateGameState, getParticipants, createGameRequest } from '../providers/game.provider'
 
 // import { joinGameRequest } from '../providers/joinGame.provider'
 // Importamos el provider REAL
@@ -16,18 +17,18 @@ class GameController {
     private static instance: GameController
 
     private gameChannel: GameChannel | null = null
-
+    private wolvesChannel: WolvesChannel | null = null
     //tengo que guardar el estado de la partida
     private _currentGame: Game | undefined
 
     // 1. Almacenamiento de Callbacks de la Vista
-    private _showLoading: (isLoading: boolean) => void = () => {}
-    private _showGlobalError: (message: string) => void = () => {}
-    private _renderGameDetails: (game: Game) => void = () => {}
-    private _disableStartButton: (isDisabled: boolean) => void = () => {}
-    private _addChatMessage: (message: Message) => void = () => {}
+    private _showLoading: (isLoading: boolean) => void = () => { }
+    private _showGlobalError: (message: string) => void = () => { }
+    private _renderGameDetails: (game: Game) => void = () => { }
+    private _disableStartButton: (isDisabled: boolean) => void = () => { }
+    private _addChatMessage: (message: Message) => void = () => { }
 
-    private constructor() {}
+    private constructor() { }
 
     //Este es lo que sería el getGame, si jesus quiere cambiarlo a getGame
     public static getInstance(): GameController {
@@ -42,7 +43,14 @@ class GameController {
     }
 
     set currentGame(currentGame) {
-        localStorage.setItem('currentGame', JSON.stringify(currentGame))
+
+        this._currentGame = currentGame;
+
+        if (currentGame) {
+            localStorage.setItem('currentGame', JSON.stringify(currentGame))
+        } else {
+            localStorage.removeItem('currentGame')
+        }
     }
 
     /** Restaura la sesión desde localStorage si existe */
@@ -148,17 +156,111 @@ class GameController {
     /**
      * La Vista llama a este método cuando se pulsa "Iniciar"
      */
-    public handleStartGame(): void {
+    public async handleStartGame(): Promise<void> {
+        // Comprobaciones de seguridad
+        if (!this._currentGame) return
+
+        // Evitar doble click
+        this._disableStartButton(true)
         this._showLoading(true) // O mostrar un mensaje "Iniciando..."
 
-        // ej: await updateGame() y actualizar en servidor el boolean de comenzada
+        try {
+            const gameId = this._currentGame.id
+            const MIN_PLAYERS = 15 // Mínimo necesario según tus reglas
 
-        // Simulamos que tarda 1 segundo
-        setTimeout(() => {
+            // 1. Comprobar participantes y Generar Bots si es necesario
+            // (Asumimos que participants ya está cargado en _currentGame)
+            const currentPlayersCount = this._currentGame.participants.length
+
+            if (currentPlayersCount < MIN_PLAYERS) {
+                console.log(`Faltan jugadores (${currentPlayersCount}/${MIN_PLAYERS}). Añadiendo bots...`)
+
+                const botResponse = await assignBots(gameId)
+
+                if (!botResponse.success) {
+                    throw new Error(botResponse.message || 'Error al generar bots')
+                }
+
+                // Recarga el juego aquí para ver los bots antes de cambiar de fase
+                await this.handleLoadGame(gameId)
+            }
+
+            // 2. Asignar personajes
+            console.log('🎭 Repartiendo cartas de personajes...')
+            const charsResponse = await assignCharacters(gameId)
+
+            if (!charsResponse.success) {
+                throw new Error(charsResponse.message || 'Error al repartir personajes')
+            }
+            // 3. Iniciar la Partida (Cambiar estado)
+            // on_course
+            const startResponse = await updateGameState(gameId, 'on_course')
+
+            if (!startResponse.success || !startResponse.data) {
+                throw new Error(startResponse.message || 'Error al iniciar la partida')
+            }
+
+            console.log('✅ Partida iniciada correctamente')
+            const updatedGame = startResponse.data.game;
+
+            if (charsResponse.data) {
+                console.log('⚡ Usando participantes devueltos por el reparto de cartas');
+                updatedGame.participants = charsResponse.data;
+            } else {
+                // Fallback por si acaso
+                const participantsRes = await getParticipants(gameId);
+                updatedGame.participants = participantsRes.data?.participants || [];
+            }
+
+
+
+            // Si la respuesta no trae participantes, usamos los que ya teníamos en memoria
+            // if (!updatedGame.participants || updatedGame.participants.length === 0) {
+            //     console.log('🔄 Recuperando participantes actualizados desde la API...');
+
+            //     // Llamamos a la nueva función
+            //     const participantsRes = await getParticipants(gameId);
+
+            //     if (participantsRes.success && participantsRes.data) {
+
+            //         updatedGame.participants = participantsRes.data.participants;
+            //     } else {
+            //         // Si falla la petición, usamos los que teníamos en memoria
+            //         console.warn('⚠️ No se pudieron cargar participantes nuevos. Usando caché.');
+            //         updatedGame.participants = this._currentGame?.participants || [];
+            //     }
+            // }
+            // 3. Actualizar el estado local
+            this.setGameData(updatedGame)
+
+            // Aquí la vista (WaitingRoom) debería detectar el cambio de estado 
+            // en el callback _renderGameDetails y cambiar la pantalla al componente de Juego.
+            this._renderGameDetails(updatedGame)
+
+
+
+        } catch (error: any) {
+            console.error(error)
+            this._showGlobalError(error.message || 'Error desconocido al iniciar')
+            this._disableStartButton(false) // Reactivar botón si falló
+        } finally {
             this._showLoading(false)
-        }, 1000)
+        }
+
     }
-    public handleCreateGame() {}
+    public async handleCreateGame() { 
+        console.log('handleCreateGame en el GameController')
+        const response = await createGameRequest()
+        if (!response.data) {
+            throw new Error('Error al crear la partida.')
+        }
+        const game = this.handleJoin(response.data.game.id)
+        //TODO CONTROLAR ERROR
+        return response.data.game.id
+        //provider creategame -> mirar en back -> crea partida -> devolver contrato -> devolver game id 
+        //comprobacion de error
+
+    }
 
     public async handleJoin(gameId: number): Promise<Game> {
         console.log('handleJoin en el GameController')
@@ -179,6 +281,28 @@ class GameController {
             console.log(`❌ Error: ${error}`, 'error')
         }
     }
+
+    public connectWolvesChannel(gameId: number): void {
+        try {
+            this.wolvesChannel = new WolvesChannel(gameId)
+            console.log(`✅ Game Channel conectado`, 'success')
+        } catch (error) {
+            console.log(`❌ Error: ${error}`, 'error')
+        }
+    }
+
+    public disconnectWolvesChannel(): void {
+        try {
+            if (this.wolvesChannel) {
+                this.wolvesChannel.leave()
+                this.wolvesChannel = null
+            }
+            console.log('👋 Wolves Channel desconectado', 'info')
+        } catch (error) {
+            console.log(`❌ Error: ${error}`, 'error')
+        }
+    }
+
 
     public disconnectGameChannel(): void {
         try {
