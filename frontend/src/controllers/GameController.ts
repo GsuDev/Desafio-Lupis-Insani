@@ -7,7 +7,12 @@
 import { GameChannel } from '../channels/GameChannel'
 import { WolvesChannel } from '../channels/WolvesChannel'
 import type { Game, Message } from '../models/models'
-import { getGame, joinGameRequest, assignBots, assignCharacters, updateGameState, getParticipants, createGameRequest } from '../providers/game.provider'
+import {
+    getGame,
+    joinGameRequest,
+    createGameRequest,
+    startGame,
+} from '../providers/game.provider'
 
 // import { joinGameRequest } from '../providers/joinGame.provider'
 // Importamos el provider REAL
@@ -22,13 +27,13 @@ class GameController {
     private _currentGame: Game | undefined
 
     // 1. Almacenamiento de Callbacks de la Vista
-    private _showLoading: (isLoading: boolean) => void = () => { }
-    private _showGlobalError: (message: string) => void = () => { }
-    private _renderGameDetails: (game: Game) => void = () => { }
-    private _disableStartButton: (isDisabled: boolean) => void = () => { }
-    private _addChatMessage: (message: Message) => void = () => { }
+    private _showLoading: (isLoading: boolean) => void = () => {}
+    private _showGlobalError: (message: string) => void = () => {}
+    private _renderGameDetails: (game: Game) => void = () => {}
+    private _disableStartButton: (isDisabled: boolean) => void = () => {}
+    private _addChatMessage: (message: Message) => void = () => {}
 
-    private constructor() { }
+    private constructor() {}
 
     //Este es lo que sería el getGame, si jesus quiere cambiarlo a getGame
     public static getInstance(): GameController {
@@ -43,8 +48,7 @@ class GameController {
     }
 
     set currentGame(currentGame) {
-
-        this._currentGame = currentGame;
+        this._currentGame = currentGame
 
         if (currentGame) {
             localStorage.setItem('currentGame', JSON.stringify(currentGame))
@@ -105,25 +109,20 @@ class GameController {
         this._showGlobalError('') // Limpiar errores antiguos
         this._disableStartButton(true)
         try {
-            //Como ahora guardo en memoria
-            if (this._currentGame) {
-                //console.log('Cargando datos desde memoria caché del Controller')
-                this._renderGameDetails(this._currentGame)
-            } else {
-                // Si no, llamamos a la API
-                //console.log('Fetching datos desde API...')
-                const response = await getGame(gameId)
-                if (!response.data) {
-                    throw new Error('No ha llegado')
-                }
-                this._currentGame = response.data.game
-                localStorage.setItem(
-                    'currentGame',
-                    JSON.stringify(this._currentGame)
-                )
-                // Guardamos en memoria
-                this._renderGameDetails(this._currentGame)
+            // Si no, llamamos a la API
+            //console.log('Fetching datos desde API...')
+            const response = await getGame(gameId)
+            console.log('handleLoadGame tiene: ', response)
+            if (!response.data) {
+                throw new Error('No ha llegado')
             }
+            this._currentGame = response.data.game
+            localStorage.setItem(
+                'currentGame',
+                JSON.stringify(this._currentGame)
+            )
+            // Guardamos en memoria
+            this._renderGameDetails(this._currentGame)
 
             //        // Si no, llamamos a la API
             //     //console.log('Fetching datos desde API...')
@@ -166,53 +165,31 @@ class GameController {
 
         try {
             const gameId = this._currentGame.id
-            const MIN_PLAYERS = 15 // Mínimo necesario según tus reglas
+            const MIN_PLAYERS = 1 // Mínimo necesario según tus reglas
 
             // 1. Comprobar participantes y Generar Bots si es necesario
             // (Asumimos que participants ya está cargado en _currentGame)
             const currentPlayersCount = this._currentGame.participants.length
-
             if (currentPlayersCount < MIN_PLAYERS) {
-                console.log(`Faltan jugadores (${currentPlayersCount}/${MIN_PLAYERS}). Añadiendo bots...`)
-
-                const botResponse = await assignBots(gameId)
-
-                if (!botResponse.success) {
-                    throw new Error(botResponse.message || 'Error al generar bots')
-                }
-
-                // Recarga el juego aquí para ver los bots antes de cambiar de fase
-                await this.handleLoadGame(gameId)
+                throw new Error(
+                    'No hay participantes suficientes para iniciar la partida'
+                )
             }
 
-            // 2. Asignar personajes
-            console.log('🎭 Repartiendo cartas de personajes...')
-            const charsResponse = await assignCharacters(gameId)
-
-            if (!charsResponse.success) {
-                throw new Error(charsResponse.message || 'Error al repartir personajes')
-            }
-            // 3. Iniciar la Partida (Cambiar estado)
-            // on_course
-            const startResponse = await updateGameState(gameId, 'on_course')
-
+            let startResponse = await startGame(gameId)
             if (!startResponse.success || !startResponse.data) {
-                throw new Error(startResponse.message || 'Error al iniciar la partida')
+                throw new Error(
+                    startResponse.message || 'Error al iniciar la partida'
+                )
             }
 
-            console.log('✅ Partida iniciada correctamente')
-            const updatedGame = startResponse.data.game;
+            // Recarga el juego aquí para ver los bots antes de cambiar de fase
+            await this.handleLoadGame(gameId)
 
-            if (charsResponse.data) {
-                console.log('⚡ Usando participantes devueltos por el reparto de cartas');
-                updatedGame.participants = charsResponse.data;
-            } else {
-                // Fallback por si acaso
-                const participantsRes = await getParticipants(gameId);
-                updatedGame.participants = participantsRes.data?.participants || [];
-            }
-
-
+            console.log(
+                '✅ Partida iniciada correctamente',
+                gameController.currentGame
+            )
 
             // Si la respuesta no trae participantes, usamos los que ya teníamos en memoria
             // if (!updatedGame.participants || updatedGame.participants.length === 0) {
@@ -231,24 +208,20 @@ class GameController {
             //     }
             // }
             // 3. Actualizar el estado local
-            this.setGameData(updatedGame)
 
-            // Aquí la vista (WaitingRoom) debería detectar el cambio de estado 
+            // Aquí la vista (WaitingRoom) debería detectar el cambio de estado
             // en el callback _renderGameDetails y cambiar la pantalla al componente de Juego.
-            this._renderGameDetails(updatedGame)
-
-
-
         } catch (error: any) {
             console.error(error)
-            this._showGlobalError(error.message || 'Error desconocido al iniciar')
+            this._showGlobalError(
+                error.message || 'Error desconocido al iniciar'
+            )
             this._disableStartButton(false) // Reactivar botón si falló
         } finally {
             this._showLoading(false)
         }
-
     }
-    public async handleCreateGame() { 
+    public async handleCreateGame() {
         console.log('handleCreateGame en el GameController')
         const response = await createGameRequest()
         if (!response.data) {
@@ -257,9 +230,8 @@ class GameController {
         const game = this.handleJoin(response.data.game.id)
         //TODO CONTROLAR ERROR
         return response.data.game.id
-        //provider creategame -> mirar en back -> crea partida -> devolver contrato -> devolver game id 
+        //provider creategame -> mirar en back -> crea partida -> devolver contrato -> devolver game id
         //comprobacion de error
-
     }
 
     public async handleJoin(gameId: number): Promise<Game> {
@@ -302,7 +274,6 @@ class GameController {
             console.log(`❌ Error: ${error}`, 'error')
         }
     }
-
 
     public disconnectGameChannel(): void {
         try {

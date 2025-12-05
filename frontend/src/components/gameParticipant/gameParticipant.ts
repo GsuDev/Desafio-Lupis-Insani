@@ -41,18 +41,17 @@ export class GameParticipant {
         return this.element
     }
 
-
     private getAvatarUrl(): string {
-
-
         const userStr = localStorage.getItem('currentUser')
         if (userStr) {
-            const user = JSON.parse(userStr);
-            const currentUserId = user.id;
-            if (this.participant.userId === currentUserId && this.participant.characterId == 2) {
-                 return `/src/assets/charactersInGame/char_l_${this.version}.png`
+            const user = JSON.parse(userStr)
+            const currentUserId = user.id
+            if (
+                this.participant.userId === currentUserId &&
+                this.participant.characterId == 2
+            ) {
+                return `/src/assets/charactersInGame/char_l_${this.version}.png`
             }
-
         }
         return `/src/assets/charactersInGame/char_w_${this.version}.png`
     }

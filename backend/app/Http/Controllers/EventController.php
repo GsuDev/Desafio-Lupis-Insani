@@ -40,11 +40,33 @@ class EventController extends Controller
 
             case 'system':
                 // Mensajes del sistema
+                $result = GameController::addMessageByGame($data, 'system', $gameId, $user);
+                if (! $result['success']) {
+                    // TODO: manejar error
+                }
+
+                return ['message' => $result['data']];
                 break;
 
             default:
 
                 break;
+        }
+    }
+
+    // Metodo atajo para mandar mensajes del sistema
+    public static function systemMessage(string $msg, $channel, $gameId)
+    {
+        if ($channel === 'wolves') {
+            $data = [
+                'message' => $msg,
+            ];
+            WolvesChannelController::systemSend('chat.system', $data, $gameId);
+        } else {
+            $data = [
+                'message' => $msg,
+            ];
+            GameChannelController::systemSend('chat.system', $data, $gameId);
         }
     }
 

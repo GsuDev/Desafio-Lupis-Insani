@@ -4,7 +4,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CharacterController;
 use App\Http\Controllers\GameChannelController;
 use App\Http\Controllers\GameController;
-use App\Http\Controllers\GameEngineController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WolvesChannelController;
@@ -164,6 +163,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
             // POST /api/games/{game}/join -> GameController@joinGame
             Route::post('/join', [GameController::class, 'joinGame'])->middleware('ability:join-game');
+
+            // POST /api/games/{game}/start -> GameController@startGame
+            Route::post('/start', [GameController::class, 'startGame']);
 
             // DELETE /api/games/{game} -> GameController@deleteGame
             Route::delete('/', [GameController::class, 'deleteGame']);

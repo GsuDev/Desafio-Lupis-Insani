@@ -11,6 +11,17 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
+        // Usuario system
+        $admin = User::firstOrCreate(
+            ['email' => 'system@system.com'],
+            [
+                'nickname' => 'system',
+                'name' => 'system',
+                'lastname' => 'system',
+                'password' => Hash::make('system'), // cámbialo si quieres
+                'birthdate' => '1990-01-01',
+            ]
+        );
         // Usuario admin
         $admin = User::firstOrCreate(
             ['email' => 'admin@example.com'],
