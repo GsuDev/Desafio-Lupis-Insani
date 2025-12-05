@@ -175,8 +175,8 @@ class AnnounceVillagerVotingResultJob implements ShouldQueue
             // Continuar el ciclo si el juego no ha terminado
             if (! $winStatus['finished']) {
                 // Se dispara el inicio de la noche
-                if (class_exists(NightStartJob::class)) {// creado por ia como placeholder
-                    NightStartedJob::dispatch($this->gameId)->delay(now()->addSeconds(5));
+                if (class_exists(TransitionToNightJob::class)) {// creado por ia como placeholder
+                    TransitionToNightJob::dispatch($this->gameId)->delay(now()->addSeconds(5));
                 }
             } else {
                 // si el juego termina, se emitiría game.finished que pertenece a otra hu

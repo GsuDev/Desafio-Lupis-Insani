@@ -46,7 +46,7 @@ class FirstDayStartMayorVoteJobTest extends TestCase
 
         // Verificamos Evento Cambio de Fase
         Event::assertDispatched(GameEvent::class, function ($event) use ($game) {
-            // CORREGIDO: Usamos $event->event en lugar de $event->type
+
             return $event->event === 'vote.start'
                 && $event->gameId === $game->id
                 && $event->data['phase'] === 'primer_dia'
