@@ -59,7 +59,6 @@ export class GameMessage {
         // burbuja dse texto
         const bubble = document.createElement('div')
         bubble.className = 'message-bubble'
-        console.log('mensajeeeeee ---->: ', this.data.message)
         bubble.textContent = this.data.message // usa el campo mensaje
 
         const time = document.createElement('span')

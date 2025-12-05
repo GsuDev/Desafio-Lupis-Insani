@@ -37,7 +37,7 @@ export class ChatManager {
                 break
 
             case 'chat.system':
-                console.log(`Mensaje del sistema en ${channel}:`)
+                console.log(`ChatManager: Mensaje del sistema en ${channel}:`)
                 ChatController.addMessage(event.data.message, channel)
                 break
 

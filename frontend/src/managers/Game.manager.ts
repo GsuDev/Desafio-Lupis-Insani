@@ -21,7 +21,10 @@ export class GameManager {
         switch (eventName) {
             case 'game.discussion':
                 // TODO: Sacar un enorme titulo para lobos o aldeanos
-                console.log('Empieza la discusion', event.data)
+                console.log(
+                    'Empieza la discusion: Cambiame por humo',
+                    event.data
+                )
                 break
 
             case 'game.example':
