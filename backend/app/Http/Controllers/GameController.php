@@ -17,8 +17,8 @@ class GameController extends Controller
     {
 
         try {
-            //Metodo 1 url con id
-            $game = new Game();
+            // Metodo 1 url con id
+            $game = new Game;
             $game->state = 'waiting';
             $game->save();
             $game->url = $game->id;
@@ -179,13 +179,13 @@ class GameController extends Controller
             $game = Game::findOrFail($gameId);
             $user = $req->user();
 
-
             $userExistsInGame = $game->users()->where('user_id', $user->id)->exists();
-            if ($userExistsInGame) {//caso que el usuario ya esté en la partida
+            if ($userExistsInGame) {// caso que el usuario ya esté en la partida
                 // Esto permite que alguien se reconecte aunque el juego haya empezado.
 
                 if ($game->state == 'waiting' || $game->state == 'on_course') {
                     $game->load('users');
+
                     return response()->json([
                         'success' => true,
                         'message' => 'Reconexión exitosa: El usuario ya estaba en la partida.',
@@ -198,7 +198,7 @@ class GameController extends Controller
                         'data' => null,
                     ], 403);
                 }
-            } else {//caso que no este en la partida
+            } else {// caso que no este en la partida
                 if ($game->state != 'waiting') {
                     return response()->json(['success' => false, 'message' => 'No se puede unir a la partida, no está en estado waiting', 'data' => null], 403);
                 }
@@ -220,7 +220,7 @@ class GameController extends Controller
 
                 // $game->users()->attach($user->id);
                 // controlo que haya salido bien
-                if (!$result['success']) {
+                if (! $result['success']) {
                     return response()->json(['success' => false, 'message' => $result['message'], 'data' => $result['data']], 422);
                 }
                 // recargo los datos de partida
@@ -255,7 +255,7 @@ class GameController extends Controller
             // Recuperamos la partida con sus participantes (humanos y bots)
             $game = Game::with('participants')->find($gameId);
 
-            if (!$game) {
+            if (! $game) {
                 return [
                     'success' => false,
                     'message' => 'Partida no encontrada',
@@ -287,7 +287,7 @@ class GameController extends Controller
             $timestamp = now();
 
             for ($i = 0; $i < $botsNeeded; $i++) {
-                $botName = 'Bot_' . Str::random(8);
+                $botName = 'Bot_'.Str::random(8);
 
                 $botsData[] = [
                     'game_id' => $gameId,

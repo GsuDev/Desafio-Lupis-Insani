@@ -5,16 +5,16 @@
     height: 100%;
     min-height: 400px;
     max-height: 600px;
-    
+
     /* Borde doble para efecto de marco antiguo */
-    border: 4px double #8b5a2b; 
+    border: 4px double #8b5a2b;
     border-radius: 10px;
-    
+
     /* Fondo base color pergamino pero semi-transparente */
     background-color: rgba(243, 229, 202, 0.2);
     /* Efecto de cristal difuminado detrás del chat */
-    backdrop-filter: blur(5px); 
-    
+    backdrop-filter: blur(5px);
+
     overflow: hidden;
     font-family: 'Georgia', 'Times New Roman', serif; /* Fuente clásica */
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
@@ -24,7 +24,7 @@
 .chat-tabs-container {
     display: flex;
     /* Fondo oscuro semitransparente (como cuero viejo) */
-    background-color: rgba(60, 40, 20, 0.85); 
+    background-color: rgba(60, 40, 20, 0.85);
     padding: 6px 6px 0 6px;
     border-bottom: 1px solid #8b5a2b;
 }
@@ -39,11 +39,11 @@
     font-size: 15px;
     font-family: 'Georgia', serif;
     letter-spacing: 1px;
-    
+
     /* Estado inactivo: Papel oscurecido */
     color: #ccb08a;
     background-color: rgba(80, 60, 40, 0.6);
-    
+
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
     border: 1px solid #5c3a1e;
@@ -61,7 +61,7 @@
     background-color: rgba(243, 229, 202, 0.9); /* Color pergamino */
     color: #3e2723; /* Color tinta marrón oscura */
     border-color: #8b5a2b;
-    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
 }
 
 /* --- Pestaña de Lobos (Estilo Pergamino Maldito/Sangriento) --- */
@@ -73,7 +73,7 @@
 
 .chat-tab.wolf-tab.active {
     /* Un pergamino teñido de rojo oscuro */
-    background-color: rgba(120, 20, 20, 0.85); 
+    background-color: rgba(120, 20, 20, 0.85);
     color: #ffcccc;
     text-shadow: 0 0 2px #000;
     border-color: #ff5555;
@@ -86,18 +86,24 @@
     padding: 16px;
     display: flex;
     flex-direction: column;
-    
+
     /* El fondo principal del papel con transparencia */
     background-color: rgba(243, 229, 202, 0.85);
-    
+
     /* Sutil gradiente para simular la curvatura del papel o vejez */
-    background-image: linear-gradient(to right, rgba(0,0,0,0.05), transparent 10%, transparent 90%, rgba(0,0,0,0.05));
-    
+    background-image: linear-gradient(
+        to right,
+        rgba(0, 0, 0, 0.05),
+        transparent 10%,
+        transparent 90%,
+        rgba(0, 0, 0, 0.05)
+    );
+
     scroll-behavior: smooth;
     transition: background-color 0.3s ease;
-    
+
     /* Color del texto por defecto */
-    color: #3e2723; 
+    color: #3e2723;
 }
 
 /* Scrollbar personalizada estilo "madera/oro" */
@@ -129,18 +135,18 @@
 .chat-input {
     flex: 1;
     padding: 10px 14px;
-    
+
     /* Fondo oscuro semitransparente (como hundido) o claro */
     background-color: rgba(255, 255, 255, 0.4);
     border: 1px solid #8b5a2b;
     border-radius: 4px; /* Menos redondeado, más clásico */
-    
+
     outline: none;
     font-size: 15px;
     font-family: 'Georgia', serif;
     color: #2b1d16;
     transition: all 0.2s;
-    box-shadow: inset 0 1px 4px rgba(0,0,0,0.1);
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
 .chat-input::placeholder {
@@ -151,7 +157,9 @@
 .chat-input:focus {
     background-color: rgba(255, 255, 255, 0.7);
     border-color: #5c3a1e;
-    box-shadow: inset 0 1px 4px rgba(0,0,0,0.05), 0 0 5px rgba(139, 90, 43, 0.3);
+    box-shadow:
+        inset 0 1px 4px rgba(0, 0, 0, 0.05),
+        0 0 5px rgba(139, 90, 43, 0.3);
 }
 
 /* Botón de enviar estilo "Sello de Lacre" o Tintero */
@@ -160,24 +168,26 @@
     height: 44px;
     border: 2px solid #5c3a1e;
     border-radius: 50%;
-    
+
     /* Color estilo Lacre Rojo o Tinta Negra, tú eliges. Aquí pongo estilo Tinta */
-    background-color: #2b1d16; 
+    background-color: #2b1d16;
     background: radial-gradient(circle at 30% 30%, #4e342e, #2b1d16);
-    
+
     color: #e6d7b9; /* Color papel claro para el icono */
     font-size: 18px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.1s, box-shadow 0.2s;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    transition:
+        transform 0.1s,
+        box-shadow 0.2s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .chat-send-btn:hover {
     transform: scale(1.1);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     border-color: #8b5a2b;
 }
 

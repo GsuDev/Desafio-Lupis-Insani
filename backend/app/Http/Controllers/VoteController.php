@@ -191,13 +191,26 @@ class VoteController extends Controller
             ->with(['votes.voter.states']) // Eager loading: traemos el voto y al votante y los estados
             ->first();
 
-        if (! $votation || $votation->votes->isEmpty() || $votation->is_closed) {
+        if (! $votation || $votation->is_closed) {
             return response()->json([
                 'success' => false,
                 'message' => 'No hay votos para resolver',
                 'data' => null,
             ], 404);
-        }// si devuelve esto significa que algo salió mal o que no recibió votos, por lo que se puede tratar para casos que no haya votos
+        } elseif ($votation->votes->isEmpty()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Votación resuelta',
+                'data' => [
+                    'is_day' => $isDay, // lo paso para saber si ha sido votacion de lobos o de linchamiento
+                    'resolved_candidate_id' => null,
+                    'tie_method' => false,
+                    'votes_count' => 0,
+                ],
+            ]);
+        }
+        // Cambiar la respuesa si los votos estan vacios
+        // si devuelve esto significa que algo salió mal o que no recibió votos, por lo que se puede tratar para casos que no haya votos
 
         // logica del conteo
         // Recuento con ponderación
