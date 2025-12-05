@@ -3,20 +3,20 @@
 namespace Tests\Feature;
 
 use App\Events\GameEvent;
-use App\Jobs\FirstDayStartMayorVoteJob;
+use App\Jobs\NightWolvesTalkJob;
+use App\Jobs\TransitionToNightJob;
 use App\Models\Game;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Queue; // El Placeholder
 use Tests\TestCase;
 
-class FirstDayStartMayorVoteJobTest extends TestCase
+class TransitionToNightJobTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_it_starts_mayor_vote_successfully()
+    public function test_it_transitions_to_night_successfully()
     {
-        // el arrange
         Event::fake();
         Queue::fake();
 
@@ -24,34 +24,29 @@ class FirstDayStartMayorVoteJobTest extends TestCase
             'state' => 'on_course',
         ]);
 
-        // act
-        $job = new FirstDayStartMayorVoteJob($game->id);
+        $job = new TransitionToNightJob($game->id);
         $job->handle();
 
-        // verificar
-
-        // Verificamos mensaje en BD
         $this->assertDatabaseHas('messages', [
             'game_id' => $game->id,
             'type' => 'system',
-            'message' => '¡Silencio! Comienza la votación para elegir al alcalde. Tenéis 30 segundos.',
+            'message' => 'La aldea se sumerge en la oscuridad. Todos duermen... excepto los lobos.',
         ]);
 
-        // Verificamos Evento Chat
         Event::assertDispatched(GameEvent::class, function ($event) use ($game) {
-
             return $event->event === 'chat.message'
                 && $event->gameId === $game->id;
         });
 
-        // Verificamos Evento Cambio de Fase
         Event::assertDispatched(GameEvent::class, function ($event) use ($game) {
-
-            return $event->event === 'vote.start'
+            return $event->event === 'game.night'
                 && $event->gameId === $game->id
-                && $event->data['phase'] === 'primer_dia'
-                && $event->data['type'] === 'eleccion_alcalde';
+                && $event->data['phase'] === 'night';
         });
 
+        // D) Siguiente Job (Lobos)
+        // Queue::assertPushed(NightWolvesTalkJob::class, function ($job) use ($game) {
+        // return true;
+        // });
     }
 }

@@ -61,9 +61,8 @@ class FirstDayStartMayorVoteJob implements ShouldQueue
             $this->gameId
         ));
 
-        // aqui iria el job de la hu 34 de victor
-        // FirstDayResolveMayorVoteJob::dispatch($this->gameId)
-        //  ->delay(now()->addSeconds($duration));
+        AnnounceVillagerVotingResultJob::dispatch($this->gameId)
+            ->delay(now()->addSeconds($duration));
 
     }
 }
