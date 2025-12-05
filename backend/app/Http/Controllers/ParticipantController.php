@@ -98,7 +98,7 @@ class ParticipantController extends Controller
             // La regla se rompe si:
             //  (empty($data['user_id']))   -> no nos han pasado un user_id para un jugador-> error
             //  (!empty($data['nickname'])) -> nos han pasado un nickname para un jugador -> error ???????
-            if (empty($data['user_id']) ||  empty($data['nickname'])) {
+            if (empty($data['user_id']) || empty($data['nickname'])) {
                 return [
                     'success' => false,
                     'message' => 'user_id es obligatorio y nickname debe ser nulo.',

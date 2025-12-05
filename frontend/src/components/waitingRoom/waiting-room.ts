@@ -4,7 +4,6 @@ import { participantController } from '../../controllers/ParticipantController'
 import { WaitingRoomChat } from '../waitingRoomChat/waitingRoomChat.ts'
 import { GameComponent } from '../game/game.ts'
 
-
 import './waiting-room.css'
 import type { Game, Message } from '../../models/models.ts'
 import { emitGameEvent } from '../../providers/event.provider.ts'
@@ -28,8 +27,8 @@ export const renderWaitingRoom = async (
     // 1. Limpiar el contenedor
     container.innerHTML = ''
 
-    let isGameActive = false;
-    let gameComponent: GameComponent | null = null;
+    let isGameActive = false
+    let gameComponent: GameComponent | null = null
 
     // 2. Crear el esqueleto de la UI
     const roomContainer = document.createElement('div')
@@ -70,7 +69,6 @@ export const renderWaitingRoom = async (
     // Contenido principal
     const main = document.createElement('main')
     main.className = 'wr-main'
-
 
     // 3. Crear columnas usando las funciones helpers
     const participantList = new ParticipantList()
@@ -114,8 +112,7 @@ export const renderWaitingRoom = async (
     }
 
     const renderGameDetails = (gameData: any) => {
-
-        const game = gameData;
+        const game = gameData
 
         console.log('renderGameDetails recibió:', game)
 
@@ -124,44 +121,46 @@ export const renderWaitingRoom = async (
         }
 
         // SI LA PARTIDA YA NO ESTÁ EN ESPERA, CAMBIAR VISTA
-        const isGameStarted = game.state !== 'waiting' && game.state !== 'finished' && game.state !== undefined;
+        const isGameStarted =
+            game.state !== 'waiting' &&
+            game.state !== 'finished' &&
+            game.state !== undefined
         if (isGameStarted) {
             // A) Si el juego ha empezado y aún no hemos cambiado la vista:
             if (!isGameActive) {
-                console.log('🚀 La partida ha comenzado. Cambiando vista...');
+                console.log('🚀 La partida ha comenzado. Cambiando vista...')
                 //TODO: asignar roles
                 // 1. Limpiar el contenedor (borra la Waiting Room)
-                container.innerHTML = '';
+                container.innerHTML = ''
 
                 // 2. Instanciar y renderizar el componente de Juego
-                gameComponent = new GameComponent();
-                container.appendChild(gameComponent.render());
+                gameComponent = new GameComponent()
+                container.appendChild(gameComponent.render())
 
                 // 3. Marcar como activo para no recrearlo en cada update
-                isGameActive = true;
+                isGameActive = true
             }
 
             // B) Actualizar los datos del componente de juego
             if (gameComponent) {
-
                 // console.log('Participantes: '+game.participants)
-                gameComponent.update(game, game.participants || []);
+                gameComponent.update(game, game.participants || [])
             }
             if (!gameController['gameChannel']) {
-                gameController.connectGameChannel(game.id);
+                gameController.connectGameChannel(game.id)
             }
             // Salimos para no ejecutar lógica de la Waiting Room
-            return;
+            return
         }
 
         // --- LÓGICA DE WAITING ROOM (Si la partida NO ha empezado) ---
         if (game.state == 'waiting') {
             // Si por alguna razón volvemos a estado 'waiting' y estábamos en juego (reset)
             if (isGameActive) {
-                isGameActive = false;
+                isGameActive = false
                 // Aquí podrías recargar la página o volver a llamar a renderWaitingRoom
-                renderWaitingRoom(container, game.id);
-                return;
+                renderWaitingRoom(container, game.id)
+                return
             }
 
             // Actualiza la lista de participantes de la sala de espera
@@ -172,10 +171,9 @@ export const renderWaitingRoom = async (
             // Conectar canal si no está conectado
             // (Nota: es mejor mover esto al controller o hacerlo solo una vez)
             if (!gameController['gameChannel']) {
-                gameController.connectGameChannel(game.id);
+                gameController.connectGameChannel(game.id)
             }
         }
-
     }
     //await renderGameDetails(gameId)
 

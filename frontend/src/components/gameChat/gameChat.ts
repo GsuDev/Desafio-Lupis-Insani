@@ -5,7 +5,6 @@ import { GameMessage } from '../gameMessage/gameMessage'
 import type { ChatData } from '../../types/events.types'
 import { gameController } from '../../controllers/GameController'
 
-
 export class GameChat {
     private isWolf: boolean
     private container: HTMLElement
@@ -95,10 +94,10 @@ export class GameChat {
         const game = gameController.currentGame
         if (game) {
             if (!gameController['gameChannel']) {
-                gameController.connectGameChannel(game.id);
+                gameController.connectGameChannel(game.id)
             }
-            if(this.isWolf){
-                gameController.connectWolvesChannel(game.id);
+            if (this.isWolf) {
+                gameController.connectWolvesChannel(game.id)
             }
         }
     }

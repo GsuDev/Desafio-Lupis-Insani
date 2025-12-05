@@ -122,7 +122,7 @@ export const getParticipants = async (
         const response = await apiClient.get<ParticipantsResponse>(
             `/games/${gameId}/participants`
         )
-        
+
         // Devolvemos el cuerpo de la respuesta (success, data, message)
         return response.data
     } catch (error) {
@@ -136,7 +136,6 @@ export const getParticipants = async (
         }
     }
 }
-
 
 /**
  * Carga los slides de tips desde tipSlides.json
@@ -313,7 +312,8 @@ export const assignBots = async (
     } catch (error) {
         return {
             success: false,
-            message: error instanceof Error ? error.message : 'Error asignando bots',
+            message:
+                error instanceof Error ? error.message : 'Error asignando bots',
             data: null,
         }
     }
@@ -337,12 +337,14 @@ export const updateGameState = async (
     } catch (error) {
         return {
             success: false,
-            message: error instanceof Error ? error.message : 'Error actualizando estado',
+            message:
+                error instanceof Error
+                    ? error.message
+                    : 'Error actualizando estado',
             data: null,
         }
     }
 }
-
 
 /**
  * Llama al backend para repartir los roles/personajes a todos los participantes
@@ -353,7 +355,7 @@ export const assignCharacters = async (
 ): Promise<VoidResponse | ApiErrorResponse> => {
     try {
         const response = await apiClient.post<VoidResponse>(
-            `/games/${gameId}/assign-characters` 
+            `/games/${gameId}/assign-characters`
         )
         return response.data
     } catch (error) {
@@ -368,13 +370,12 @@ export const assignCharacters = async (
     }
 }
 
-
-export async function createGameRequest(
-): Promise<GameResponse | ApiErrorResponse> {
-
-    const { data: createResponse } = await apiClient.post<GameResponse|ApiErrorResponse>(
-        `/games`
-    )
+export async function createGameRequest(): Promise<
+    GameResponse | ApiErrorResponse
+> {
+    const { data: createResponse } = await apiClient.post<
+        GameResponse | ApiErrorResponse
+    >(`/games`)
     //TODO: Manejar fallo creacion partida
     return createResponse
 }

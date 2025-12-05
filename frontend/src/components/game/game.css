@@ -35,7 +35,6 @@
     padding: 5px 15px;
     border-radius: 20px;
     color: white;
-
 }
 
 .game-participants-grid {
@@ -43,7 +42,6 @@
     width: 100%;
     height: 100%;
     display: block;
-   
 }
 
 /*
@@ -80,11 +78,10 @@ La Hoguera Central
 .game-participant-card {
     position: absolute; /* ¡Clave! */
     /* Centramos el punto de anclaje de la carta */
-    transform: translate(-50%, -50%); 
+    transform: translate(-50%, -50%);
     transition: all 0.5s ease-out;
     z-index: 10;
 }
-
 
 .participant-card.is-bot {
     border: 2px solid #ccc;
@@ -99,20 +96,19 @@ La Hoguera Central
     margin-bottom: 0.5rem;
 }
 
-
 .game-chat-wrapper {
-    position: absolute;       
-    left: 20px;              
-    top: 50%;               
-    transform: translateY(-50%); 
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
 
-    width: 300px;            
-    height: 60vh;            
+    width: 300px;
+    height: 60vh;
     max-height: 600px;
-    
+
     /* Asegurar que esté encima de los participantes/hoguera */
     z-index: 100;
-    
+
     /* Estética opcional para el contenedor si el componente no la trae */
     overflow: hidden; /* Para que no se salga nada */
     pointer-events: auto; /* Asegurar que se puede hacer clic en el chat */
