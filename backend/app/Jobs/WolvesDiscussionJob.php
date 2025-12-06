@@ -2,15 +2,17 @@
 
 namespace App\Jobs;
 
-use App\Events\GameEvent;
 use App\Models\Game;
+use App\Events\GameEvent;
+use App\Events\WolvesEvent; 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
-class TransitionToNightJob implements ShouldQueue
+class WolvesDiscussionJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -23,16 +25,19 @@ class TransitionToNightJob implements ShouldQueue
 
     public function handle(): void
     {
+        
 
         $game = Game::find($this->gameId);
 
-        if (! $game) {
-            // TODO
+        if (!$game) {
+            //TODO
             return;
         }
 
-        $text = 'La aldea se sumerge en la oscuridad. Todos duermen... excepto los lobos.';
+        $duration = config('game.timers.wolves_discussion_duration', 45);
 
+      
+        $text = "Unos aullidos rompen el silencio. Los lobos se comunican...";
         $message = $game->addMessage('system', null, $text);
 
         broadcast(new GameEvent(
@@ -41,19 +46,23 @@ class TransitionToNightJob implements ShouldQueue
             $this->gameId
         ));
 
-        broadcast(new GameEvent(
-            'game.night',
+        
+        broadcast(new WolvesEvent(
+            'wolves.discussion',
             [
-                'phase' => 'night',
-                'gameId' => $this->gameId,
+                'duration' => $duration,
+                'game.conditions' => [
+                    'finished' => false,
+                    'winners' => null
+                ]
             ],
             $this->gameId
         ));
 
-        $delay = config('game.timers.night_transition_duration', 5);
+        // Encadenar siguiente Job (Votación de Lobos)
+        //StartWolvesVotingJob::dispatch($this->gameId)
+          //  ->delay(now()->addSeconds($duration));
 
-        WolvesDiscussionJob::dispatch($this->gameId)
-          ->delay(now()->addSeconds($delay));
-
+        
     }
 }
