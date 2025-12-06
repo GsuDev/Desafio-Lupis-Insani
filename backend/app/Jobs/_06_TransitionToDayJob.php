@@ -13,7 +13,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class TransitionToDayJob implements ShouldQueue
+class _06_TransitionToDayJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -34,6 +34,7 @@ class TransitionToDayJob implements ShouldQueue
             return;
         }
 
+        $duration = env('GAME_TRANSITION_TO_DAY_DURATION',10);
         // esto para calcular el dia y poder sumarle uno
         $lastDay = Votation::where('game_id', $this->gameId)->max('day_number') ?? 0;
         
@@ -62,7 +63,7 @@ class TransitionToDayJob implements ShouldQueue
         // 4. ENCADENAR SIGUIENTE JOB
         // Pasamos el testigo para resolver qué pasó por la noche (muertes, etc.)
         //ResolveNightAttackJob::dispatch($this->gameId)
-            //->delay(now()->addSeconds(5)); // Pequeña pausa dramática
+            //->delay(now()->addSeconds($duration)); // Pequeña pausa dramática
 
         
     }
