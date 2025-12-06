@@ -11,7 +11,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class StartWolvesVoteJob implements ShouldQueue
+class _05_StartWolvesVoteJob implements ShouldQueue
 {
     use Queueable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -61,7 +61,7 @@ class StartWolvesVoteJob implements ShouldQueue
 
 
         //Ejemplo:
-        // ResolveWolvesVoteJob::dispatch($this->gameId)
-        //     ->delay(now()->addSeconds($duration)); // Aqui va el job que cambia de noche a día (game.day) y resuelve la votación (según tengo entendido).
+        _06_TransitionToDayJob::dispatch($this->gameId)
+             ->delay(now()->addSeconds($duration)); // Aqui va el job que cambia de noche a día (game.day) y resuelve la votación (según tengo entendido).
     }
 }

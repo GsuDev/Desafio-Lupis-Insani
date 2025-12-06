@@ -18,6 +18,10 @@ class EventController extends Controller
                 return EventController::voteEventFilter($event, $data, $gameId, $user);
                 break;
 
+            case 'game':
+                return $data;
+                break;
+
             default:
 
                 break;
