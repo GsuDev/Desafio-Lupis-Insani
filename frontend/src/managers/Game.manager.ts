@@ -7,20 +7,7 @@ import type { ChatEvent, Event } from '../types/events.types'
  * En el manager se separan los eventos que vienen del router
  * por evento dentro de una categoría.
  */
-export class ChatManager {
-    /**
-     * Determina en qué pestaña aparecer el mensaje según el canal
-     */
-    static getTargetTab(
-        event: string,
-        channel: 'game' | 'wolves'
-    ): 'general' | 'wolves' {
-        // Los mensajes del canal wolves van a la pestaña de lobos
-        if (channel === 'wolves') return 'wolves'
-        // Los del canal game y global van a general
-        return 'general'
-    }
-
+export class GameManager {
     static handleEvent(
         eventName: string,
         event: ChatEvent,
@@ -32,13 +19,16 @@ export class ChatManager {
         }
 
         switch (eventName) {
-            case 'chat.message':
-                ChatController.addMessage(event.data.message, channel)
+            case 'game.discussion':
+                // TODO: Sacar un enorme titulo para lobos o aldeanos
+                console.log(
+                    'Empieza la discusion: Cambiame por humo',
+                    event.data
+                )
                 break
 
-            case 'chat.system':
-                console.log(`ChatManager: Mensaje del sistema en ${channel}:`)
-                ChatController.addMessage(event.data.message, channel)
+            case 'game.example':
+                // Cambiar para añadir
                 break
 
             default:

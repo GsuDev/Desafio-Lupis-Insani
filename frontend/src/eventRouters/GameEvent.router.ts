@@ -1,5 +1,6 @@
 import { GameChannel } from '../channels/GameChannel'
 import { ChatManager } from '../managers/Chat.manager'
+import { GameManager } from '../managers/Game.manager'
 import type { Event } from '../types/events.types'
 
 /**
@@ -20,7 +21,10 @@ export class GameEventRouter {
                 // Pasar 'game' para que ChatManager sepa que va a la pestaña general
                 ChatManager.handleEvent(event, data, 'game')
                 break
-
+            case 'game':
+                // Pasar 'game' para que el Manager
+                GameManager.handleEvent(event, data, 'game')
+                break
             default:
                 console.warn(`⚠️ Evento sin manager asignado: ${event}`, data)
         }

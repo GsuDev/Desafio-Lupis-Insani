@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\StartFirstDayJob;
 use App\Models\Game;
 use App\Models\participant;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -248,7 +249,7 @@ class GameController extends Controller
      * HU9: Garantiza mínimo de 15 jugadores y siempre +2bots
      * Hasta nu máximo de 30 participantes totales
      */
-    public function assignBots($gameId)
+    public static function assignBots($gameId)
     {
         try {
 
@@ -372,6 +373,70 @@ class GameController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => "Error al obtener participantes, {$e->getMessage()}",
+                'data' => null,
+            ], 500);
+        }
+    }
+
+    public function startGame(Request $request, $gameId)
+    {
+        $user = $request->user();
+
+        try {
+            $game = Game::findOrFail($gameId);
+
+            // Buscar al usuario entre los participantes
+            $participant = $game->participants()->where('user_id', $user->id)->first();
+
+            if (! $participant) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No estás en esta partida',
+                    'data' => null,
+                ], 403);
+            }
+
+            $isHost = (bool) $participant->is_host;
+
+            if (! $isHost) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No eres el anfitrión de la partida',
+                    'data' => null,
+                ], 403);
+            }
+
+            // Logica de inicio de partida
+            $game->state = 'on_course';
+            $game->save();
+            $assignBotsRes = self::assignBots($gameId);
+            if (! $assignBotsRes['success']) {
+                return response()->json($assignBotsRes, 500);
+            }
+            $assignCharsRes = CharacterController::assignCharacters($gameId);
+            if (! $assignCharsRes['success']) {
+                return response()->json($assignCharsRes, 500);
+            }
+
+            $game->refresh();
+
+            dispatch(new StartFirstDayJob($gameId))->delay(10);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Partida iniciada correctamente',
+                'data' => ['game' => $game],
+            ], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Partida no encontrada',
+                'data' => null,
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => "Error al iniciar partida, {$e->getMessage()}",
                 'data' => null,
             ], 500);
         }

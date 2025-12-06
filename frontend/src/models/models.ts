@@ -42,7 +42,6 @@ export type GameData = {
     id: number
     state: string
     url: string
-    createdAt: string
 }
 
 export type Game = {
@@ -51,7 +50,6 @@ export type Game = {
     url: string
     messages: Message[]
     participants: Participant[]
-    createdAt: string
 }
 
 export type Message = {
