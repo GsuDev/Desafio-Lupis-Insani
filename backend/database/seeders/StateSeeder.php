@@ -15,8 +15,8 @@ class StateSeeder extends Seeder
         // Estado clasicos del juego de los lobos, son estados de prueba, no sabemos los que se pondran finalmente exactamente
         $states = [
             [
-                'name' => 'enamorado',
-                'description' => 'Vinculado a otro jugador por Cupido. Si uno muere, el otro también muere de pena.',
+                'name' => 'DEAD',
+                'description' => 'Muerto, morido o matado.',
             ],
             [
                 'name' => 'protegido',
@@ -31,7 +31,7 @@ class StateSeeder extends Seeder
                 'description' => 'Bajo el influjo del Flautista. Si todos los vivos están hipnotizados, el Flautista gana.',
             ],
             [
-                'name' => 'capitan',
+                'name' => 'COUNCIL',
                 'description' => 'Es el Alguacil del pueblo. Su voto vale doble en caso de empate.',
             ],
         ];
