@@ -34,11 +34,11 @@ export const getGame = async (
     gameId: number
 ): Promise<GameResponse | ApiErrorResponse> => {
     try {
-        console.log('Game Provider getGame()')
         // 1. Lanzamos las 3 peticiones en paralelo con Axios
         const requestGame = apiClient.get<GameDataResponse | ApiErrorResponse>(
             `/games/${gameId}`
         )
+
         const requestParticipants = apiClient.get<
             ParticipantsResponse | ApiErrorResponse
         >(`/games/${gameId}/participants`)
@@ -56,7 +56,6 @@ export const getGame = async (
             requestParticipants,
             requestMessages,
         ])
-
         // 3. Extraemos la data
         const gameData: GameData | null = gameResponse?.data?.game ?? null
 
@@ -90,11 +89,10 @@ export const getGame = async (
             id: gameData.id,
             state: gameData.state,
             url: gameData.url,
-            createdAt: formatTime(gameData.createdAt),
             participants: participantsData,
             messages: messages,
         }
-
+        console.log('Game Provider getGame()', game)
         // ✅ Respuesta API correcta
         return {
             success: true,
@@ -323,24 +321,21 @@ export const assignBots = async (
  * Actualiza el estado de la partida (ej. para iniciarla)
  * Ruta: PUT /api/games/{gameId}
  */
-export const updateGameState = async (
-    gameId: number,
-    newState: string
-): Promise<GameResponse | ApiErrorResponse> => {
+export const startGame = async (
+    gameId: number
+): Promise<GameDataResponse | ApiErrorResponse> => {
     try {
-        const payload = { state: newState }
-        const response = await apiClient.put<GameResponse>(
-            `/games/${gameId}`,
-            payload
-        )
-        return response.data
+        const { data: response } = await apiClient.post<
+            GameResponse | ApiErrorResponse
+        >(`/games/${gameId}/start`)
+        return response
     } catch (error) {
         return {
             success: false,
             message:
                 error instanceof Error
                     ? error.message
-                    : 'Error actualizando estado',
+                    : 'Error iniciando partida',
             data: null,
         }
     }

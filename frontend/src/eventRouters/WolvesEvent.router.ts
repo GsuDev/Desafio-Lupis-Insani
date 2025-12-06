@@ -1,5 +1,6 @@
 import { WolvesChannel } from '../channels/WolvesChannel'
 import { ChatManager } from '../managers/Chat.manager'
+import { GameManager } from '../managers/Game.manager'
 import type { Event } from '../types/events.types'
 
 /**
@@ -19,6 +20,10 @@ export class WolvesEventRouter {
             case 'chat':
                 // Pasar 'wolves' para que ChatManager sepa dónde mostrar
                 ChatManager.handleEvent(event, data, 'wolves')
+                break
+            case 'game':
+                // Pasar 'game' para que el Manager
+                GameManager.handleEvent(event, data, 'game')
                 break
 
             default:

@@ -34,7 +34,7 @@ class CharacterController extends Controller
      *    - message: mensaje de éxito o de error específico de cada fase
      *    - data: colección de participantes con su character_id asignado en caso de éxito, o null si hay error
      */
-    public function assignCharacters($gameId)
+    public static function assignCharacters($gameId)
     {
         try {
             $game = Game::with('participants')->findOrFail($gameId);
@@ -52,19 +52,19 @@ class CharacterController extends Controller
                 $used = collect(); // ids de participantes ya asignados
 
                 // 1️⃣ Bots obligatorios
-                $this->assignMandatoryBots($bots, $used);
+                self::assignMandatoryBots($bots, $used);
 
                 // 2️⃣ Personajes únicos
-                $this->assignUniqueCharacters($humans, $bots, $used);
+                self::assignUniqueCharacters($humans, $bots, $used);
 
                 // 3️⃣ Calcular lobos según ratio
-                $wolvesNeeded = $this->calculateWolvesNeeded($game);
+                $wolvesNeeded = self::calculateWolvesNeeded($game);
 
                 // 4️⃣ Asignar lobos restantes
-                $this->assignExtraWolves($game, $wolvesNeeded);
+                self::assignExtraWolves($game, $wolvesNeeded);
 
                 // 5️⃣ Asignar aldeanos al resto
-                $this->assignRemainingVillagers($game);
+                self::assignRemainingVillagers($game);
             });
 
             // Cargar participantes con character_id
@@ -93,7 +93,7 @@ class CharacterController extends Controller
     | 1. Bots obligatorios (aldeano + lobo)
     |--------------------------------------------------------------------------
     */
-    private function assignMandatoryBots($bots, &$used)
+    private static function assignMandatoryBots($bots, &$used)
     {
         if ($bots->count() < 2) {
             throw new \Exception('Error: Se requieren al menos 2 bots para iniciar la partida.');
@@ -112,7 +112,7 @@ class CharacterController extends Controller
     | 2. Personajes únicos
     |--------------------------------------------------------------------------
     */
-    private function assignUniqueCharacters($humans, $bots, &$used)
+    private static function assignUniqueCharacters($humans, $bots, &$used)
     {
         if (! env('USE_UNIQUE_CHARACTERS', true)) {
             return;
@@ -158,7 +158,7 @@ class CharacterController extends Controller
     | 3. Cálculo de lobos según ratio
     |--------------------------------------------------------------------------
     */
-    private function calculateWolvesNeeded(Game $game): int
+    private static function calculateWolvesNeeded(Game $game): int
     {
         $ratio = floatval(env('WOLF_RATIO', 0.25));
         $total = $game->participants()->count();
@@ -175,7 +175,7 @@ class CharacterController extends Controller
     | 4. Asignar lobos restantes
     |--------------------------------------------------------------------------
     */
-    private function assignExtraWolves(Game $game, int $wolvesNeeded)
+    private static function assignExtraWolves(Game $game, int $wolvesNeeded)
     {
         $currentWolves = $game->participants()->where('character_id', 2)->count();
         $remaining = max(0, $wolvesNeeded - $currentWolves);
@@ -202,7 +202,7 @@ class CharacterController extends Controller
     | 5. Resto = Aldeanos
     |--------------------------------------------------------------------------
     */
-    private function assignRemainingVillagers(Game $game)
+    private static function assignRemainingVillagers(Game $game)
     {
         $remaining = $game->participants()->whereNull('character_id')->count();
 

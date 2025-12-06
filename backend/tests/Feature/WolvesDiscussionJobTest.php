@@ -2,15 +2,15 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use App\Models\Game;
 use App\Events\GameEvent;
 use App\Events\WolvesEvent;
+use App\Jobs\StartWolvesVotingJob;
+use App\Jobs\WolvesDiscussionJob;
+use App\Models\Game;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
-use App\Jobs\WolvesDiscussionJob;
-use App\Jobs\StartWolvesVotingJob;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class WolvesDiscussionJobTest extends TestCase
 {
@@ -18,34 +18,28 @@ class WolvesDiscussionJobTest extends TestCase
 
     public function test_it_starts_wolves_discussion_successfully()
     {
-       
+
         Event::fake();
         Queue::fake();
 
         $game = Game::factory()->create([
-            'state' => 'on_course'
+            'state' => 'on_course',
         ]);
 
- 
         $job = new WolvesDiscussionJob($game->id);
         $job->handle();
 
-      
-        
-       
         $this->assertDatabaseHas('messages', [
             'game_id' => $game->id,
             'type' => 'system',
             'message' => 'Unos aullidos rompen el silencio. Los lobos se comunican...',
         ]);
 
-        
         Event::assertDispatched(GameEvent::class, function ($event) use ($game) {
-            return $event->event === 'chat.message' 
+            return $event->event === 'chat.message'
                 && $event->gameId === $game->id;
         });
 
-        
         Event::assertDispatched(WolvesEvent::class, function ($event) use ($game) {
             return $event->event === 'wolves.discussion'
                 && $event->gameId === $game->id
@@ -54,8 +48,8 @@ class WolvesDiscussionJobTest extends TestCase
         });
 
         // D) Siguiente Job
-        //Queue::assertPushed(StartWolvesVotingJob::class, function ($job) use ($game) {
-          //  return true;
-        //});
+        // Queue::assertPushed(StartWolvesVotingJob::class, function ($job) use ($game) {
+        //  return true;
+        // });
     }
 }

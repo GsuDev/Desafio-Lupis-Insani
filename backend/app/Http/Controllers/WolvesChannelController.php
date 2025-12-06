@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\WolvesEvent;
 use App\Models\Participant;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -54,5 +55,24 @@ class WolvesChannelController extends Controller
             'data' => null,
         ]);
 
+    }
+
+    public static function systemSend($event, $data, $gameId)
+    {
+        $user = User::where('email', 'system@system.com')->first();
+
+        // GESTIÓN DE LAS ACCIONES DEL EVENTO
+        $data = EventController::eventCategoryFilter($event, $data, $gameId, $user);
+        try {
+            broadcast(new WolvesEvent(
+                $event,
+                $data ?? [],
+                $gameId
+            ));
+
+            return true;
+        } catch (\Throwable $e) {
+            return false;
+        }
     }
 }

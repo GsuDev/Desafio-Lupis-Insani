@@ -10,11 +10,8 @@ import type { Game, Message } from '../models/models'
 import {
     getGame,
     joinGameRequest,
-    assignBots,
-    assignCharacters,
-    updateGameState,
-    getParticipants,
     createGameRequest,
+    startGame,
 } from '../providers/game.provider'
 
 // import { joinGameRequest } from '../providers/joinGame.provider'
@@ -112,25 +109,20 @@ class GameController {
         this._showGlobalError('') // Limpiar errores antiguos
         this._disableStartButton(true)
         try {
-            //Como ahora guardo en memoria
-            if (this._currentGame) {
-                //console.log('Cargando datos desde memoria caché del Controller')
-                this._renderGameDetails(this._currentGame)
-            } else {
-                // Si no, llamamos a la API
-                //console.log('Fetching datos desde API...')
-                const response = await getGame(gameId)
-                if (!response.data) {
-                    throw new Error('No ha llegado')
-                }
-                this._currentGame = response.data.game
-                localStorage.setItem(
-                    'currentGame',
-                    JSON.stringify(this._currentGame)
-                )
-                // Guardamos en memoria
-                this._renderGameDetails(this._currentGame)
+            // Si no, llamamos a la API
+            //console.log('Fetching datos desde API...')
+            const response = await getGame(gameId)
+            console.log('handleLoadGame tiene: ', response)
+            if (!response.data) {
+                throw new Error('No ha llegado')
             }
+            this._currentGame = response.data.game
+            localStorage.setItem(
+                'currentGame',
+                JSON.stringify(this._currentGame)
+            )
+            // Guardamos en memoria
+            this._renderGameDetails(this._currentGame)
 
             //        // Si no, llamamos a la API
             //     //console.log('Fetching datos desde API...')
@@ -173,62 +165,31 @@ class GameController {
 
         try {
             const gameId = this._currentGame.id
-            const MIN_PLAYERS = 15 // Mínimo necesario según tus reglas
+            const MIN_PLAYERS = 1 // Mínimo necesario según tus reglas
 
             // 1. Comprobar participantes y Generar Bots si es necesario
             // (Asumimos que participants ya está cargado en _currentGame)
             const currentPlayersCount = this._currentGame.participants.length
-
             if (currentPlayersCount < MIN_PLAYERS) {
-                console.log(
-                    `Faltan jugadores (${currentPlayersCount}/${MIN_PLAYERS}). Añadiendo bots...`
-                )
-
-                const botResponse = await assignBots(gameId)
-
-                if (!botResponse.success) {
-                    throw new Error(
-                        botResponse.message || 'Error al generar bots'
-                    )
-                }
-
-                // Recarga el juego aquí para ver los bots antes de cambiar de fase
-                await this.handleLoadGame(gameId)
-            }
-
-            // 2. Asignar personajes
-            console.log('🎭 Repartiendo cartas de personajes...')
-            const charsResponse = await assignCharacters(gameId)
-
-            if (!charsResponse.success) {
                 throw new Error(
-                    charsResponse.message || 'Error al repartir personajes'
+                    'No hay participantes suficientes para iniciar la partida'
                 )
             }
-            // 3. Iniciar la Partida (Cambiar estado)
-            // on_course
-            const startResponse = await updateGameState(gameId, 'on_course')
 
+            let startResponse = await startGame(gameId)
             if (!startResponse.success || !startResponse.data) {
                 throw new Error(
                     startResponse.message || 'Error al iniciar la partida'
                 )
             }
 
-            console.log('✅ Partida iniciada correctamente')
-            const updatedGame = startResponse.data.game
+            // Recarga el juego aquí para ver los bots antes de cambiar de fase
+            await this.handleLoadGame(gameId)
 
-            if (charsResponse.data) {
-                console.log(
-                    '⚡ Usando participantes devueltos por el reparto de cartas'
-                )
-                updatedGame.participants = charsResponse.data
-            } else {
-                // Fallback por si acaso
-                const participantsRes = await getParticipants(gameId)
-                updatedGame.participants =
-                    participantsRes.data?.participants || []
-            }
+            console.log(
+                '✅ Partida iniciada correctamente',
+                gameController.currentGame
+            )
 
             // Si la respuesta no trae participantes, usamos los que ya teníamos en memoria
             // if (!updatedGame.participants || updatedGame.participants.length === 0) {
@@ -247,11 +208,9 @@ class GameController {
             //     }
             // }
             // 3. Actualizar el estado local
-            this.setGameData(updatedGame)
 
             // Aquí la vista (WaitingRoom) debería detectar el cambio de estado
             // en el callback _renderGameDetails y cambiar la pantalla al componente de Juego.
-            this._renderGameDetails(updatedGame)
         } catch (error: any) {
             console.error(error)
             this._showGlobalError(
