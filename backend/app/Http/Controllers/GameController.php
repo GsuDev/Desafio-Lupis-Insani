@@ -181,7 +181,7 @@ class GameController extends Controller
             $user = $req->user();
 
             $userExistsInGame = $game->users()->where('user_id', $user->id)->exists();
-            if ($userExistsInGame) { // caso que el usuario ya esté en la partida
+            if ($userExistsInGame) {// caso que el usuario ya esté en la partida
                 // Esto permite que alguien se reconecte aunque el juego haya empezado.
 
                 if ($game->state == 'waiting' || $game->state == 'on_course') {
@@ -199,7 +199,7 @@ class GameController extends Controller
                         'data' => null,
                     ], 403);
                 }
-            } else { // caso que no este en la partida
+            } else {// caso que no este en la partida
                 if ($game->state != 'waiting') {
                     return response()->json(['success' => false, 'message' => 'No se puede unir a la partida, no está en estado waiting', 'data' => null], 403);
                 }
