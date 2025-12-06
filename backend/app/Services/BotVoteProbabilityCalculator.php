@@ -15,7 +15,7 @@ class BotVoteProbabilityCalculator
      *                             1.0 = Los bots (consideran a todos)
      * @return array<int, float> Devuelve [ID_JUGADOR => PORCENTAJE]. Ej: [1 => 0.50, 2 => 0.30...]
      */
-    public function calculateProbabilities(array $votedParticipants, array $allParticipants, float $dispersion): array
+    public static function calculateProbabilities(array $votedParticipants, array $allParticipants, float $dispersion): array
     {
         // PASO 1: Separar a los ya votados de los otros sin votos
 
