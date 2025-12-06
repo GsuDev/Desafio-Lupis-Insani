@@ -2,15 +2,14 @@
 
 namespace App\Jobs;
 
-use App\Models\Game;
 use App\Events\GameEvent;
-use App\Events\WolvesEvent; 
+use App\Events\WolvesEvent;
+use App\Models\Game;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 
 class WolvesDiscussionJob implements ShouldQueue
 {
@@ -25,19 +24,17 @@ class WolvesDiscussionJob implements ShouldQueue
 
     public function handle(): void
     {
-        
 
         $game = Game::find($this->gameId);
 
-        if (!$game) {
-            //TODO
+        if (! $game) {
+            // TODO
             return;
         }
 
         $duration = config('game.timers.wolves_discussion_duration', 45);
 
-      
-        $text = "Unos aullidos rompen el silencio. Los lobos se comunican...";
+        $text = 'Unos aullidos rompen el silencio. Los lobos se comunican...';
         $message = $game->addMessage('system', null, $text);
 
         broadcast(new GameEvent(
@@ -46,23 +43,21 @@ class WolvesDiscussionJob implements ShouldQueue
             $this->gameId
         ));
 
-        
         broadcast(new WolvesEvent(
             'wolves.discussion',
             [
                 'duration' => $duration,
                 'game.conditions' => [
                     'finished' => false,
-                    'winners' => null
-                ]
+                    'winners' => null,
+                ],
             ],
             $this->gameId
         ));
 
         // Encadenar siguiente Job (Votación de Lobos)
-        //StartWolvesVotingJob::dispatch($this->gameId)
-          //  ->delay(now()->addSeconds($duration));
+        // StartWolvesVotingJob::dispatch($this->gameId)
+        //  ->delay(now()->addSeconds($duration));
 
-        
     }
 }

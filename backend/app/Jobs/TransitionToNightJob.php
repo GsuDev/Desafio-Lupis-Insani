@@ -53,7 +53,7 @@ class TransitionToNightJob implements ShouldQueue
         $delay = config('game.timers.night_transition_duration', 5);
 
         WolvesDiscussionJob::dispatch($this->gameId)
-          ->delay(now()->addSeconds($delay));
+            ->delay(now()->addSeconds($delay));
 
     }
 }
