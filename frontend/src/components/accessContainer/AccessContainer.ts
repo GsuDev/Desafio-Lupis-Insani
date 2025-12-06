@@ -2,7 +2,9 @@ import './access-container.css'
 import { AnonymousSelectorComponent } from '../anonymousPlayer/anonymousPlayer'
 import { LoginFormComponent } from '../loginForm/loginForm'
 import { Carousel } from '../howToPlayCarousel/howToPlayCarousel'
-import { getTipSlides } from '../../providers/game.provider'
+//import { getTipSlides } from '../../providers/game.provider'
+import tipSlidesData from '../../assets/data/tipSlides.json'
+import type { SlideData } from '../../models/models'
 
 class AccessContainer {
     private container: HTMLElement
@@ -58,7 +60,7 @@ class AccessContainer {
         // Creamos los componentes
         const anonymousCard = new AnonymousSelectorComponent(container)
         const loginCard = new LoginFormComponent(container)
-        const slides = await getTipSlides()
+        /*const slides = await getTipSlides()
         let carouselCard
         if (slides.data) {
             carouselCard = new Carousel(container, slides.data.slides, 0)
@@ -68,15 +70,20 @@ class AccessContainer {
                 [
                     {
                         stepNumber: 1,
-                        tittle: 'LOBO',
+                        title: 'LOBO',
                         description: 'LOBEA',
-                        imageUrl:
+                        imageName:
                             'https://www.dadocritico.es/2534-medium_default/el-pacto-de-los-hombres-lobo-de-castronegro.jpg',
                     },
                 ],
                 0
             )
-        }
+        }*/
+       const carouselCard = new Carousel(
+            container, 
+            tipSlidesData as unknown as SlideData[], 
+            0
+        )
 
         // Los renderizamos
         anonymousCard.render()

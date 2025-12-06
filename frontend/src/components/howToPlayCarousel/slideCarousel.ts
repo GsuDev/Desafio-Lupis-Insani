@@ -9,6 +9,13 @@ export class Slide {
         this.slideElement = this.createSlideElement()
     }
 
+   private getImageUrl(imageName: string): string {
+    const url = new URL(`../../assets/carrusel/${imageName}`, import.meta.url).href;
+    
+    
+    return url;
+}
+
     /**
      * Método por el que genera y devuelve el elemento HTML para esta diapositiva
      * @returns HTMLDivElement
@@ -21,7 +28,7 @@ export class Slide {
         //Imagen
         const img = document.createElement('img')
         img.classList.add('slide-image')
-        img.src = this.slideData.imageUrl
+        img.src = this.getImageUrl(this.slideData.imageName)
         img.alt = `Step ${this.slideData.stepNumber}`
         slide.appendChild(img)
 
@@ -30,7 +37,7 @@ export class Slide {
         textContent.classList.add('slide-text-content')
         //Titulo
         const title = document.createElement('h3')
-        title.textContent = this.slideData.tittle
+        title.textContent = this.slideData.title
         textContent.appendChild(title)
 
         //Descripción
