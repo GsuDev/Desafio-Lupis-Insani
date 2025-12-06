@@ -9,8 +9,6 @@ class State extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
-
     protected $fillable = ['name', 'description'];
 
     public function participants()
