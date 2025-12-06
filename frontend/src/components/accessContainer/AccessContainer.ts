@@ -79,9 +79,9 @@ class AccessContainer {
                 0
             )
         }*/
-       const carouselCard = new Carousel(
-            container, 
-            tipSlidesData as unknown as SlideData[], 
+        const carouselCard = new Carousel(
+            container,
+            tipSlidesData as unknown as SlideData[],
             0
         )
 

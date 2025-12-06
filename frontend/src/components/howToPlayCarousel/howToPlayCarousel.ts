@@ -178,8 +178,4 @@ export class Carousel {
             this.goToSlide(0)
         }
     }
-
-    
 }
-
-
