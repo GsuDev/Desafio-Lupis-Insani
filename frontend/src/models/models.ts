@@ -65,9 +65,9 @@ export type Message = {
 
 export interface SlideData {
     stepNumber: number
-    tittle: string
+    title: string
     description: string
-    imageUrl: string
+    imageName: string
 }
 
 export type GameStatistic = {

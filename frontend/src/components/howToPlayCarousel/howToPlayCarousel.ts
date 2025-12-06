@@ -4,6 +4,7 @@ import './howToPlayCarousel.css'
 import type { SlideData } from '../../models/models'
 import { Slide } from './slideCarousel'
 import { Pagination } from './paginationCarousel'
+import rawSlidesData from '../../assets/data/tipSlides.json'
 
 // --------------------------------------------------
 // Funciones "Constructoras" de HTML
@@ -59,7 +60,7 @@ export class Carousel {
         //Titulo principal
         const mainTitle = document.createElement('h2')
         mainTitle.className = 'carousel-main-title'
-        mainTitle.textContent = 'PISTAS/CONSEJOS'
+        mainTitle.textContent = 'PISTAS / CONSEJOS'
 
         //Contenedor para el slide y botones
         const slideAndControls = document.createElement('div')
@@ -177,4 +178,8 @@ export class Carousel {
             this.goToSlide(0)
         }
     }
+
+    
 }
+
+

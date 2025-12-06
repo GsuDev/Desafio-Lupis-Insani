@@ -1,20 +1,44 @@
 [
     {
         "stepNumber": 1,
-        "tittle": "LOBO",
-        "description": "Actúa con calma y no llames la atención. Manipula las sospechas hacia otros jugadores y coordínate con tu manada para eliminar aldeanos clave sin levantar sospechas.",
-        "imageUrl": "https://www.dadocritico.es/2534-medium_default/el-pacto-de-los-hombres-lobo-de-castronegro.jpg"
+        "title": "LOBO",
+        "description": "Actúa con calma y no llames la atención. Manipula las sospechas hacia otros jugadores y coordínate con tu manada para eliminar aldeanos clave.",
+        "imageName": "lobo.png"
     },
     {
         "stepNumber": 2,
-        "tittle": "ALDEANO",
+        "title": "ALDEANO",
         "description": "Observa los comportamientos y participa en las votaciones con lógica. Confía, pero mantén siempre la sospecha: cualquier error puede costarte la partida.",
-        "imageUrl": "https://tse3.mm.bing.net/th/id/OIP.9r7sXqg4h24URsL_UoHiBwAAAA?rs=1&pid=ImgDetMain&o=7&rm=3"
+        "imageName": "aldeano.png"
     },
     {
         "stepNumber": 3,
-        "tittle": "ASESINO",
-        "description": "Juega en la sombra y elimina estratégicamente a quienes puedan descubrirte. Sé impredecible y aprovecha el caos para sembrar miedo y desconfianza.",
-        "imageUrl": "https://th.bing.com/th/id/R.0464bb17cbdbf68ba78b40d9752f7b75?rik=KJCJAOL1zVTMIg&riu=http%3a%2f%2fgetwallpapers.com%2fwallpaper%2ffull%2f2%2fe%2fb%2f1519627-cool-ezio-auditore-wallpaper-2560x1440-for-windows.jpg&ehk=zGwr85bZW30vVLwJ4vp5f5Vimq4jBOZLlVhAmXMN5Dw%3d&risl=&pid=ImgRaw&r=0"
+        "title": "ENAMORADOS",
+        "description": "Unidos por el destino. Vuestro objetivo prioritario es sobrevivir juntos, sin importar vuestro bando original. Protege a tu pareja.",
+        "imageName": "enamorados-1.png"
+    },
+    {
+        "stepNumber": 4,
+        "title": "LA BRUJA",
+        "description": "Tienes el poder de la vida y la muerte. Cuentas con una poción para revivir y otra para matar. Úsalas en el momento crítico.",
+        "imageName": "bruja-1.png"
+    },
+    {
+        "stepNumber": 5,
+        "title": "LA VIDENTE",
+        "description": "La información es tu arma. Cada noche descubres la identidad real de un jugador. Guía al pueblo sutilmente sin exponer tu rol.",
+        "imageName": "vidente-2.png"
+    },
+    {
+        "stepNumber": 6,
+        "title": "LA NIÑA",
+        "description": "Tu curiosidad es peligrosa. Puedes espiar entrecerrando los ojos cuando los lobos despiertan, pero si te descubren, serás su próxima víctima.",
+        "imageName": "nina-1.png"
+    },
+    {
+        "stepNumber": 7,
+        "title": "CUPIDO",
+        "description": "El amor está en tus manos. Al inicio de la partida, debes flechar a dos jugadores para enamorarlos. Si uno muere, el otro morirá de pena.",
+        "imageName": "cupido-2.png"
     }
 ]
