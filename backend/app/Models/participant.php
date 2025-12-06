@@ -101,4 +101,10 @@ class participant extends Model
     {
         return $query->where('character_id', 2);
     }
+
+    /**comprueba si el participante es un lobo */
+    public function isWereWolf():bool
+    {
+        return $this->character_id === 2;
+    }
 }
