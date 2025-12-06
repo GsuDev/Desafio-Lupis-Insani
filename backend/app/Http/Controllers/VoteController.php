@@ -6,6 +6,7 @@ use App\Models\Game;
 use App\Models\participant;
 use App\Models\Votation;
 use App\Models\Vote;
+use App\Services\BotVoteService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -167,11 +168,11 @@ class VoteController extends Controller
         // Si no existe la votación, devuelvo el array vacío para no romper el front pero si quereis se puede cambiar por return success false
         $votes = $votation ? $votation->votes : [];
 
-        return response()->json([
+        return [
             'success' => true,
             'message' => 'Votos recuperados con éxito',
             'data' => ['votes' => $votes],
-        ], 200);
+        ];
     }
 
     // Los parametros de entreda se pueden cambiar por Request $request, pero por el momento lo manejo asi
@@ -192,23 +193,24 @@ class VoteController extends Controller
             ->first();
 
         if (! $votation || $votation->is_closed) {
-            return response()->json([
+            return [
                 'success' => false,
-                'message' => 'No hay votos para resolver',
+                'message' => 'No hay votación para resolver',
                 'data' => null,
-            ], 404);
-        } elseif ($votation->votes->isEmpty()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Votación resuelta',
-                'data' => [
-                    'is_day' => $isDay, // lo paso para saber si ha sido votacion de lobos o de linchamiento
-                    'resolved_candidate_id' => null,
-                    'tie_method' => false,
-                    'votes_count' => 0,
-                ],
-            ]);
+            ];
         }
+        // } elseif ($votation->votes->isEmpty()) {
+        //     return response()->json([
+        //         'success' => true,
+        //         'message' => 'Votación resuelta',
+        //         'data' => [
+        //             'is_day' => $isDay, // lo paso para saber si ha sido votacion de lobos o de linchamiento
+        //             'resolved_candidate_id' => null,
+        //             'tie_method' => false,
+        //             'votes_count' => 0,
+        //         ],
+        //     ]);
+        // }
         // Cambiar la respuesa si los votos estan vacios
         // si devuelve esto significa que algo salió mal o que no recibió votos, por lo que se puede tratar para casos que no haya votos
 
@@ -216,9 +218,19 @@ class VoteController extends Controller
         // Recuento con ponderación
         $tally = []; // Array para contar: [id_candidato => total_puntos]
 
-        $MAYOR_STATE_NAME = 'alcalde'; // sacarlo al env
+        $MAYOR_STATE_NAME = 'COUNCIL'; // sacarlo al env
 
-        foreach ($votation->votes as $vote) {
+        $userVotes = $votation->votes;
+        $botVotes = BotVoteService::applyBotVotes($userVotes, $gameId, $phase, $cycle, $votation->id);
+        // obtengo la votacion con los votos y los datos del votante (para ver si es alcalde)
+        $votation = Votation::where('game_id', $gameId)
+            ->where('is_day', $isDay)
+            ->where('day_number', $dayNumber)
+            ->with(['votes.voter.states']) // Eager loading: traemos el voto y al votante y los estados
+            ->first();
+        $currentVotes = $votation->votes;
+
+        foreach ($currentVotes as $vote) {
             $points = 1;
 
             // Doble voto del alcalde
@@ -283,7 +295,7 @@ class VoteController extends Controller
         }
          */
 
-        return response()->json([
+        return [
             'success' => true,
             'message' => 'Votación resuelta',
             'data' => [
@@ -292,7 +304,7 @@ class VoteController extends Controller
                 'tie_method' => $tieMethod,
                 'votes_count' => $maxVotes,
             ],
-        ]);
+        ];
 
     }
 
@@ -336,8 +348,10 @@ class VoteController extends Controller
                 'data' => null,
             ];
         }
+        $latestDay = $game->votations()->latest()->day_number;
+        $latestPhase = $game->votations()->latest()->is_day;
 
-        if ($game->day_number != $dayNumber || (bool) $game->is_day != (bool) $isDay) {
+        if ($latestDay != $dayNumber || (bool) $latestPhase != (bool) $isDay) {
             return [
                 'success' => false,
                 'message' => 'El ciclo enviado no coincide con el actual.',

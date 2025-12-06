@@ -11,7 +11,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class StartFirstDayJob implements ShouldQueue
+class _00_StartFirstDayJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -35,18 +35,19 @@ class StartFirstDayJob implements ShouldQueue
 
         // 2. Verificar que estamos en la fase correcta
         // TODO
-
-        $message = 'Comienza la elección del alcalde. Los jugadores pueden discutir durante este periodo antes de votar.';
+        // $duration = config('game.timers.mayor_discussion_duration', 30);
+        $duration = 2;
+        $message = "Comienza la elección del alcalde. Los jugadores pueden discutir durante {$duration}  antes de votar.";
 
         // 4. Emitir evento chat.message
         EventController::systemMessage($message, 'game', $this->gameId);
 
         // 5. Emitir evento game.discussion
         GameChannelController::systemSend('game.discussion', null, $this->gameId);
+
         // 6. Encadenar el siguiente job (HU-02) con delay configurable
-        // $delaySeconds = 30;
-        // FirstDayStartMayorVotingJob::dispatch($this->gameId)
-        //     ->delay($delaySeconds);
+        _01_FirstDayStartMayorVoteJob::dispatch($this->gameId)
+            ->delay(now()->addSeconds($duration));
 
     }
 }

@@ -4,25 +4,9 @@ namespace App\Services;
 
 use App\Models\participant;
 use App\Models\Vote;
-use Illuminate\Support\Collection;
 
 class BotVoteService
 {
-    private const WEREWOLF_CHARACTER_ID = 2;
-
-    /**
-     * Instancia nuestro calculadora
-     */
-    protected BotVoteProbabilityCalculator $calculator;
-
-    /**
-     * Laravel inyectará automáticamente la calculadora aquí.
-     */
-    public function __construct(BotVoteProbabilityCalculator $calculator)
-    {
-        $this->calculator = $calculator;
-    }
-
     /**
      * Método PRINCIPAL: Orquesta la votación de los bots.
      *
@@ -32,7 +16,7 @@ class BotVoteService
      * @param  int  $cycle  Número de día/turno (corresponde a day_number).
      * @return Collection Colección extendida (Humanos + Bots).
      */
-    public function applyBotVotes(Collection $currentVotes, int $gameId, string $phase, int $cycle): Collection
+    public static function applyBotVotes($currentVotes, int $gameId, string $phase, int $cycle, $votationId)
     {
 
         // Leemos la dispersión del .env. si no existe, usamos 0.5 por default
@@ -53,25 +37,30 @@ class BotVoteService
 
         // tambien necesitamos la lista de todos los vivos para saber quiénes son los otros
         // pluck('id') nos da solo los números y los ponemos en un array bonito
-        $allAliveIds = participant::where('game_id', $gameId)->alive()->pluck('id')->toArray();
+        $allAliveIds = Participant::where('game_id', $gameId)
+            ->whereDoesntHave('states', function ($query) {
+                $query->where('name', 'DEAD');
+            })
+            ->pluck('id')
+            ->toArray();
 
         // ahora se calculan las probabilidades globales
         // la calculadora que se hizo nos muestra las probabilidades de nuestro candidato
-        $globalProbabilities = $this->calculator->calculateProbabilities(
+        $globalProbabilities = BotVoteProbabilityCalculator::calculateProbabilities(
             $votedParticipants,
             $allAliveIds,
             $dispersion
         );
 
         // se obtienen los bots que van a votar
-        $bots = $this->getEligibleBots($gameId, $phase);
-
+        $bots = self::getEligibleBots($gameId, $phase);
+        $botVotesToInsert = [];
         // ahora se inyectan los votos
         foreach ($bots as $bot) {
 
             // filtramos a quienes no pueden votar este bot en especifico
             // quita su propio id o id de los otros lobos
-            $validCandidates = $this->excludeCandidates($allAliveIds, $bot, $phase);
+            $validCandidates = self::excludeCandidates($allAliveIds, $bot, $phase);
 
             // se ajustan las probabilidades:
 
@@ -86,22 +75,23 @@ class BotVoteService
                 }
             }
             // buscamos el objetivo
-            $targetId = $this->selectTarget($botProbabilities);
+            $targetId = self::selectTarget($botProbabilities);
 
-            // TODO:VICTOR
-            // se crea el Voto en memoria no persiste en bbdd
-            // Usamos $cycle para rellenar 'day_number'.
-            // se usa  la comparación ($phase === 'day') para rellenar 'is_day'.
             $botVote = new Vote([
-                'game_id' => $gameId,
                 'voter_id' => $bot->id,
                 'target_id' => $targetId,
-                'is_day' => ($phase === 'day'),
-                'day_number' => $cycle,
+                'votation_id' => $votationId,
             ]);
 
             $currentVotes->push($botVote);
+
+            $botVotesToInsert[] = [
+                'voter_id' => $bot->id,
+                'target_id' => $targetId,
+                'votation_id' => $votationId,
+            ];
         }
+        Vote::insert($botVotesToInsert);
 
         return $currentVotes;
     }
@@ -111,21 +101,21 @@ class BotVoteService
      * - Día: Todos los bots vivos de la partida.
      * - Noche: Solo los bots vivos que sean LOBOS.
      */
-    private function getEligibleBots(int $gameId, string $phase): Collection
+    private static function getEligibleBots(int $gameId, string $phase)
     {
-        // 1. Empezamos la consulta: Queremos participantes de esta partida
-        $query = participant::where('game_id', $gameId)
-            ->where('is_bot', true) // Solo bots
-            ->alive();              // Solo vivos
+        $query = Participant::where('game_id', $gameId)
+            ->where('is_bot', true)
+            ->alive(); // <-- ya tienes el scope, úsalo
 
-        // 2. Regla de la Noche:
-        // Si es de noche, aplicamos un filtro extra: solo pasan los lobos
+        // Si es noche, filtrar solo por lobos
         if ($phase === 'night') {
             $query->werewolves();
         }
 
-        // 3. Ejecutamos la consulta y devolvemos la colección.
-        return $query->get();
+        // Ejecutar
+        $bots = $query->get();
+
+        return $bots;
     }
 
     /**
@@ -136,7 +126,7 @@ class BotVoteService
      * @param  string  $phase  Fase actual ('day' o 'night').
      * @return array Lista final de IDs válidos para votar.
      */
-    private function excludeCandidates(array $candidateIds, participant $bot, string $phase): array
+    private static function excludeCandidates(array $candidateIds, participant $bot, string $phase): array
     {
         // regla general: está prohibido autovotarse
         // se quita el id del propio bots de la lista
@@ -145,7 +135,7 @@ class BotVoteService
 
         // regla de la noche: los lobos no se atacan entre si
         // solo aplica si es de noche y el bot actual es lobo
-        if ($phase === 'night' && $bot->character_id === self::WEREWOLF_CHARACTER_ID) {
+        if ($phase === 'night' && $bot->character_id === env('WOLF_ID', 2)) {
 
             // se obtienen los id de todos los compañeros lobo
             // se usa el scope que se creo antes
@@ -164,7 +154,7 @@ class BotVoteService
      * Elige a la víctima usando una "Ruleta Rusa" de probabilidades.
      * Recibo un array tipo: [ID_JUGADOR => PROBABILIDAD]. Ej: [5 => 0.20, 8 => 0.80]
      */
-    private function selectTarget(array $probabilities): ?int
+    private static function selectTarget(array $probabilities): ?int
     {
         // se genero un número aleatorio entre 0.0 y 1.0
         // mt_rand() da un entero gigante al dividirlo por el máximo posible me da el decimal

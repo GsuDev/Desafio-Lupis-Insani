@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Events\GameEvent;
-use App\Events\WolvesEvent;
 use App\Models\Game;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,7 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class WolvesDiscussionJob implements ShouldQueue
+class _03_TransitionToNightJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -32,9 +31,8 @@ class WolvesDiscussionJob implements ShouldQueue
             return;
         }
 
-        $duration = config('game.timers.wolves_discussion_duration', 45);
+        $text = 'La aldea se sumerge en la oscuridad. Todos duermen... excepto los lobos.';
 
-        $text = 'Unos aullidos rompen el silencio. Los lobos se comunican...';
         $message = $game->addMessage('system', null, $text);
 
         broadcast(new GameEvent(
@@ -43,21 +41,18 @@ class WolvesDiscussionJob implements ShouldQueue
             $this->gameId
         ));
 
-        broadcast(new WolvesEvent(
-            'wolves.discussion',
+        broadcast(new GameEvent(
+            'game.night',
             [
-                'duration' => $duration,
-                'game.conditions' => [
-                    'finished' => false,
-                    'winners' => null,
-                ],
+                'phase' => 'night',
             ],
             $this->gameId
         ));
 
-        // Encadenar siguiente Job (Votación de Lobos)
-        // StartWolvesVotingJob::dispatch($this->gameId)
-        //  ->delay(now()->addSeconds($duration));
+        $delay = 5;
+
+        _04_WolvesDiscussionJob::dispatch($this->gameId)
+            ->delay(now()->addSeconds($delay));
 
     }
 }

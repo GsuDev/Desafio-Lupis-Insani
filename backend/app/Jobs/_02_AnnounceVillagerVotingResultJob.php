@@ -14,7 +14,7 @@ use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class AnnounceVillagerVotingResultJob implements ShouldQueue
+class _02_AnnounceVillagerVotingResultJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -36,6 +36,7 @@ class AnnounceVillagerVotingResultJob implements ShouldQueue
      */
     public function handle(): void
     {
+
         // Primero carga la partida
         $game = Game::find($this->gameId);
 
@@ -44,11 +45,13 @@ class AnnounceVillagerVotingResultJob implements ShouldQueue
             return;
         }
 
-        $latestDay = $game->votations()->latest()->day_number; // busco el ultimo dia en las votaciones de la partida porque teoricamente sería el ultimo añadido por lo que es el dia actual
+        // $latestDay = $game->votations()->latest()->day_number; // busco el ultimo dia en las votaciones de la partida porque teoricamente sería el ultimo añadido por lo que es el dia actual
+        $latestVotation = $game->votations()->latest('day_number')->first();
+
+        $latestDay = $latestVotation?->day_number ?? 0;
 
         // Segundo obtener resultado de la votación llamando al controlador
         $response = VoteController::resolveVoting($this->gameId, 'day', $latestDay); // si da fallos, aqui puede ser un sitio
-        $data = $response->getData(true); // esto convierte json a array
 
         $victim = null;
         $messageText = '';
@@ -62,30 +65,30 @@ class AnnounceVillagerVotingResultJob implements ShouldQueue
 
         if ($votation) {
             $votation->update(['is_closed' => true]);
-        }// cierro la votación
+        } // cierro la votación
 
-        if (isset($data['success']) && $data['success']) { // compruebo que la respuesta haya sido success
-            $result = $data['data'];
+        if (isset($response['success']) && $response['success']) { // compruebo que la respuesta haya sido success
+            $result = $response['data'];
             $victimId = $result['resolved_candidate_id']; // recojo el id del participante escogido
 
-            if ($victimId != null && ! $this->isFirstDay) {// si hay procede, posible sitio de fallo
+            if ($victimId != null && ! $this->isFirstDay) { // si hay procede, posible sitio de fallo
                 $victim = Participant::find($victimId);
 
                 if ($victim) { // controlo que haya recibido algo de bbdd
                     // marcar como muerto a traves del sistema de estados
                     $deadState = State::where('name', 'DEAD')->first();
 
-                    if ($deadState) {// controlo el hecho de que exista el estado muerto
+                    if ($deadState) { // controlo el hecho de que exista el estado muerto
                         $victim->states()->syncWithoutDetaching([$deadState->id]); // este controla que no se desasigne nada
 
                         // $victim->states()->attach($deadState->id); //si da error el anterior probar con este otro
 
-                    }// else sería para añadir el estado muerto ?
+                    } // else sería para añadir el estado muerto ?
                     // Determina el nombre del rol para el mensaje (la revelación de quien era)
                     $roleName = 'Desconocido'; // por defecto uso este en caso de que haya algun fallo
                     if ($victim->character) {
                         $roleName = $victim->character->name;
-                    } elseif ($victim->character_id === 2) {// en caso de que fallo lo anterior lo controlo a lo bruto
+                    } elseif ($victim->character_id === 2) { // en caso de que fallo lo anterior lo controlo a lo bruto
                         $roleName = 'Lobo';
                     } else {
                         $roleName = 'Aldeano'; // por defecto todos son aldeanos
@@ -96,16 +99,14 @@ class AnnounceVillagerVotingResultJob implements ShouldQueue
 
                     // Error o sin votos
                     $messageText = 'RESULTADO: El silencio reina. No se han emitido votos suficientes.';
-
                 }
-
             } elseif ($this->isFirstDay) {
                 // En caso de que sea el primer dia se comprueba si hay elegido de ser el alcalde
-                if ($victimId != null) {// comrpobcion de que haya habido almenos un voto a una persona
+                if ($victimId != null) { // comrpobcion de que haya habido almenos un voto a una persona
                     $victim = Participant::find($victimId);
-                    if ($victim) {// que encuentre el judgado en la base de datos
+                    if ($victim) { // que encuentre el judgado en la base de datos
                         // comprobar que en los estado que tiene el participante no este muerto(caso en el que haya una desconexion)
-                        if ($victim->states->where('name', 'DEAD')->exists()) {
+                        if ($victim->states()->where('name', 'DEAD')->exists()) {
                             // si esta muerto no se le puede asignar el rol
                             // $messageText = 'RESULTADO: El participante elegido para alcalde está muerto. No se le puede asignar el rol.';
                             // hacer bucle para buscar uno valido(siempre tiene que haber uno)                            $validVictimFound = false;
@@ -118,16 +119,15 @@ class AnnounceVillagerVotingResultJob implements ShouldQueue
                                     break; // se que esto gusta poco pero es mas eficiente lo podemos quitar
                                 }
                             }
-
-                        }// no hace falta el else porque sería repetir el codigo
+                        } // no hace falta el else porque sería repetir el codigo
                         $councilState = State::where('name', 'COUNCIL')->first();
                         if ($councilState) {
                             $victim->states()->syncWithoutDetaching([$councilState->id]);
                             // $victim->states()->attach($councilState->id);
                             $messageText = $this->messageCouncilGenerator($victim->nickname);
-                        }// si no encuenta el state que hacemos ??
+                        } // si no encuenta el state que hacemos ??
                     }
-                } else {// en caso de que no haya elegidos (nadie haya votado)
+                } else { // en caso de que no haya elegidos (nadie haya votado)
                     // escoger a alguien al azar de la partida
                     $participants = $game->participants()->get();
                     $randomParticipant = $participants->random();
@@ -138,7 +138,7 @@ class AnnounceVillagerVotingResultJob implements ShouldQueue
                             $randomParticipant->states()->syncWithoutDetaching([$councilState->id]);
                             $messageText = $this->messageCouncilGenerator($randomParticipant->nickname);
                         }
-                    }// si no encuentra ??
+                    } // si no encuentra ??
 
                 }
             } else {
@@ -175,21 +175,17 @@ class AnnounceVillagerVotingResultJob implements ShouldQueue
             // Continuar el ciclo si el juego no ha terminado
             if (! $winStatus['finished']) {
                 // Se dispara el inicio de la noche
-                if (class_exists(TransitionToNightJob::class)) {// creado por ia como placeholder
-                    TransitionToNightJob::dispatch($this->gameId)->delay(now()->addSeconds(5));
-                }
+                _03_TransitionToNightJob::dispatch($this->gameId)->delay(now()->addSeconds(5));
             } else {
                 // si el juego termina, se emitiría game.finished que pertenece a otra hu
                 broadcast(new GameEvent('game.finished', ['winners' => $winStatus['winners']], $this->gameId));
             }
-
         } else {
             // TODO en caso de que no sea succes controlar aquí que devuelve arriba
             // Error al resolver la votación de forma temporal dejo esto
             $messageText = 'Hubo un error al intentar resolver la votación :c';
             $messageObj = $game->addMessage('error', null, $messageText);
         }
-
     }
 
     private function messageGenerator($victimName, $roleName, $killed)

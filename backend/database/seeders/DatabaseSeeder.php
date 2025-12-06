@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
             CharacterSeeder::class,
             GameSeeder::class,
             ParticipantSeeder::class,
+            StateSeeder::class,
         ]);
 
     }

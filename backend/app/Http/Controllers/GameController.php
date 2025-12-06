@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\StartFirstDayJob;
+use App\Jobs\_00_StartFirstDayJob;
 use App\Models\Game;
 use App\Models\participant;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -419,8 +419,8 @@ class GameController extends Controller
             }
 
             $game->refresh();
-
-            dispatch(new StartFirstDayJob($gameId))->delay(10);
+            $duration = 2;
+            dispatch(new _00_StartFirstDayJob($gameId))->delay(now()->addSeconds($duration));
 
             return response()->json([
                 'success' => true,

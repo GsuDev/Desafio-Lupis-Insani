@@ -9,12 +9,14 @@ export class Slide {
         this.slideElement = this.createSlideElement()
     }
 
-   private getImageUrl(imageName: string): string {
-    const url = new URL(`../../assets/carrusel/${imageName}`, import.meta.url).href;
-    
-    
-    return url;
-}
+    private getImageUrl(imageName: string): string {
+        const url = new URL(
+            `../../assets/carrusel/${imageName}`,
+            import.meta.url
+        ).href
+
+        return url
+    }
 
     /**
      * Método por el que genera y devuelve el elemento HTML para esta diapositiva

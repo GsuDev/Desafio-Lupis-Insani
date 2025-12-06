@@ -12,7 +12,6 @@ class Vote extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'game_id',
         'voter_id',
         'target_id',
         'votation_id',
