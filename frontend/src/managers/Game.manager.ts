@@ -5,6 +5,7 @@ import type { ChatEvent, Event } from '../types/events.types'
 import { GameOverContainer } from '../components/gameOverContainer/gameOverContainer'
 import type { GameOverData } from '../components/gameOver/gameOverDetails'
 import type { ApiResponse } from '../types/api.types'
+import { GameComponent } from '../components/game/game'
 
 /**
  * En el manager se separan los eventos que vienen del router
@@ -17,11 +18,21 @@ export class GameManager {
         channel: 'game' | 'wolves'
     ): void {
         if (!event.data) {
-            console.warn(`⚠️ ChatManager: datos vacíos para ${event}`)
+            console.warn(`⚠️ GameManager: datos vacíos para ${event}`)
             return
         }
 
         switch (eventName) {
+            case 'game.day':
+                console.log('☀️ Evento de DÍA recibido:', event.data)
+                GameComponent.handleDayPhase(event.data)
+                break
+
+            case 'game.night':
+                console.log('🌙 Evento de NOCHE recibido:', event.data)
+                GameComponent.handleNightPhase(event.data)
+                break
+
             case 'game.discussion':
                 // TODO: Sacar un enorme titulo para lobos o aldeanos
                 console.log(
@@ -29,6 +40,7 @@ export class GameManager {
                     event.data
                 )
                 break
+
             //hu 45 pantalla game over
             case 'game.conditions':
                 console.log('🏁 Evento de fin de partida recibido:', event.data)
@@ -63,7 +75,7 @@ export class GameManager {
                 break
 
             default:
-                console.warn(`⚠️ Evento de chat no manejado: ${event}`)
+                console.warn(`⚠️ Evento de game no manejado: ${event}`)
         }
     }
 }
