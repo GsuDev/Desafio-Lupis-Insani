@@ -58,7 +58,7 @@ Route::post('/restore-password', [AuthController::class, 'restorePassword']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
 // Ruta /reset-password: Nueva contraseña al recuperar
-Route::middleware('auth:sanctum')->post('/reset-password', [AuthController::class, 'reset-password']);
+Route::middleware('auth:sanctum')->post('/reset-password', [AuthController::class, 'resetPassword']);
 
 // ------------------------------------------------------------------------
 
