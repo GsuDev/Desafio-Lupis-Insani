@@ -35,8 +35,8 @@ class _00_StartFirstDayJob implements ShouldQueue
 
         // 2. Verificar que estamos en la fase correcta
         // TODO
-        // $duration = config('game.timers.mayor_discussion_duration', 30);
-        $duration = 2;
+
+        $duration = (int) env('_00_GAME_MAYOR_DISCUSSION_DURATION', 30);
         $message = "Comienza la elección del alcalde. Los jugadores pueden discutir durante {$duration}  antes de votar.";
 
         // 4. Emitir evento chat.message
