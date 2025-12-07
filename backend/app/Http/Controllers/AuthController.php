@@ -166,11 +166,11 @@ class AuthController extends Controller
             ], 404);
         }
 
-        // 1. Crear token de Sanctum
-        $token = $user->createToken('auth-token', ['reset-password'])->plainTextToken;
-
         // 2. Borrar todos los demás tokens excepto este
         $user->tokens()->delete();
+
+        // 1. Crear token de Sanctum
+        $token = $user->createToken('auth-token', ['reset-password'])->plainTextToken;
 
         // 3. Enviar correo al usuario
         Mail::to($user->email)->send(new RestorePasswordMail($token));
