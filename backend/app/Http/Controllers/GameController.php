@@ -419,7 +419,7 @@ class GameController extends Controller
             }
 
             $game->refresh();
-            $duration = 2;
+            $duration = (int) env('GAME_START_DELAY', 30);
             dispatch(new _00_StartFirstDayJob($gameId))->delay(now()->addSeconds($duration));
 
             return response()->json([
@@ -505,5 +505,4 @@ class GameController extends Controller
             ];
         }
     }
-
 }
