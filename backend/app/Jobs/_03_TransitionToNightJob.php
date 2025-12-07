@@ -49,7 +49,7 @@ class _03_TransitionToNightJob implements ShouldQueue
             $this->gameId
         ));
 
-        $delay = 5;
+        $delay = (int) env('_03_GAME_TRANSITION_TO_NIGHT_DURATION', 10);
 
         _04_WolvesDiscussionJob::dispatch($this->gameId)
             ->delay(now()->addSeconds($delay));

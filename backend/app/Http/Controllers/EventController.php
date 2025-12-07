@@ -90,12 +90,9 @@ class EventController extends Controller
 
             case 'result':
 
-                $result = VoteController::resolveVoting($gameId, $data['phase'], $data['cycle']);
-                if (! $result['success']) {
-                    // TODO: manejar error
-                }
+                // Lógica en el job
 
-                return ['message' => $result['data']];
+                return $data;
 
                 break;
 

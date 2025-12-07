@@ -4,6 +4,7 @@ import type { Message } from '../models/models'
 import type { ChatEvent, Event } from '../types/events.types'
 import { GameOverContainer } from '../components/gameOverContainer/gameOverContainer'
 import type { GameOverData } from '../components/gameOver/gameOverDetails'
+import type { ApiResponse } from '../types/api.types'
 
 /**
  * En el manager se separan los eventos que vienen del router
@@ -34,16 +35,24 @@ export class GameManager {
 
                 //  Verificamos si hay un ganador según contrato backend
                 // El backend envía winner: 'wolves' | 'villagers' | null
-                if (event.data.winner) {
+                if (event.data.data.winner) {
+                    console.log('Hay ganador')
                     const rootNode =
                         document.getElementById('app') || document.body
 
-                    const gameOverData: GameOverData = event.data
-
-                    const gameOverModal = new GameOverContainer(
-                        rootNode,
-                        gameOverData
-                    )
+                    console.log('deberia ser app', rootNode)
+                    const gameOverData: ApiResponse<GameOverData> = event.data
+                    console.log('Datos: ', gameOverData)
+                    if (!gameOverData || !gameOverData.data) {
+                        console.log('error al terminar la partida')
+                        return
+                    }
+                    const gameOverModal = new GameOverContainer(rootNode, {
+                        winner: gameOverData.data.winner,
+                        alive_wolves: gameOverData.data.alive_wolves,
+                        alive_villagers: gameOverData.data.alive_villagers,
+                        reason: gameOverData.message ?? 'Fin de la Partida',
+                    })
 
                     gameOverModal.render()
                 }

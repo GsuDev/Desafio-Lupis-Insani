@@ -35,7 +35,7 @@ class _01_FirstDayStartMayorVoteJob implements ShouldQueue
 
         // obtenemos la duracion desde la config que creamos
         // $duration = config('game.timers.mayor_vote_duration', 30);
-        $duration = 2;
+        $duration = (int) env('_01_GAME_MAYOR_VOTATION_DURATION', 30);
         $text = "¡Silencio! Comienza la votación para elegir al alcalde. Tenéis {$duration} segundos.";
 
         // con el controller seria asi
