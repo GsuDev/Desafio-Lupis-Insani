@@ -1,0 +1,39 @@
+.game-over-container {
+    /* Posición fija para cubrir toda la pantalla, hagas scroll o no */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    
+    /* Fondo oscuro semitransparente estilo Lupis Insani */
+    background-color: rgba(15, 12, 41, 0.7); 
+    backdrop-filter: blur(8px); /* efecto borroso elegante */
+    
+    
+    z-index: 30; 
+    
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* Estado inicial para la animación (invisible) */
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+}
+
+/* Cuando añadimos esta clase con js se vuelve visible suavemente */
+.game-over-container.visible {
+    opacity: 1;
+}
+
+/* Ocultar elementos de la interfaz de juego cuando el Game Over está activo */
+body.game-over-active .game-chat-root,
+body.game-over-active .role-card,
+body.game-over-active .time-bar-wrapper {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
