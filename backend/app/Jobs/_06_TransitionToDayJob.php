@@ -29,7 +29,7 @@ class _06_TransitionToDayJob implements ShouldQueue
         try {
             $game = Game::find($this->gameId);
 
-            if (! $game) {
+            if (!$game) {
                 // TODO
                 return;
             }
@@ -41,6 +41,8 @@ class _06_TransitionToDayJob implements ShouldQueue
             $currentDay = $lastDay + 1;
 
             $message = "Amanece en el pueblo... Un nuevo día comienza (Día {$currentDay})";
+
+            GameChannelController::systemSend('game.narrator', ['message' => $message], $this->gameId);
 
             EventController::systemMessage($message, 'system', $this->gameId);
 
@@ -61,7 +63,7 @@ class _06_TransitionToDayJob implements ShouldQueue
         } catch (Exception $e) {
 
             EventController::systemMessage(
-                'Error al cambiar a dia'.json_encode($e->getMessage()),
+                'Error al cambiar a dia' . json_encode($e->getMessage()),
                 'game',
                 $this->gameId
             );

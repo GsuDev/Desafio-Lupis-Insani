@@ -4,6 +4,7 @@ import { GameParticipant } from '../gameParticipant/gameParticipant'
 import { GameChat } from '../gameChat/gameChat'
 import { TimeBar } from '../timeBar/timeBar'
 import { RoleCard, type PlayerRole } from '../roleCard/roleCard'
+import { NarratorOverlay } from '../narratorOverlay/NarratorOverlay'
 
 import campfireImg from '../../assets/gameRenders/night_game_fire.png'
 
@@ -22,6 +23,10 @@ export class GameComponent {
     private timeBarContainer: HTMLElement
     private roleCardContainer: HTMLElement
 
+    //Componente letras
+    private campfireContainer: HTMLElement
+
+    private narratorOverlay: NarratorOverlay
     //seguramente crezca en función de los elementos que necesite por ejemplo la carta, la barra de tiempo...
     constructor() {
         this.container = this.createContainer()
@@ -30,7 +35,21 @@ export class GameComponent {
 
         this.timeBarContainer = this.createTimeBarContainer()
         this.roleCardContainer = this.createRoleCardContainer()
+
+        this.campfireContainer = this.createCampfireContainer()
+        this.narratorOverlay = new NarratorOverlay(this.container)
+    
+
     }
+
+    private createCampfireContainer(): HTMLElement {
+        const container = document.createElement('div')
+        container.className = 'campfire-image-container'
+        // Aquí iría tu: div.innerHTML = `<img src="${campfireImg}" ... />` en el update()
+        return container
+    
+    }
+
 
     /**
      * Crea el contenedor principal del componente
@@ -46,8 +65,7 @@ export class GameComponent {
      */
     private createTimeBarContainer(): HTMLElement {
         const div = document.createElement('div')
-        // Puedes darle una clase si necesitas posicionamiento extra en game.css,
-        // aunque TimeBar ya tiene sus estilos internos.
+        // TimeBar ya tiene sus estilos internos.
         div.className = 'game-time-bar-wrapper'
         div.style.position = 'absolute'
         div.style.top = '0'
@@ -112,6 +130,10 @@ export class GameComponent {
         const myRole = this.getMyRole()
         const roleCard = new RoleCard(this.roleCardContainer, myRole)
         roleCard.render()
+
+        //Renderizo la hoguera
+        this.container.appendChild(this.campfireContainer)
+
         return this.container
     }
 

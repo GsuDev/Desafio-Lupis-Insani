@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Events\GameEvent;
+use App\Http\Controllers\GameChannelController;
 use App\Http\Controllers\GameController;
 use App\Models\Game;
 use App\Models\Votation;
@@ -28,7 +29,7 @@ class _01_FirstDayStartMayorVoteJob implements ShouldQueue
 
         $game = Game::find($this->gameId);
 
-        if (! $game) {
+        if (!$game) {
             // TODO
             return;
         }
@@ -50,7 +51,7 @@ class _01_FirstDayStartMayorVoteJob implements ShouldQueue
             ['message' => $message->toStructured()], // aplica patron dto para envio de datos al frontend, devuelve array
             $this->gameId
         ));
-
+        GameChannelController::systemSend('game.narrator', ['message' => '¡SILENCIO! A VOTAR!'], $this->gameId);
         $votation = new Votation(['game_id' => $this->gameId, 'is_day' => true, 'day_number' => 1, 'is_closed' => false]);
         $votation->save();
 

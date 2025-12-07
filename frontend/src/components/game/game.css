@@ -44,22 +44,25 @@
     display: block;
 }
 
-/*
-Me queda ajustar esto
-La Hoguera Central 
+/* Me queda ajustar esto
+La Hoguera Central  */
 .campfire-container {
     position: absolute;
-    top: 50%;
+    /*Ajustar según la imagen, creo  que con poner que sea el 100% de la pantalla se solucioan*/
+    /* top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    width: 150px;  Ajusta según tu imagen 
-    height: 150px;
-    z-index: 5;
+    transform: translate(-50%, -50%); */
+    width: 100%;   
+    height: 100%;
+    z-index: 40;
     display: flex;
     justify-content: center;
     align-items: center;
+    pointer-events: none;
+
 }
 
+/*
 .campfire-img {
     width: 100%;
     height: auto;
