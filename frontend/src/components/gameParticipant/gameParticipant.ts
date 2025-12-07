@@ -54,7 +54,7 @@ export class GameParticipant {
 
     private handleClick(): void {
         if (!this.isVotingEnabled) return
-        // TODO HU futura: Verificar si está muerto y no permitir voto
+        // TODO: SERGIO HU futura: Verificar si está muerto y no permitir voto
 
         if (this.onVoteCallback) {
             this.onVoteCallback(this.participant.id)

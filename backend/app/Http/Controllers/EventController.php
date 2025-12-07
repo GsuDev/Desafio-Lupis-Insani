@@ -82,7 +82,7 @@ class EventController extends Controller
             case 'emitted':
                 $result = VoteController::vote($data, $gameId, $user);
                 if (! $result['success']) {
-                    // TODO: manejar error
+                    return null;
                 }
 
                 return $data;
@@ -99,7 +99,7 @@ class EventController extends Controller
             case 'canceled':
                 $result = VoteController::cancelVote($data, $gameId, $user);
                 if (! $result['success']) {
-                    // TODO: manejar error
+
                 }
 
                 return $data;
