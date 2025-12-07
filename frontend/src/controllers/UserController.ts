@@ -155,6 +155,21 @@ class UserController {
         }
     }
 
+    async resetPassword(password: string) {
+        try {
+            console.log('🔐 Enviando nueva contraseña...')
+            const response = await userProvider.resetPassword(password)
+            return response
+        } catch (error: any) {
+            console.error('Error resetPassword controller:', error)
+            return {
+                success: false,
+                message: error.message || 'Error al restablecer la contraseña',
+                data: null,
+            }
+        }
+    }
+
     async restorePassword(email: string) {
         const response = userProvider.restorePassword(email)
         return response
