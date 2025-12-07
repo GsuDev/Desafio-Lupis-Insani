@@ -475,9 +475,9 @@ class GameController extends Controller
             if ($aliveWolves >= $aliveVillagers) { // si empatan los lobos ganan
                 return [
                     'success' => true,
-                    'message' => '¡Victoria de los hombres lobo! Superan o igualan a los aldeanos.',
+                    'message' => '¡Victoria de los hombres lobo! Superan a los aldeanos.',
                     'data' => [
-                        'winner' => 'werewolves',
+                        'winner' => 'wolves',
                         'alive_wolves' => $aliveWolves,
                         'alive_villagers' => $aliveVillagers,
                         'participant_id' => $affectedParticipantId,
