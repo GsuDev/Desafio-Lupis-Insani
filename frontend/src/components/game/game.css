@@ -3,13 +3,59 @@
     flex-direction: column;
     width: 100%;
     height: 100%;
-    background-color: #f4f4f9;
-    /* Color de fondo ejemplo */
+    background-color: #367aaa;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Capa de DÍA (fondo base) */
+.game-component::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background-image: url('../../assets/gameRenders/day_game_without_fire.png');
     background-size: 100% 100%;
-    overflow: hidden;
-    /* Evitar scrollbars si algo sobresale un poco */
-    position: relative;
+    opacity: 1;
+    transition: opacity 2s ease-in-out;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Capa de NOCHE (encima) */
+.game-component::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../../assets/gameRenders/night_game_without_fire.png');
+    background-size: 100% 100%;
+    opacity: 0;
+    transition: opacity 2s ease-in-out;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Cuando es de NOCHE: ocultar día, mostrar noche */
+.game-component.phase-night::before {
+    opacity: 0;
+}
+
+.game-component.phase-night::after {
+    opacity: 1;
+}
+
+/* Cuando es de DÍA: mostrar día, ocultar noche */
+.game-component.phase-day::before {
+    opacity: 1;
+}
+
+.game-component.phase-day::after {
+    opacity: 0;
 }
 
 .game-header {
@@ -19,15 +65,12 @@
     text-align: center;
     color: #333;
     z-index: 20;
-    /* Por encima de todo */
     pointer-events: none;
-    /* Dejar pasar clics si hay botones debajo */
 }
 
 .game-status {
     position: absolute;
     top: 60px;
-    /* Debajo del header */
     left: 50%;
     transform: translateX(-50%);
     z-index: 20;
@@ -42,42 +85,11 @@
     width: 100%;
     height: 100%;
     display: block;
+    z-index: 1;
 }
-
-/*
-Me queda ajustar esto
-La Hoguera Central 
-.campfire-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 150px;  Ajusta según tu imagen 
-    height: 150px;
-    z-index: 5;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.campfire-img {
-    width: 100%;
-    height: auto;
-    filter: drop-shadow(0 0 20px orange);  Efecto de brillo 
-    animation: flicker 2s infinite alternate;
-}
-
-@keyframes flicker {
-    0% { filter: drop-shadow(0 0 15px orange); transform: scale(1); }
-    100% { filter: drop-shadow(0 0 25px orangered); transform: scale(1.02); }
-}
-
-
-*/
 
 .game-participant-card {
-    position: absolute; /* ¡Clave! */
-    /* Centramos el punto de anclaje de la carta */
+    position: absolute;
     transform: translate(-50%, -50%);
     transition: all 0.5s ease-out;
     z-index: 10;
@@ -85,7 +97,6 @@ La Hoguera Central
 
 .participant-card.is-bot {
     border: 2px solid #ccc;
-    /* Diferenciar bots visualmente */
 }
 
 .participant-avatar img {
@@ -101,20 +112,14 @@ La Hoguera Central
     left: 20px;
     top: 50%;
     transform: translateY(-50%);
-
     width: 300px;
     height: 60vh;
     max-height: 600px;
-
-    /* Asegurar que esté encima de los participantes/hoguera */
     z-index: 100;
-
-    /* Estética opcional para el contenedor si el componente no la trae */
-    overflow: hidden; /* Para que no se salga nada */
-    pointer-events: auto; /* Asegurar que se puede hacer clic en el chat */
+    overflow: hidden;
+    pointer-events: auto;
 }
 
-/* Opcional: Ajustar en móviles */
 @media (max-width: 768px) {
     .game-chat-wrapper {
         left: 0;

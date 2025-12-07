@@ -79,13 +79,13 @@ class EventController extends Controller
         $category = explode('.', $event);
         switch ($category[1]) {
 
-            case 'emited':
+            case 'emitted':
                 $result = VoteController::vote($data, $gameId, $user);
                 if (! $result['success']) {
-                    // TODO: manejar error
+                    return null;
                 }
 
-                return ['message' => $result['data']];
+                return $data;
                 break;
 
             case 'result':
@@ -96,6 +96,13 @@ class EventController extends Controller
 
                 break;
 
+            case 'canceled':
+                $result = VoteController::cancelVote($data, $gameId, $user);
+                if (! $result['success']) {
+
+                }
+
+                return $data;
             default:
 
                 break;
