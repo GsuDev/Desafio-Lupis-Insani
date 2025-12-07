@@ -103,7 +103,7 @@ class participant extends Model
     }
 
     /**comprueba si el participante es un lobo */
-    public function isWereWolf():bool
+    public function isWereWolf(): bool
     {
         return $this->character_id === 2;
     }
