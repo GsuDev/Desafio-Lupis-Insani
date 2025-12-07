@@ -57,7 +57,7 @@ class _05_StartWolvesVoteJob implements ShouldQueue
         VoteController::startVotation($this->gameId, 'night', $lastDay);
         // emito el evento de cambio de fase
         broadcast(new WolvesEvent(
-            'wolves.vote.start',
+            'vote.start',
             [
                 'phase' => 'night',
                 'gameId' => $this->gameId,

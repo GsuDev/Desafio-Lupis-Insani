@@ -48,7 +48,7 @@ class _04_WolvesDiscussionJob implements ShouldQueue
         ));
 
         broadcast(new WolvesEvent(
-            'wolves.discussion',
+            'game.discussion',
             [
                 'duration' => $duration,
                 'game.conditions' => [

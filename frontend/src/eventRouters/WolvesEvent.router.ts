@@ -1,6 +1,7 @@
 import { WolvesChannel } from '../channels/WolvesChannel'
 import { ChatManager } from '../managers/Chat.manager'
 import { GameManager } from '../managers/Game.manager'
+import { VoteManager } from '../managers/Vote.manager'
 import type { Event } from '../types/events.types'
 
 /**
@@ -25,7 +26,10 @@ export class WolvesEventRouter {
                 // Pasar 'game' para que el Manager
                 GameManager.handleEvent(event, data, 'game')
                 break
-
+            case 'vote':
+                // Pasar 'game' para que VoteManager sepa que va a la pestaña general
+                VoteManager.handleEvent(event, data, 'wolves')
+                break
             default:
                 console.warn(`⚠️ Evento sin manager asignado: ${event}`, data)
         }

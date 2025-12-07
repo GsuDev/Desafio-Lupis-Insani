@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Events\GameEvent;
 use App\Http\Controllers\GameChannelController;
+use App\Http\Controllers\VoteController;
 use App\Models\Game;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -27,7 +28,7 @@ class _03_TransitionToNightJob implements ShouldQueue
 
         $game = Game::find($this->gameId);
 
-        if (!$game) {
+        if (! $game) {
             // TODO
             return;
         }
@@ -44,11 +45,13 @@ class _03_TransitionToNightJob implements ShouldQueue
             ['message' => $message->toStructured()],
             $this->gameId
         ));
-
+        // esto para calcular el dia y poder sumarle uno
+        $lastDay = VoteController::getLatestVotation($game)->day_number ?? 0;
         broadcast(new GameEvent(
             'game.night',
             [
                 'phase' => 'night',
+                'dayNumber' => $lastDay,
             ],
             $this->gameId
         ));

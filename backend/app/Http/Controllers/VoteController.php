@@ -46,6 +46,11 @@ class VoteController extends Controller
             ->with('states')
             ->first();
 
+        $check = $participant->id !== $voteData['targetId'];
+        if (! $check['success']) {
+            return $check;
+        }
+
         $check = self::validateUserInGame($participant);
         if (! $check['success']) {
             return $check;
@@ -69,50 +74,19 @@ class VoteController extends Controller
         if (! $check['success']) {
             return $check;
         }
-        // $vote = Vote::create($validated);
+
+        $game = Game::find($gameId);
+
+        if (! $game) {
+            return [
+                'success' => false,
+                'message' => 'La partida no existe.',
+                'status' => 404,
+                'data' => null,
+            ];
+        }
         // Busco la votación activa o la creo si es el primer voto del turno
-        // busca una votación con ese game/fase/dia.
-
-        // victor
-        // $votation = Votation::firstOrCreate(
-        //     [
-        //         'game_id' => $validated['game_id'],
-        //         'is_day' => $validated['is_day'],
-        //         'day_number' => $validated['day_number'],
-        //     ],
-        //     [
-        //         'is_closed' => false, // Si la crea nueva, nace abierta
-        //     ]
-        // );
-
-        // // Comprobacion de seguridad: ¿Está cerrada la votación?
-        // if ($votation->is_closed) {
-        //     return response()->json([
-        //         'success' => false,
-        //         'message' => 'Esta votación ya está cerrada.',
-        //     ], 403);
-        // }
-
-        // // Creo el voto vinculado a la Votación (NO al game directamente)
-        // // Solo paso los datos que pertenecen a la tabla 'votes'
-        // $vote = Vote::create([
-        //     'votation_id' => $votation->id,
-        //     'voter_id' => $validated['voter_id'],
-        //     'target_id' => $validated['target_id'],
-        // ]);
-        // Fin victor
-
-        // Busco la votación activa o la creo si es el primer voto del turno
-        $votation = Votation::firstOrCreate(
-            [
-                'game_id' => $gameId,
-                'is_day' => $voteData['isDay'],
-                'day_number' => $voteData['dayNumber'],
-            ],
-            [
-                'is_closed' => false, // Si la crea nueva, nace abierta
-            ]
-        );
+        $votation = self::getLatestVotation($game);
 
         // Comprobacion de seguridad: ¿Está cerrada la votación?
         if ($votation->is_closed) {
@@ -140,6 +114,109 @@ class VoteController extends Controller
         return [
             'success' => true,
             'message' => 'Voto registrado correctamente',
+            'data' => ['vote' => $vote],
+        ];
+    }
+
+    public static function cancelVote($data, $gameId, $user)
+    {
+        /*
+        $validated = $request->validate([
+            'game_id' => 'required|integer|exists:games,id',
+            'voter_id' => 'required|integer|exists:participants,id',
+            'target_id' => 'required|integer|exists:participants,id',
+            'is_day' => 'required|boolean',
+            'day_number' => 'required|integer|min:1',
+        */
+        // 1. Validación básica de inputs
+        $validator = Validator::make($data, [
+            'targetId' => 'required|integer|exists:participants,id',
+            'isDay' => 'required|boolean',
+            'dayNumber' => 'required|integer|min:1',
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                'success' => false,
+                'message' => $validator->errors(),
+                'data' => null,
+            ];
+        }
+
+        $voteData = $validator->validated();
+
+        // 2. Participante votante
+        $participant = Participant::where('user_id', $user->id)
+            ->where('game_id', $gameId)
+            ->with('states')
+            ->first();
+
+        $check = self::validateUserInGame($participant);
+        if (! $check['success']) {
+            return $check;
+        }
+
+        // 3. Validar ciclo día/noche según BBDD
+        $check = self::validateCycle($gameId, $voteData['dayNumber'], $voteData['isDay']);
+        if (! $check['success']) {
+            return $check;
+        }
+
+        // 4. Validaciones según fase (día o noche)
+        $check = self::validatePhaseRestrictions($participant, $voteData['targetId'], $voteData['isDay']);
+        if (! $check['success']) {
+            return $check;
+        }
+
+        // 5. Validar objetivo vivo
+
+        $check = self::validateTargetAlive($voteData['targetId']);
+        if (! $check['success']) {
+            return $check;
+        }
+
+        $game = Game::find($gameId);
+
+        if (! $game) {
+            return [
+                'success' => false,
+                'message' => 'La partida no existe.',
+                'status' => 404,
+                'data' => null,
+            ];
+        }
+        // Busco la votación activa o la creo si es el primer voto del turno
+        $votation = self::getLatestVotation($game);
+
+        // Comprobacion de seguridad: ¿Está cerrada la votación?
+        if ($votation->is_closed) {
+            return [
+                'success' => false,
+                'message' => 'Esta votación ya está cerrada.',
+                'status' => 403,
+                'data' => null,
+            ];
+        }
+
+        // 6. Validar que no haya votado ya (AHORA USANDO EL ID DE LA VOTACIÓN)
+        $check = self::validateRepeatedVote($participant->id, $votation->id);
+        if (! $check['success']) {
+            return $check;
+        }
+
+        // Borrar voto
+        $vote = Vote::where('voter_id', $voteData['voterId'])
+            ->where('target_id', $voteData['targetId'])
+            ->where('votation_id', $votation->id)
+            ->first();
+
+        if ($vote) {
+            $vote->delete();
+        }
+
+        return [
+            'success' => true,
+            'message' => 'Voto cancelado correctamente',
             'data' => ['vote' => $vote],
         ];
     }
@@ -348,8 +425,9 @@ class VoteController extends Controller
                 'data' => null,
             ];
         }
-        $latestDay = $game->votations()->latest()->day_number;
-        $latestPhase = $game->votations()->latest()->is_day;
+        $latestVotation = self::getLatestVotation($game);
+        $latestDay = $latestVotation->day_number;
+        $latestPhase = $latestVotation->is_day;
 
         if ($latestDay != $dayNumber || (bool) $latestPhase != (bool) $isDay) {
             return [
@@ -387,7 +465,7 @@ class VoteController extends Controller
 
     private static function validateTargetAlive($targetId)
     {
-        $target = Participant::with('state')->find($targetId);
+        $target = Participant::with('states')->find($targetId);
 
         if (! $target) {
             return [
@@ -399,7 +477,7 @@ class VoteController extends Controller
         }
 
         // muerto si tiene state y state = 'dead'
-        if ($target->states->contains('name', 'dead')) {
+        if ($target->states()->where('name', 'DEAD')->exists()) {
             return [
                 'success' => false,
                 'message' => 'Ese jugador está muerto.',
