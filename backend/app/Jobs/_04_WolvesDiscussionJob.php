@@ -32,7 +32,7 @@ class _04_WolvesDiscussionJob implements ShouldQueue
             return;
         }
 
-        $duration = 5;
+        $duration = (int) env('_04_GAME_WOLVES_DISCUSSION_DURATION', 30);
 
         $text = 'Unos aullidos rompen el silencio. Los lobos se comunican...';
         $message = $game->addMessage('system', null, $text);
@@ -56,8 +56,8 @@ class _04_WolvesDiscussionJob implements ShouldQueue
         ));
 
         // Encadenar siguiente Job (Votación de Lobos)
-        // StartWolvesVotingJob::dispatch($this->gameId)
-        //  ->delay(now()->addSeconds($duration));
+        _05_StartWolvesVoteJob::dispatch($this->gameId)
+            ->delay(now()->addSeconds($duration));
 
     }
 }

@@ -2,20 +2,20 @@
 
 namespace App\Jobs;
 
-use App\Events\GameEvent;
 use App\Events\WolvesEvent;
+use App\Http\Controllers\VoteController;
 use App\Models\Game;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
 class _05_StartWolvesVoteJob implements ShouldQueue
 {
-    use Queueable, InteractsWithQueue, Queueable, SerializesModels;
+    use InteractsWithQueue, Queueable, Queueable, SerializesModels;
 
     protected int $gameId;
+
     /**
      * Create a new job instance.
      */
@@ -35,21 +35,24 @@ class _05_StartWolvesVoteJob implements ShouldQueue
             return;
         }
 
-        //Se tendría que controlar que el juego esté en la noche  ?
+        // Se tendría que controlar que el juego esté en la noche  ?
 
-        $duration = env('GAME_WOLVES_VOTE_DURATION', 10);
+        $duration = (int) env('_05_GAME_WOLVES_VOTATION_DURATION', 10);
 
         $text = "Lobos, es hora de acechar. Tenéis {$duration} segundos.";
         $message = $game->addMessage('system', null, $text);
 
-        //envio al chat de los lobos que el evento a comenzado
+        // envio al chat de los lobos que el evento a comenzado
         broadcast(new WolvesEvent(
             'chat.message',
             ['message' => $message->toStructured()],
             $this->gameId
         ));
 
-        //emito el evento de cambio de fase
+        // Abre una nueva votación
+        $lastDay = VoteController::getLatestVotation($game)->day_number ?? 0;
+        VoteController::startVotation($this->gameId, 'night', $lastDay);
+        // emito el evento de cambio de fase
         broadcast(new WolvesEvent(
             'wolves.vote.start',
             [
@@ -59,9 +62,8 @@ class _05_StartWolvesVoteJob implements ShouldQueue
             $this->gameId
         ));
 
-
-        //Ejemplo:
+        // Ejemplo:
         _06_TransitionToDayJob::dispatch($this->gameId)
-             ->delay(now()->addSeconds($duration)); // Aqui va el job que cambia de noche a día (game.day) y resuelve la votación (según tengo entendido).
+            ->delay(now()->addSeconds($duration)); // Aqui va el job que cambia de noche a día (game.day) y resuelve la votación (según tengo entendido).
     }
 }
