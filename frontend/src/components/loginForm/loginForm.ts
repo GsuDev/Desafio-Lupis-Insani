@@ -2,6 +2,7 @@ import { userController } from '../../controllers/UserController'
 import AccessContainer from '../accessContainer/AccessContainer'
 import { renderUserForm } from '../userForm/userForm'
 import UserProfileContainer from '../userProfileContainer/userProfileContainer'
+import { RestorePasswordModal } from '../restorePasswordModal/restorePasswordModal'
 import './loginForm.css'
 
 export class LoginFormComponent {
@@ -77,8 +78,16 @@ export class LoginFormComponent {
         // Footer con link
         const footer = document.createElement('div')
         footer.className = 'login-footer'
-        footer.innerHTML =
-            '¿No tienes cuenta? <a href="#" id="create-account-link">Crear cuenta</a>'
+        footer.innerHTML = `
+            <div style="margin-bottom: 0.5rem;">
+                ¿No tienes cuenta? <a href="#" id="create-account-link">Crear cuenta</a>
+            </div>
+            <div>
+                <a href="#" id="restore-password-link" style="color: #ff8f29; font-size: 0.9em;">
+                    ¿Has olvidado tu contraseña?
+                </a>
+            </div>
+        `
 
         body.append(description, form, footer)
         card.append(header, body)
@@ -145,6 +154,10 @@ export class LoginFormComponent {
             '#create-account-link'
         )
 
+        const restorePasswordLink = this.rootElement.querySelector(
+            '#restore-password-link'
+        )
+
         // Submit del formulario
         if (form) {
             form.addEventListener('submit', (event) => this.handleSubmit(event))
@@ -154,6 +167,12 @@ export class LoginFormComponent {
         if (createAccountLink) {
             createAccountLink.addEventListener('click', (event) =>
                 this.handleCreateAccountClick(event)
+            )
+        }
+
+        if (restorePasswordLink) {
+            restorePasswordLink.addEventListener('click', (event) =>
+                this.handleRestorePasswordClick(event)
             )
         }
     }
@@ -266,5 +285,13 @@ export class LoginFormComponent {
         errorElements.forEach((element) => {
             element.textContent = ''
         })
+    }
+
+    /** olvidé contraseña */
+    private handleRestorePasswordClick(event: Event): void {
+        event.preventDefault()
+        console.log('abriendo modal de recuperacion')
+        const restoreModal = new RestorePasswordModal(this.container)
+        restoreModal.render()
     }
 }
