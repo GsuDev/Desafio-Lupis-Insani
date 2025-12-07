@@ -5,7 +5,6 @@ import UserProfileComponent from '../userProfile/userProfile'
 import AccessContainer from '../accessContainer/AccessContainer'
 import UserStatistics from '../userStatistics/userStatistics'
 
-
 /**
  * clase principal del perfil de usuario.
  * basicamente es la carcasa que tiene el header y divide la pantalla en dos.
@@ -25,7 +24,6 @@ class UserProfileContainer {
     render(): void {
         // limpiamos lo que hubiera antes para no duplicar cosas
         this.container.innerHTML = ''
-
 
         // fondo y header
         //  div principal que envuelve todo

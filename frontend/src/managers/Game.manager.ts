@@ -30,27 +30,24 @@ export class GameManager {
                 break
             //hu 45 pantalla game over
             case 'game.conditions':
-                console.log('🏁 Evento de fin de partida recibido:', event.data);
-                
+                console.log('🏁 Evento de fin de partida recibido:', event.data)
+
                 //  Verificamos si hay un ganador según contrato backend
                 // El backend envía winner: 'wolves' | 'villagers' | null
                 if (event.data.winner) {
-                    
-                    
-                    const rootNode = document.getElementById('app') || document.body;
+                    const rootNode =
+                        document.getElementById('app') || document.body
 
-                    
-                    const gameOverData: GameOverData = event.data;
+                    const gameOverData: GameOverData = event.data
 
-                    
-                    const gameOverModal = new GameOverContainer(rootNode, gameOverData);
-                    
-                    
-                    gameOverModal.render();
+                    const gameOverModal = new GameOverContainer(
+                        rootNode,
+                        gameOverData
+                    )
 
-                    
+                    gameOverModal.render()
                 }
-                break;
+                break
 
             case 'game.example':
                 // Cambiar para añadir
