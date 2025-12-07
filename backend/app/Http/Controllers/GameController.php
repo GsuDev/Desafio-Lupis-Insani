@@ -441,4 +441,69 @@ class GameController extends Controller
             ], 500);
         }
     }
+
+    public static function checkGameStatus(int $gameId, ?int $affectedParticipantId = null)
+    {
+        try {
+            // obtengo todos los participantes vivos de la partida
+            $alive = participant::where('game_id', $gameId)
+                ->alive()
+                ->get();
+
+            // lobos vivos
+            $aliveWolves = $alive->filter(fn ($p) => $p->isWerewolf())->count();
+
+            // aldeanos vivos
+            $aliveVillagers = $alive->count() - $aliveWolves;
+
+            // victoria aldeana
+            if ($aliveWolves === 0) {
+                return [
+                    'success' => true,
+                    'message' => '¡Victoria de los aldeanos! No quedan lobos vivos.',
+                    'data' => [
+                        'winner' => 'villagers',
+                        'alive_wolves' => 0,
+                        'alive_villagers' => $aliveVillagers,
+                        'participant_id' => $affectedParticipantId,
+                    ],
+
+                ];
+            }
+
+            // victoria de los lobos
+            if ($aliveWolves >= $aliveVillagers) { // si empatan los lobos ganan
+                return [
+                    'success' => true,
+                    'message' => '¡Victoria de los hombres lobo! Superan o igualan a los aldeanos.',
+                    'data' => [
+                        'winner' => 'werewolves',
+                        'alive_wolves' => $aliveWolves,
+                        'alive_villagers' => $aliveVillagers,
+                        'participant_id' => $affectedParticipantId,
+                    ],
+                ];
+            }
+
+            // la partida continua
+            return [
+                'success' => true,
+                'message' => 'La partida continúa.',
+                'data' => [
+                    'winner' => null, // no hay ganador todavia
+                    'alive_wolves' => $aliveWolves,
+                    'alive_villagers' => $aliveVillagers,
+                    'participant_id' => $affectedParticipantId,
+                ],
+            ];
+        } catch (\Exception $e) {
+
+            return [
+                'success' => false,
+                'message' => 'Error interno al verificar el estado de la partida.',
+                'data' => null,
+            ];
+        }
+    }
+
 }
