@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\participant; 
+use App\Models\State;
 
 class EventController extends Controller
 {
@@ -16,6 +18,10 @@ class EventController extends Controller
 
             case 'vote':
                 return EventController::voteEventFilter($event, $data, $gameId, $user);
+                break;
+
+            case 'player':
+                return EventController::playerEventFilter($event, $data, $gameId, $user);
                 break;
 
             case 'game':
@@ -108,4 +114,34 @@ class EventController extends Controller
                 break;
         }
     }
+
+    public static function playerEventFilter($event, $data, $gameId, $user)
+    {
+        $category = explode('.', $event);
+
+        switch ($category[1]) {
+            case 'left':
+                
+                $participant = participant::where('game_id', $gameId)
+                    ->where('user_id', $user->id)
+                    ->first();
+
+                if ($participant) {
+                    
+                    $deadState = State::firstOrCreate(['name' => 'DEAD']);
+
+                    
+                    // Usamos syncWithoutDetaching para no borrar otros estados (ej: si era Vidente)
+                    $participant->states()->syncWithoutDetaching([$deadState->id]);
+                }
+
+                return $data;
+                break;
+
+            default:
+                return $data;
+                break;
+        }
+    }
+
 }

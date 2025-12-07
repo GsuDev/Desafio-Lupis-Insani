@@ -341,6 +341,7 @@ class GameController extends Controller
     public function getParticipantsByGame(Request $req, $gameId)
     {
         try {
+
             $game = Game::findOrFail($gameId);
             $participants = $game->participants;
 
@@ -353,6 +354,7 @@ class GameController extends Controller
                     'nickname' => $participant->nickname,
                     'characterId' => $participant->character_id,
                     'profileUrl' => (bool) $participant->is_bot ? null : $participant->user->profile_url,
+                    'states' => $participant->states->pluck('name')->toArray(), //nuevo
                 ];
             });
 
