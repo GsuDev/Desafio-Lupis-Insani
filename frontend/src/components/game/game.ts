@@ -12,6 +12,7 @@ import { emitGameEvent } from '../../providers/event.provider'
 import AccessContainer from '../accessContainer/AccessContainer'
 import UserProfileContainer from '../userProfileContainer/userProfileContainer'
 import { DeathModalContainer } from '../deathModalContainer/deathModalContainer'
+import { userController } from '../../controllers/UserController'
 
 /**
  * Clase GameComponent
@@ -109,12 +110,18 @@ export class GameComponent {
 
         GameComponent.instance.endVoting() // Finalizar votación
         // TODO: SERGIO HU futura: Marcar a los muertos como muertos
-        const victim = data.dead_participant
+        const victim =
+            data.participantId ||
+            data.participant_id ||
+            data.targetId ||
+            data.target_id
 
-        if (victim && victim.id) {
+        const dead = data.dead
+        if (victim && victim.id && dead) {
             // Marcamos al muerto usando su ID real
             GameComponent.markParticipantAsDead(victim.id)
         }
+        //TODO MARCAR ALCALDE COMO ALCALDE
 
         // Actualizamos estado general por si acaso
         GameComponent.updateParticipantsDeadStatus()
@@ -184,7 +191,7 @@ export class GameComponent {
             component.setDead()
         }
 
-        const myId = GameComponent.instance.getCurrentUserId()
+        const myId = GameComponent.instance.getCurrentParticipantId()
         if (myId === participantId) {
             console.log('⚰️ ¡He muerto yo! Mostrando modal...')
 
@@ -242,7 +249,7 @@ export class GameComponent {
         }
 
         // Si soy yo quien votó, marcar visualmente
-        const currentUser = this.getCurrentUserId()
+        const currentUser = this.getCurrentParticipantId()
         if (voterId === currentUser) {
             this.markMyVote(participantId)
         }
@@ -260,7 +267,7 @@ export class GameComponent {
         }
 
         // Si soy yo quien canceló, quitar marca visual
-        const currentUser = this.getCurrentUserId()
+        const currentUser = this.getCurrentParticipantId()
         if (voterId === currentUser) {
             component?.setVotedByMe(false)
         }
@@ -348,12 +355,19 @@ export class GameComponent {
     /**
      * Obtiene el ID del usuario actual
      */
-    private getCurrentUserId(): number | null {
+    private getCurrentParticipantId(): number | null {
         try {
-            const userStr = localStorage.getItem('currentUser')
-            if (!userStr) return null
-            const user = JSON.parse(userStr)
-            return user.id
+            const cUser = userController.currentUser
+            if (!cUser) {
+                console.log('no existe')
+                return null
+            }
+            const participant = gameController.currentGame?.participants.find(
+                (p) => p.nickname === cUser.nickname
+            )
+            if (!participant) return null
+
+            return participant.id
         } catch {
             return null
         }
@@ -665,10 +679,20 @@ export class GameComponent {
      * Envía el evento player.left, desconecta sockets y cambia de pantalla
      */
     private async exitGame(target: 'title' | 'profile'): Promise<void> {
+        // 1. Limpiamos el modal de SALIR (tu código original)
         const modal = document.querySelector('.exit-modal-overlay')
         if (modal) {
             modal.remove()
         }
+
+        // 👇 AÑADIR ESTO: Limpiamos también el modal de MUERTE si está abierto
+        const deathModal = document.querySelector('.death-modal-container')
+        if (deathModal) {
+            deathModal.remove()
+        }
+        // 👇 AÑADIR ESTO: Limpiamos las clases del body
+        document.body.classList.remove('death-modal-active')
+        document.body.classList.remove('game-over-active')
 
         try {
             const gameStr = localStorage.getItem('currentGame')
@@ -676,8 +700,9 @@ export class GameComponent {
             if (gameStr) {
                 const game = JSON.parse(gameStr)
 
+                // Respetamos TU método: getCurrentParticipantId()
                 await emitGameEvent(game.id, 'player.left', {
-                    participantId: this.getCurrentUserId(),
+                    participantId: this.getCurrentParticipantId(),
                 })
                 console.log('✅ Evento player.left enviado')
             }
