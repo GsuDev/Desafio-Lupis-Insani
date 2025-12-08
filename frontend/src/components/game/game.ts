@@ -94,7 +94,10 @@ export class GameComponent {
     private createCampfireContainer(): HTMLElement {
         const container = document.createElement('div')
         container.className = 'campfire-image-container'
-        // Aquí iría tu: div.innerHTML = `<img src="${campfireImg}" ... />` en el update()
+        const imgCampfire = document.createElement('img')
+        imgCampfire.src = campfireImg
+        imgCampfire.className = 'campfire-image'
+        container.appendChild(imgCampfire)
         return container
 
     }

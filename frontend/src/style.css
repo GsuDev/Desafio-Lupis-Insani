@@ -95,7 +95,7 @@ select {
 
 @font-face {
     font-family: 'Smooky';
-    src: url('../src/assets/fonts/Smooky.otf') format('truetype');
+    src: url('../src/assets/fonts/cloudfont_by_victor.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
