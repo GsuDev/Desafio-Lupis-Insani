@@ -8,6 +8,9 @@ import { gameController } from '../../controllers/GameController'
 
 import campfireImg from '../../assets/gameRenders/night_game_fire.png'
 import { emitGameEvent } from '../../providers/event.provider'
+// Asegúrate de que las rutas coinciden con tu estructura
+import AccessContainer from '../accessContainer/AccessContainer'
+import  UserProfileContainer  from '../userProfileContainer/userProfileContainer'
 
 /**
  * Clase GameComponent
@@ -105,6 +108,16 @@ export class GameComponent {
 
         GameComponent.instance.endVoting() // Finalizar votación
         // TODO: SERGIO HU futura: Marcar a los muertos como muertos
+        const victim = data.dead_participant
+        
+        if (victim && victim.id) {
+            // Marcamos al muerto usando su ID real
+            GameComponent.markParticipantAsDead(victim.id)
+        }
+        
+        // Actualizamos estado general por si acaso
+        GameComponent.updateParticipantsDeadStatus()
+
     }
 
     // ========== MÉTODOS ESTÁTICOS PARA DÍA/NOCHE ==========
@@ -150,6 +163,48 @@ export class GameComponent {
             gameContainer.classList.add('phase-night') // 👈 Añade noche
         }
     }
+    // ========== MÉTODOS ESTÁTICOS PARA PLAYER EVENTS ==========
+
+    /**
+     * Actualiza los sprites de todos los participantes según sus states
+     */
+    /**
+     * Busca un participante por ID y lo marca como muerto inmediatamente
+     * (Esto se ejecuta en tiempo real cuando llega el evento del socket)
+     */
+    public static markParticipantAsDead(participantId: number): void {
+        if (!GameComponent.instance) return
+
+        console.log(`💀 Marcando como muerto al ID: ${participantId}`)
+        
+        
+        const component = GameComponent.instance.participantComponents.get(participantId)
+        
+        if (component) {
+         
+            component.setDead() 
+        }
+    }
+
+    public static updateParticipantsDeadStatus(): void {
+        if (!GameComponent.instance) {
+            console.warn('⚠️ No hay instancia de GameComponent')
+            return
+        }
+
+        console.log('💀 Actualizando estados de vida/muerte de participantes')
+        GameComponent.instance.refreshParticipantsDeadStatus()
+    }
+
+    /**
+     * Refresca el estado de vida/muerte de todos los participantes renderizados
+     */
+    private refreshParticipantsDeadStatus(): void {
+        this.participantComponents.forEach((component) => {
+            component.updateDeadStatus()
+        })
+    }
+
 
     // ========== MÉTODOS DE INSTANCIA PARA VOTACIÓN ==========
 
@@ -343,6 +398,8 @@ export class GameComponent {
         this.container.appendChild(this.chatContainer)
         this.container.appendChild(this.roleCardContainer)
 
+        this.addExitButton()
+
         const isWolf = this.checkIfPlayerIsWolf()
         const gameChat = new GameChat(this.chatContainer, isWolf)
         gameChat.render()
@@ -510,4 +567,109 @@ export class GameComponent {
         const index = Math.round(normalizedAngle / 45) % 8
         return poses[index]
     }
+
+    // ========== MÉTODOS DE SALIDA DE PARTIDA ==========
+
+    /**
+     * Añade el botón de salir de la partida
+     */
+    private addExitButton(): void {
+        const exitButton = document.createElement('button')
+        exitButton.className = 'game-exit-button'
+        exitButton.innerHTML = '🚪 Salir'
+        exitButton.addEventListener('click', () => this.showExitModal())
+
+        this.container.appendChild(exitButton)
+    }
+
+
+   /**
+     * Muestra el modal de confirmación de salida
+     */
+    private showExitModal(): void {
+        const modal = document.createElement('div')
+        modal.className = 'exit-modal-overlay'
+
+        const userStr = localStorage.getItem('currentUser')
+        const isAnonymous = !userStr || JSON.parse(userStr).isAnonymous
+
+        modal.innerHTML = `
+            <div class="exit-modal">
+                <h2>¿Salir de la partida?</h2>
+                <p>Si sales, quedarás marcado como muerto y no podrás volver.</p>
+                
+                <div class="exit-modal-buttons">
+                    <button class="btn-cancel">Cancelar</button>
+                    <button class="btn-exit-title">Salir al Título</button>
+                    ${!isAnonymous ? '<button class="btn-exit-profile">Ir a mi Perfil</button>' : ''}
+                </div>
+            </div>
+        `
+
+        modal.querySelector('.btn-cancel')?.addEventListener('click', () => {
+            modal.remove()
+        })
+
+        
+        modal.querySelector('.btn-exit-title')?.addEventListener('click', () => {
+            this.exitGame('title')
+        })
+
+        
+        modal.querySelector('.btn-exit-profile')?.addEventListener('click', () => {
+            this.exitGame('profile')
+        })
+
+        document.body.appendChild(modal)
+    }
+    
+
+    /**
+     * Envía el evento player.left, desconecta sockets y cambia de pantalla
+     */
+    private async exitGame(target: 'title' | 'profile'): Promise<void> {
+       
+        const modal = document.querySelector('.exit-modal-overlay')
+        if (modal) {
+            modal.remove()
+        }
+
+        try {
+            const gameStr = localStorage.getItem('currentGame')
+            
+            if (gameStr) {
+                const game = JSON.parse(gameStr)
+                
+                await emitGameEvent(game.id, 'player.left', {
+                    participantId: this.getCurrentUserId()
+                })
+                console.log('✅ Evento player.left enviado')
+            }
+        } catch (error) {
+            console.error('Error al salir de la partida:', error)
+        }
+
+        
+        
+        gameController.disconnectGameChannel()
+        gameController.disconnectWolvesChannel()
+
+        
+        const app = document.getElementById('app')
+        if (!app) {
+            console.error('❌ No se encontró el contenedor #app')
+            return
+        }
+
+        app.innerHTML = ''
+
+        if (target === 'title') {
+            const access = new AccessContainer(app)
+            access.render()
+        } else {
+            const profile = new UserProfileContainer(app)
+            profile.render()
+        }
+    }
+
 }
