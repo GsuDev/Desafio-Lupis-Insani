@@ -7,7 +7,6 @@ import { RoleCard, type PlayerRole } from '../roleCard/roleCard'
 import { NarratorOverlay } from '../narratorOverlay/NarratorOverlay'
 import { gameController } from '../../controllers/GameController'
 
-import campfireImg from '../../assets/gameRenders/night_game_fire.png'
 import { emitGameEvent } from '../../providers/event.provider'
 // Asegúrate de que las rutas coinciden con tu estructura
 import AccessContainer from '../accessContainer/AccessContainer'
@@ -113,13 +112,15 @@ export class GameComponent {
     }
 
     private createCampfireContainer(): HTMLElement {
-        const container = document.createElement('div')
+const container = document.createElement('div')
         container.className = 'campfire-image-container'
-        const imgCampfire = document.createElement('img')
-        imgCampfire.src = campfireImg
-        imgCampfire.className = 'campfire-image'
-        imgCampfire.id = 'campfire-image'
-        container.appendChild(imgCampfire)
+        
+        const fireDiv = document.createElement('div')
+        
+        fireDiv.className = 'campfire-image'
+        fireDiv.id = 'campfire-image'
+        
+        container.appendChild(fireDiv)
         return container
 
     }
