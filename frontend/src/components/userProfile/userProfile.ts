@@ -11,7 +11,6 @@ import UserProfileContainer from '../userProfileContainer/userProfileContainer'
 import defaultAvatar from '../../assets/characters/werewolf.png'
 import AdminPanelComponent from '../adminPanel/adminPanel'
 
-
 /**
  * Componente que muestra la tarjeta del perfil del usuario
  * pinta la foto de perfil el nombre y los botones
@@ -80,9 +79,11 @@ export class UserProfileComponent {
             userSettings.render()
         }
 
-        const isAdmin = this.userData.roles?.some(role => role.name === 'admin')
+        const isAdmin = this.userData.roles?.some(
+            (role) => role.name === 'admin'
+        )
 
-        let adminBtn: HTMLButtonElement | null = null;
+        let adminBtn: HTMLButtonElement | null = null
 
         if (isAdmin) {
             adminBtn = document.createElement('button')
@@ -90,8 +91,7 @@ export class UserProfileComponent {
             adminBtn.textContent = '🛡️ Panel'
             adminBtn.style.marginLeft = '10px'
             // Estilo rápido para diferenciarlo
-           
-            
+
             // Al hacer click, cargamos el Panel de Administración en #app
             adminBtn.onclick = () => {
                 const app = document.getElementById('app')

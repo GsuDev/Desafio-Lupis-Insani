@@ -7,7 +7,7 @@ import type {
     UserResponse,
     VoidResponse,
     UserStatisticResponse,
-    UsersListResponse
+    UsersListResponse,
 } from '../types/response.types'
 
 /**
@@ -343,7 +343,9 @@ export async function getUserStatistics(): Promise<
 /**
  * Obtiene la lista de todos los usuarios (Solo Admin)
  */
-export async function getUsers(): Promise<UsersListResponse | ApiErrorResponse> {
+export async function getUsers(): Promise<
+    UsersListResponse | ApiErrorResponse
+> {
     try {
         const { data } = await apiClient.get<UsersListResponse>('/users')
         return data
@@ -351,8 +353,11 @@ export async function getUsers(): Promise<UsersListResponse | ApiErrorResponse> 
         console.error('❌ Error en getUsers:', error)
         return {
             success: false,
-            message: error instanceof Error ? error.message : 'Error obteniendo usuarios',
-            data: null
+            message:
+                error instanceof Error
+                    ? error.message
+                    : 'Error obteniendo usuarios',
+            data: null,
         }
     }
 }
@@ -360,16 +365,23 @@ export async function getUsers(): Promise<UsersListResponse | ApiErrorResponse> 
 /**
  * Elimina un usuario por su ID (Solo Admin)
  */
-export async function deleteUser(id: number): Promise<ApiErrorResponse | ApiResponse<null>> {
+export async function deleteUser(
+    id: number
+): Promise<ApiErrorResponse | ApiResponse<null>> {
     try {
-        const { data } = await apiClient.delete<ApiResponse<null>>(`/users/${id}`)
+        const { data } = await apiClient.delete<ApiResponse<null>>(
+            `/users/${id}`
+        )
         return data
     } catch (error) {
         console.error('❌ Error en deleteUser:', error)
         return {
             success: false,
-            message: error instanceof Error ? error.message : 'Error eliminando usuario',
-            data: null
+            message:
+                error instanceof Error
+                    ? error.message
+                    : 'Error eliminando usuario',
+            data: null,
         }
     }
 }
@@ -377,18 +389,25 @@ export async function deleteUser(id: number): Promise<ApiErrorResponse | ApiResp
 /**
  * Actualiza un usuario específico por ID (Solo Admin)
  */
-export async function updateUserById(id: number, data: Partial<User>): Promise<UserResponse | ApiErrorResponse> {
+export async function updateUserById(
+    id: number,
+    data: Partial<User>
+): Promise<UserResponse | ApiErrorResponse> {
     try {
-        const { data: response } = await apiClient.put<UserResponse>(`/users/${id}`, data)
+        const { data: response } = await apiClient.put<UserResponse>(
+            `/users/${id}`,
+            data
+        )
         return response
     } catch (error) {
         console.error('❌ Error en updateUserById:', error)
         return {
             success: false,
-            message: error instanceof Error ? error.message : 'Error actualizando usuario',
-            data: null
+            message:
+                error instanceof Error
+                    ? error.message
+                    : 'Error actualizando usuario',
+            data: null,
         }
     }
 }
-
-

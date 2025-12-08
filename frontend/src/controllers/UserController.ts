@@ -372,7 +372,10 @@ class UserController {
 
             if (!response.success || !response.data?.users) {
                 if (showGlobalMessage) {
-                    showGlobalMessage(response.message || 'Error cargando lista de usuarios', false)
+                    showGlobalMessage(
+                        response.message || 'Error cargando lista de usuarios',
+                        false
+                    )
                 }
                 return undefined
             }
@@ -380,12 +383,15 @@ class UserController {
             return response.data.users
         } catch (error: unknown) {
             if (showGlobalMessage) {
-                showGlobalMessage('Error de conexión al obtener usuarios', false)
+                showGlobalMessage(
+                    'Error de conexión al obtener usuarios',
+                    false
+                )
             }
             return undefined
         }
     }
-      /**
+    /**
      * Elimina un usuario del sistema (Admin)
      */
     async deleteUser(id: number): Promise<boolean> {
@@ -408,21 +414,24 @@ class UserController {
     /**
      * Admin actualiza los datos de un usuario (Nickname y Email)
      */
-    async updateUser(id: number, data: { nickname: string; email: string }): Promise<boolean> {
+    async updateUser(
+        id: number,
+        data: { nickname: string; email: string }
+    ): Promise<boolean> {
         try {
-            
             const response = await userProvider.updateUserById(id, data)
 
             if (response.success) {
-                
                 if (showGlobalMessage) {
                     showGlobalMessage('Usuario actualizado correctamente', true)
                 }
                 return true
             } else {
-                
                 if (showGlobalMessage) {
-                    showGlobalMessage(response.message || 'Error al actualizar usuario', false)
+                    showGlobalMessage(
+                        response.message || 'Error al actualizar usuario',
+                        false
+                    )
                 }
                 return false
             }
@@ -434,13 +443,7 @@ class UserController {
             return false
         }
     }
-
-   
 }
-
-
-  
-
 
 /** Exporta la instancia singleton del UserController */
 export const userController = UserController.getInstance()

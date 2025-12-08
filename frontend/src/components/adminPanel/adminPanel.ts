@@ -5,7 +5,7 @@ import AdminUsersTableComponent from '../adminUserTable/adminUserTable'
 export class AdminPanelComponent {
     private container: HTMLElement
     private activeTab: 'users' | 'games' = 'users'
-    
+
     private contentContainer: HTMLElement | null = null
     private titleElement: HTMLElement | null = null
 
@@ -56,7 +56,7 @@ export class AdminPanelComponent {
 
         const footer = document.createElement('div')
         footer.className = 'sidebar-footer'
-        
+
         const exitBtn = document.createElement('button')
         exitBtn.className = 'btn-exit'
         exitBtn.textContent = '← Volver al Juego'
@@ -67,7 +67,10 @@ export class AdminPanelComponent {
         return sidebar
     }
 
-    private createMenuBtn(label: string, tab: 'users' | 'games'): HTMLButtonElement {
+    private createMenuBtn(
+        label: string,
+        tab: 'users' | 'games'
+    ): HTMLButtonElement {
         const btn = document.createElement('button')
         btn.className = `menu-btn ${this.activeTab === tab ? 'active' : ''}`
         btn.textContent = label
@@ -82,10 +85,10 @@ export class AdminPanelComponent {
         // Topbar simple
         const topbar = document.createElement('div')
         topbar.className = 'admin-topbar'
-        
+
         this.titleElement = document.createElement('h1')
-        this.titleElement.textContent = 'Gestión de Usuarios' 
-        
+        this.titleElement.textContent = 'Gestión de Usuarios'
+
         topbar.appendChild(this.titleElement)
 
         // Contenedor de datos
@@ -97,21 +100,28 @@ export class AdminPanelComponent {
         return main
     }
 
-    private switchTab(tab: 'users' | 'games', clickedBtn: HTMLButtonElement): void {
+    private switchTab(
+        tab: 'users' | 'games',
+        clickedBtn: HTMLButtonElement
+    ): void {
         if (this.activeTab === tab) return
         this.activeTab = tab
-        document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'))
+        document
+            .querySelectorAll('.menu-btn')
+            .forEach((b) => b.classList.remove('active'))
         clickedBtn.classList.add('active')
         this.loadTabContent()
     }
 
     private loadTabContent(): void {
         if (!this.contentContainer || !this.titleElement) return
-        this.contentContainer.innerHTML = '' 
+        this.contentContainer.innerHTML = ''
 
         if (this.activeTab === 'users') {
             this.titleElement.textContent = 'Gestión de Usuarios'
-            const usersTable = new AdminUsersTableComponent(this.contentContainer)
+            const usersTable = new AdminUsersTableComponent(
+                this.contentContainer
+            )
             usersTable.render()
         } else {
             this.titleElement.textContent = 'Gestión de Partidas'
