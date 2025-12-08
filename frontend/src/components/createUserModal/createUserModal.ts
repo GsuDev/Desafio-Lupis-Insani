@@ -22,7 +22,7 @@ export class CreateUserModal {
         const modal = document.createElement('div')
         modal.className = 'create-user-modal'
 
-        //esto está metido aqui a embuche, si hay tiempo se mejorara y se renderizara otro componente
+        //esto está metido aqui a embuche, si hay tiempo se mejorara y se hará en condiciones
         modal.innerHTML = `
             <h2>➕ Crear Usuario</h2>
             

@@ -74,15 +74,11 @@
 .games-table thead {
     position: sticky;
     top: 0;
-    z-index: 2;
+    z-index: 10;
 }
 
 .games-table th {
-    background: linear-gradient(
-        180deg,
-        rgba(255, 143, 41, 0.2) 0%,
-        rgba(255, 143, 41, 0.1) 100%
-    );
+    background: rgb(60, 40, 25);
     color: #ff8f29;
     text-transform: uppercase;
     font-size: 0.85rem;
@@ -90,7 +86,7 @@
     letter-spacing: 1px;
     padding: 15px 12px;
     text-align: left;
-    border-bottom: 2px solid rgba(255, 143, 41, 0.3);
+    border-bottom: 2px solid rgba(255, 143, 41, 0.4);
 }
 
 .games-table td {
