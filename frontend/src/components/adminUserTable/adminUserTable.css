@@ -258,6 +258,7 @@
     background-color: rgba(46, 204, 113, 0.4);
 }
 
+
 /* boton cancelar en la tabla: gris (solo dentro de users-table) */
 .users-table .btn-cancel {
     background-color: rgba(150, 150, 150, 0.2);
@@ -266,4 +267,59 @@
 
 .users-table .btn-cancel:hover {
     background-color: rgba(150, 150, 150, 0.4);
+}
+
+/* ============================================
+   RESPONSIVE - tabla de usuarios en movil
+   ============================================ */
+@media (max-width: 768px) {
+    .search-container {
+        width: 100%;
+    }
+
+    .search-input {
+        max-width: 100%;
+    }
+
+    .users-table {
+        table-layout: auto;
+    }
+
+    .users-table th,
+    .users-table td {
+        padding: 10px 6px;
+        font-size: 0.8rem;
+    }
+
+    /* ocultamos columnas menos importantes en movil */
+    .users-table th:nth-child(2),
+    .users-table td:nth-child(2) {
+        display: none; /* Avatar */
+    }
+
+    .users-table th:nth-child(4),
+    .users-table td:nth-child(4) {
+        display: none; /* Email */
+    }
+
+    .table-avatar {
+        width: 30px;
+        height: 30px;
+    }
+
+    .role-badge {
+        padding: 3px 6px;
+        font-size: 0.65rem;
+    }
+
+    .action-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 0.85rem;
+    }
+
+    .inline-input {
+        padding: 6px 8px;
+        font-size: 0.85rem;
+    }
 }
