@@ -97,6 +97,7 @@ export class GameComponent {
         const imgCampfire = document.createElement('img')
         imgCampfire.src = campfireImg
         imgCampfire.className = 'campfire-image'
+        imgCampfire.id = 'campfire-image'
         container.appendChild(imgCampfire)
         return container
 
@@ -171,6 +172,10 @@ export class GameComponent {
             gameContainer.classList.remove('phase-night') // 👈 Quita noche
             gameContainer.classList.add('phase-day') // 👈 Añade día
         }
+        const campfireImg = document.getElementById('campfire-image')
+        if (campfireImg) {
+            campfireImg.classList.remove('phase-night');
+        }
     }
 
     /**
@@ -191,6 +196,10 @@ export class GameComponent {
         if (gameContainer) {
             gameContainer.classList.remove('phase-day') // 👈 Quita día
             gameContainer.classList.add('phase-night') // 👈 Añade noche
+        }
+        const campfireImg = document.getElementById('campfire-image')
+        if (campfireImg) {
+            campfireImg.classList.add('phase-night');
         }
     }
     // ========== MÉTODOS ESTÁTICOS PARA PLAYER EVENTS ==========
@@ -438,7 +447,12 @@ export class GameComponent {
     // ========== MÉTODOS DE RENDERIZADO ==========
 
     public render(): HTMLElement {
+
+        //Renderizo la hoguera
+        this.container.appendChild(this.campfireContainer)
+
         this.container.appendChild(this.participantsContainer)
+
         this.container.appendChild(this.timeBarContainer)
         this.container.appendChild(this.chatContainer)
         this.container.appendChild(this.roleCardContainer)
@@ -457,8 +471,7 @@ export class GameComponent {
         roleCard.render()
 
 
-        //Renderizo la hoguera
-        this.container.appendChild(this.campfireContainer)
+
 
         return this.container
     }
@@ -559,6 +572,8 @@ export class GameComponent {
 
         const angleStep = (2 * Math.PI) / list.length
 
+        const CAMPFIRE_Z_INDEX = 10;
+
         list.forEach((p, index) => {
             const angle = index * angleStep - Math.PI / 2
 
@@ -589,6 +604,13 @@ export class GameComponent {
 
             const pComponent = new GameParticipant(p, versionIndex)
             const pElement = pComponent.render()
+
+            //Logica de profundidad 
+            const is_behind = y < midHeight;
+            pElement.style.zIndex = is_behind
+                ? (CAMPFIRE_Z_INDEX - 1).toString()
+                : (CAMPFIRE_Z_INDEX + 1).toString();
+
 
             // Configurar callback de voto
             pComponent.setOnVote((participantId) =>

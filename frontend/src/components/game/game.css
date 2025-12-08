@@ -85,14 +85,16 @@
     width: 100%;
     height: 100%;
     display: block;
-    z-index: 1;
+    z-index: auto;
+    pointer-events: none;
+
 }
-/*Si origina problemas quitar este (merge)*/
+
 .campfire-image-container {
     position: absolute;
     width: 100%;
     height: 100%;
-    z-index: 40;
+    z-index: 10;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -101,10 +103,15 @@
 .campfire-image{
     width: 100%;
     height: 100%;
+    opacity: 0;
+    transition: opacity 2s ease-in-out;
 
-    pointer-events: none;
-    z-index: 11;
 }
+.campfire-image.phase-night {
+    opacity: 1;
+}
+
+
 
 
 .game-participant-card {
@@ -112,6 +119,11 @@
     transform: translate(-50%, -50%);
     transition: all 0.5s ease-out;
     z-index: 10;
+    pointer-events: auto; 
+}
+.game-participant-card:hover {
+    z-index: 100 !important; 
+    /* transform: translate(-50%, -50%) scale(1.1);  */
 }
 
 .participant-card.is-bot {
