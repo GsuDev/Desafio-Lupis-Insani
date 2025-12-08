@@ -111,6 +111,7 @@
 }
 
 .character-circle.selected::after {
+    z-index: 99999999;
     content: '✓';
     position: absolute;
     bottom: -2px;

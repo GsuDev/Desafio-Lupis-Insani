@@ -1,5 +1,8 @@
 import './userForm.css'
 import { userController } from '../../controllers/UserController'
+import UserProfileContainer from '../userProfileContainer/userProfileContainer'
+import closedEyeIcon from '../../assets/icons/closed-eye.png'
+import openEyeIcon from '../../assets/icons/open-eye.png'
 
 const createInputGroup = (
     id: string,
@@ -15,6 +18,9 @@ const createInputGroup = (
     const label = document.createElement('label')
     label.htmlFor = id
     label.textContent = labelText
+
+    const inputWrapper = document.createElement('div')
+    inputWrapper.className = 'input-wrapper'
 
     const input = document.createElement('input')
     input.type = inputType
@@ -32,12 +38,44 @@ const createInputGroup = (
         input.autocomplete = 'off'
     }
 
+    inputWrapper.appendChild(input)
+
+    // Añadir botón de mostrar/ocultar contraseña si es tipo password
+    if (inputType === 'password') {
+        const toggleButton = document.createElement('button')
+        toggleButton.type = 'button'
+        toggleButton.className = 'toggle-password'
+        toggleButton.setAttribute('aria-label', 'Mostrar contraseña')
+
+        const eyeIcon = document.createElement('img')
+        eyeIcon.src = closedEyeIcon
+        eyeIcon.alt = 'Mostrar contraseña'
+        eyeIcon.className = 'eye-icon'
+        toggleButton.appendChild(eyeIcon)
+
+        toggleButton.addEventListener('click', () => {
+            if (input.type === 'password') {
+                input.type = 'text'
+                eyeIcon.src = openEyeIcon
+                eyeIcon.alt = 'Ocultar contraseña'
+                toggleButton.setAttribute('aria-label', 'Ocultar contraseña')
+            } else {
+                input.type = 'password'
+                eyeIcon.src = closedEyeIcon
+                eyeIcon.alt = 'Mostrar contraseña'
+                toggleButton.setAttribute('aria-label', 'Mostrar contraseña')
+            }
+        })
+
+        inputWrapper.appendChild(toggleButton)
+    }
+
     const errorP = document.createElement('p')
     errorP.className = 'error-message'
     errorP.dataset.input = id
 
     group.append(label)
-    group.append(input)
+    group.append(inputWrapper)
     group.append(errorP)
 
     return group
@@ -251,6 +289,9 @@ export const renderUserForm = (
     container.append(card)
     appContainer.append(container)
 
+    // Variable para controlar si el registro fue exitoso
+    let registrationSuccess = false
+
     // Callbacks
     const showValidationError = (field: string, message: string) => {
         const errorElement = container.querySelector(
@@ -272,9 +313,37 @@ export const renderUserForm = (
         if (isSuccess) {
             globalSuccess.textContent = message
             globalError.textContent = ''
+            registrationSuccess = true
+
+            // Verificar que hay token antes de redirigir
+            const token = localStorage.getItem('token')
+
+            if (!token) {
+                console.error(
+                    '❌ Registro exitoso pero no hay token en localStorage'
+                )
+                globalError.textContent =
+                    'Error: No se pudo autenticar. Intenta iniciar sesión.'
+                globalSuccess.textContent = ''
+                registrationSuccess = false
+                return
+            }
+
+            console.log('✅ Token encontrado, redirigiendo al perfil...')
+
+            // Esperar 2 segundos antes de redirigir
+            setTimeout(() => {
+                container.remove()
+                const app = document.getElementById('app')
+                if (app) {
+                    const userProfileContainer = new UserProfileContainer(app)
+                    userProfileContainer.render()
+                }
+            }, 2000)
         } else {
             globalError.textContent = message
             globalSuccess.textContent = ''
+            registrationSuccess = false
         }
     }
 
@@ -292,7 +361,7 @@ export const renderUserForm = (
         disableForm
     )
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
         e.preventDefault()
         console.log('VISTA: Submit detectado. Creando FormData...')
 
@@ -303,6 +372,9 @@ export const renderUserForm = (
             formData.append('profile_picture', fileInput.files[0])
         }
 
-        userController.handleRegister(formData)
+        await userController.handleRegister(formData)
+
+        // Solo cerrar si el registro fue exitoso
+        // (el cierre y redirección se maneja en showGlobalMessage)
     })
 }
