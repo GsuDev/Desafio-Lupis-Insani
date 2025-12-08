@@ -279,6 +279,32 @@ export class AnonymousSelectorComponent {
                 nickname,
                 profileUrl
             )
+
+            // Verificación del token y redirección
+            const token = localStorage.getItem('token')
+
+            if (token) {
+                console.log(
+                    '✅ Registro anonimo exitoso, token encontrado. Redirigiendo...'
+                )
+                const app = document.getElementById('app')
+
+                if (app) {
+                    const modal = new JoinGameModal(app, () => {
+                        console.log('El usuario canceló o cerró el modal')
+                    })
+
+                    modal.render()
+                }
+            } else {
+                // Manejar error si el registro es exitoso pero no hay token
+                console.error(
+                    '❌ Registro anonimo exitoso, pero no se encontró el token de sesión.'
+                )
+                this.showError(
+                    'Error al entrar como anonimo. Intenta de nuevo.'
+                ) // Mostrar un error genérico
+            }
         } catch (error) {
             console.error(error)
             this.showError('Error inesperado en la aplicación')
@@ -294,16 +320,6 @@ export class AnonymousSelectorComponent {
             character: this.selectedCharacterId,
             nickname: nickname,
         })
-
-        const app = document.getElementById('app')
-
-        if (app) {
-            const modal = new JoinGameModal(app, () => {
-                console.log('El usuario canceló o cerró el modal')
-            })
-
-            modal.render()
-        }
     }
 
     /**
