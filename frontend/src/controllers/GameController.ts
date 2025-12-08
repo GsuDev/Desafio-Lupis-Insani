@@ -12,6 +12,8 @@ import {
     joinGameRequest,
     createGameRequest,
     startGame,
+    getGames,
+    deleteGame,
 } from '../providers/game.provider'
 
 // import { joinGameRequest } from '../providers/joinGame.provider'
@@ -284,6 +286,44 @@ class GameController {
             console.log('👋 Game Channel desconectado', 'info')
         } catch (error) {
             console.log(`❌ Error: ${error}`, 'error')
+        }
+    }
+
+    /**
+     * Obtiene todas las partidas disponibles
+     */
+    async getGamesList(): Promise<any[]> {
+        try {
+            // Importa * as gameProvider arriba si no lo tienes, o usa gameProvider.getGames()
+            const response = await getGames()
+
+            if (response.success && response.data?.games) {
+                return response.data.games
+            }
+            return []
+        } catch (error) {
+            console.error('Error cargando partidas:', error)
+            return []
+        }
+    }
+
+    /**
+     * Elimina una partida
+     */
+    async deleteGame(gameId: number): Promise<boolean> {
+        try {
+            const response = await deleteGame(gameId)
+
+            if (response.success) {
+                console.log('✅ Partida eliminada:', gameId)
+                return true
+            } else {
+                alert(response.message || 'No se pudo eliminar la partida')
+                return false
+            }
+        } catch (error) {
+            console.error('Error borrando partida:', error)
+            return false
         }
     }
 }

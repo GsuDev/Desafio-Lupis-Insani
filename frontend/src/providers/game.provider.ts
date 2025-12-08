@@ -14,7 +14,7 @@ import type {
     SlidesResponse,
 } from '../types/response.types'
 import apiClient from '../services/apiClient'
-import type { ApiErrorResponse } from '../types/api.types'
+import type { ApiErrorResponse, ApiResponse } from '../types/api.types'
 import slidesData from '../assets/data/tipSlides.json'
 
 /**
@@ -373,4 +373,53 @@ export async function createGameRequest(): Promise<
     >(`/games`)
     //TODO: Manejar fallo creacion partida
     return createResponse
+}
+
+/**
+ * Obtiene la lista de partidas (Usaremos la misma que para el Lobby)
+ * Endpoint: GET /games
+ */
+export async function getGames(): Promise<
+    ApiResponse<{ games: GameData[] }> | ApiErrorResponse
+> {
+    try {
+        const { data } =
+            await apiClient.get<ApiResponse<{ games: GameData[] }>>('/games')
+        return data
+    } catch (error) {
+        console.error('❌ Error en getGames:', error)
+        return {
+            success: false,
+            message:
+                error instanceof Error
+                    ? error.message
+                    : 'Error obteniendo partidas',
+            data: null,
+        }
+    }
+}
+
+/**
+ * Elimina una partida por ID (Solo Admin)
+ * Endpoint: DELETE /games/{id}
+ */
+export async function deleteGame(
+    gameId: number
+): Promise<ApiErrorResponse | ApiResponse<null>> {
+    try {
+        const { data } = await apiClient.delete<ApiResponse<null>>(
+            `/games/${gameId}`
+        )
+        return data
+    } catch (error) {
+        console.error('❌ Error en deleteGame:', error)
+        return {
+            success: false,
+            message:
+                error instanceof Error
+                    ? error.message
+                    : 'Error eliminando partida',
+            data: null,
+        }
+    }
 }

@@ -1,6 +1,7 @@
 import './adminPanel.css'
 import UserProfileContainer from '../userProfileContainer/userProfileContainer'
 import AdminUsersTableComponent from '../adminUserTable/adminUserTable'
+import AdminGamesTableComponent from '../adminGamesTable/adminGamesTable'
 
 export class AdminPanelComponent {
     private container: HTMLElement
@@ -125,7 +126,10 @@ export class AdminPanelComponent {
             usersTable.render()
         } else {
             this.titleElement.textContent = 'Gestión de Partidas'
-            this.contentContainer.innerHTML = '<h3>Cargando partidas...</h3>'
+            const gamesTable = new AdminGamesTableComponent(
+                this.contentContainer
+            )
+            gamesTable.render()
         }
     }
 
