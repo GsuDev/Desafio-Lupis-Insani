@@ -28,7 +28,7 @@ class _04_WolvesDiscussionJob implements ShouldQueue
 
         $game = Game::find($this->gameId);
 
-        if (!$game) {
+        if (! $game) {
             // TODO
             return;
         }
@@ -39,7 +39,6 @@ class _04_WolvesDiscussionJob implements ShouldQueue
         $message = $game->addMessage('system', null, $text);
 
         GameChannelController::systemSend('game.narrator', ['message' => '¡Se escuchan aullidos de fondo!'], $this->gameId);
-
 
         broadcast(new GameEvent(
             'chat.message',

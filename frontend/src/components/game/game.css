@@ -87,7 +87,6 @@
     display: block;
     z-index: auto;
     pointer-events: none;
-
 }
 
 .campfire-image-container {
@@ -141,8 +140,6 @@
         background-image: url('../../assets/campfire/FUEGO_1.png');
     }
 }
-
-
 
 .game-participant-card {
     position: absolute;
