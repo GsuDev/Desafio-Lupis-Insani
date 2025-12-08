@@ -260,8 +260,6 @@ class UserController {
         disableForm = disableCallback
     }
 
-    // La función principal que el formulario llamará al hacer Submit
-    // Usamos 'async' porque llamaremos a una Promesa (el Provider)
     async handleRegister(formData: FormData) {
         clearValidationErrors()
         disableForm(true)
@@ -279,7 +277,24 @@ class UserController {
         }
 
         let hasError = false
-        if (data.password !== data.password_confirmation) {
+
+        // ============================
+        // VALIDACIÓN DE CONTRASEÑA
+        // ============================
+        const password = data.password
+
+        // Min 8 chars + 1 mayúscula + 1 minúscula + 1 número + 1 símbolo
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/
+
+        if (!passwordRegex.test(password)) {
+            showValidationError(
+                'password',
+                'La contraseña debe tener al menos 8 caracteres e incluir mínimo: 1 mayúscula, 1 minúscula, 1 número y 1 símbolo.'
+            )
+            hasError = true
+        }
+
+        if (password !== data.password_confirmation) {
             showValidationError(
                 'password_confirmation',
                 'Las contraseñas no coinciden.'
@@ -287,6 +302,7 @@ class UserController {
             hasError = true
         }
 
+        // Email básico
         if (!data.email.includes('@') || !data.email.includes('.')) {
             showValidationError(
                 'email',
@@ -295,6 +311,7 @@ class UserController {
             hasError = true
         }
 
+        // Nickname
         if (!data.nickname || data.nickname.length < 3) {
             showValidationError(
                 'nickname',
@@ -320,7 +337,6 @@ class UserController {
                 return
             }
 
-            // Registro exitoso
             this._currentUser = response.data?.user
             localStorage.setItem(
                 'currentUser',

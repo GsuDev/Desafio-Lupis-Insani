@@ -123,9 +123,12 @@ export class ResetPasswordForm {
         const pass = formData.get('new_password') as string
         const repeat = formData.get('repeat_password') as string
 
-        if (pass.length < 8) {
+        // Validación de contraseña
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/
+
+        if (!passwordRegex.test(pass)) {
             this.showMessage(
-                'La contraseña debe tener al menos 8 caracteres.',
+                'La contraseña debe tener al menos 8 caracteres, incluyendo 1 mayúscula, 1 minúscula, 1 número y 1 símbolo.',
                 true
             )
             return
@@ -136,7 +139,7 @@ export class ResetPasswordForm {
             return
         }
 
-        // guardamos ese token temporalmente para que Axios lo use.
+        // Guardamos token temporalmente para Axios
         localStorage.setItem('token', this.token)
 
         const btn = form.querySelector('button') as HTMLButtonElement
@@ -144,7 +147,6 @@ export class ResetPasswordForm {
         btn.textContent = 'Guardando...'
 
         try {
-            // Llamamos al controlador
             const response = await userController.resetPassword(pass)
 
             if (response && response.success) {
@@ -153,10 +155,8 @@ export class ResetPasswordForm {
                     false
                 )
 
-                // Limpiamos el token temporal y recargamos para ir al login limpio
                 setTimeout(() => {
                     localStorage.removeItem('token')
-                    // Redirigimos a la raíz sin el token en la URL
                     window.location.href = '/'
                 }, 2000)
             } else {

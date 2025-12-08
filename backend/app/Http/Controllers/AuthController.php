@@ -185,7 +185,14 @@ class AuthController extends Controller
     public function resetPassword(Request $request)
     {
         $validator = $request->validate([
-            'password' => 'required|string|min:8',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/',
+            ],
+        ], [
+            'password.regex' => 'La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, una minúscula, un número y un símbolo.',
         ]);
 
         // 4. Obtener usuario
