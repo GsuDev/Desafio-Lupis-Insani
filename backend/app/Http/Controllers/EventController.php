@@ -26,7 +26,7 @@ class EventController extends Controller
                 break;
 
             case 'game':
-                return $data;
+                return EventController::gameEventFilter($event, $data, $gameId, $user);
                 break;
 
             default:
@@ -140,6 +140,27 @@ class EventController extends Controller
 
             default:
                 return $data;
+                break;
+        }
+    }
+
+    public static function gameEventFilter($event, $data, $gameId, $user)
+    {
+        $category = explode('.', $event);
+        switch ($category[1]) {
+
+            case 'discussion':
+                return $data;
+                break;
+
+            case 'conditions':
+                // Lógica en el job
+                return $data;
+
+                break;
+
+            default:
+
                 break;
         }
     }
