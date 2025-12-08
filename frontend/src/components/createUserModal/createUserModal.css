@@ -1,0 +1,157 @@
+.create-user-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.create-user-modal {
+    background: linear-gradient(145deg, #1e1e2a, #16161f);
+    border: 2px solid #ff8f29;
+    border-radius: 16px;
+    padding: 30px;
+    width: 450px;
+    max-width: 95vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    color: white;
+    font-family: var(--font-body, 'Nunito', sans-serif);
+    box-shadow:
+        0 0 50px rgba(0, 0, 0, 0.8),
+        0 0 100px rgba(255, 143, 41, 0.2);
+}
+
+/* titulo */
+.create-user-modal h2 {
+    margin: 0 0 25px 0;
+    color: #ff8f29;
+    font-size: 1.5rem;
+    text-align: center;
+    font-family: var(--font-heading, 'Fredoka One', cursive);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* formulario */
+#create-user-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* fila con dos campos */
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+/* grupo de campo */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    color: #ff8f29;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* inputs */
+.form-group input {
+    width: 100%;
+    padding: 12px 14px;
+    background: rgba(15, 15, 22, 0.9);
+    border: 2px solid #3a3a48;
+    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
+    font-family: var(--font-body, 'Nunito', sans-serif);
+    outline: none;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.form-group input:focus {
+    border-color: #ff8f29;
+    box-shadow: 0 0 15px rgba(255, 143, 41, 0.2);
+}
+
+.form-group input::placeholder {
+    color: #666;
+}
+
+/* botones */
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.btn-cancel,
+.btn-create {
+    flex: 1;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    font-family: var(--font-body, 'Nunito', sans-serif);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.btn-cancel {
+    background: rgba(60, 60, 70, 0.8);
+    color: #bbb;
+    border: 2px solid #555;
+}
+
+.btn-cancel:hover {
+    background: rgba(80, 80, 90, 0.9);
+    color: white;
+    border-color: #777;
+}
+
+.btn-create {
+    background: linear-gradient(135deg, #ff8f29 0%, #e67300 100%);
+    color: #1a1a1a;
+}
+
+.btn-create:hover {
+    background: linear-gradient(135deg, #ffaa55 0%, #ff8f29 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(255, 143, 41, 0.4);
+}
+
+/* responsive */
+@media (max-width: 500px) {
+    .create-user-modal {
+        padding: 20px;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+}

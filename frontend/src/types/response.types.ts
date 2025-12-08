@@ -20,3 +20,4 @@ export type ParticipantsResponse = ApiResponse<{ participants: Participant[] }>
 export type VoidResponse = ApiResponse<null>
 export type SlidesResponse = ApiResponse<{ slides: SlideData[] }>
 export type UserStatisticResponse = ApiResponse<UserStatisticsData>
+export type UsersListResponse = ApiResponse<{ users: User[] }>
