@@ -50,6 +50,13 @@ class GameChannelController extends Controller
         $data = EventController::eventCategoryFilter($validator->validated()['event'], $validator->validated()['data'], $gameId, $user);
 
         try {
+            if (isset($data) && $data === ['dontEmit']) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'No se debia emitir evento y no se emitió',
+                    'data' => null,
+                ], 200);
+            }
             broadcast(new GameEvent(
                 $validator->validated()['event'],
                 $data ?? [],
