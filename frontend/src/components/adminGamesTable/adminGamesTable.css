@@ -1,6 +1,15 @@
+/* --- CABECERA DE LA TABLA (buscador + boton crear) --- */
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
 /* --- BUSCADOR --- */
 .search-container {
-    margin-bottom: 15px;
     display: flex;
     justify-content: flex-start;
     flex-shrink: 0;
@@ -27,6 +36,33 @@
 .search-input:focus {
     border-color: #ff8f29;
     box-shadow: 0 0 15px rgba(255, 143, 41, 0.3);
+}
+
+/* --- BOTON CREAR PARTIDA --- */
+.btn-create-game {
+    background: linear-gradient(135deg, #ff8f29 0%, #e67300 100%);
+    color: #1a1a1a;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    font-family: var(--font-body, 'Nunito', sans-serif);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-create-game:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(255, 143, 41, 0.4);
+    background: linear-gradient(135deg, #ffaa55 0%, #ff8f29 100%);
+}
+
+.btn-create-game:active {
+    transform: translateY(0);
 }
 
 .games-table {

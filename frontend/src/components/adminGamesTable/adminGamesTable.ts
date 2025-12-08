@@ -21,14 +21,12 @@ export class AdminGamesTableComponent {
         // obtenemos todas las partidas
         const games = await gameController.getGamesList()
 
-        if (!games || games.length === 0) {
-            this.container.innerHTML =
-                '<p class="no-games-msg">No hay partidas registradas.</p>'
-            return
-        }
-
-        this.allGames = games
+        this.allGames = games || []
         this.container.innerHTML = ''
+
+        // cabecera con buscador y boton crear
+        const headerContainer = document.createElement('div')
+        headerContainer.className = 'table-header'
 
         // buscador
         const searchContainer = document.createElement('div')
@@ -50,7 +48,15 @@ export class AdminGamesTableComponent {
         }
 
         searchContainer.appendChild(searchInput)
-        this.container.appendChild(searchContainer)
+
+        // boton crear partida
+        const createBtn = document.createElement('button')
+        createBtn.className = 'btn-create-game'
+        createBtn.textContent = '➕ Crear Partida'
+        createBtn.onclick = () => this.handleCreateGame()
+
+        headerContainer.append(searchContainer, createBtn)
+        this.container.appendChild(headerContainer)
 
         // tabla
         const wrapper = document.createElement('div')
@@ -65,8 +71,8 @@ export class AdminGamesTableComponent {
                     <th>ID</th>
                     <th>Estado</th>
                     <th>Jugadores</th>
-                    <th>URL</th>
                     <th>Acciones</th>
+                    
                 </tr>
             </thead>
             <tbody id="games-table-body"></tbody>
@@ -106,7 +112,6 @@ export class AdminGamesTableComponent {
                 <td><strong>#${game.id}</strong></td>
                 <td>${stateBadge}</td>
                 <td>👥 ${playersCount}</td>
-                <td class="url-cell">${game.url || '<em>Sin URL</em>'}</td>
                 <td class="actions-cell">
                     <button class="action-btn btn-delete" title="Eliminar partida">🗑️</button>
                 </td>
@@ -124,6 +129,7 @@ export class AdminGamesTableComponent {
 
     /**
      * devuelve un badge con color segun el estado de la partida
+     * mostramos el nombre original del backend para que el buscador funcione
      */
     private getStateBadge(state: string): string {
         const stateColors: Record<string, string> = {
@@ -134,18 +140,20 @@ export class AdminGamesTableComponent {
             night: 'state-night',
         }
 
-        const stateLabels: Record<string, string> = {
-            waiting: '⏳ Esperando',
-            playing: '🎮 Jugando',
-            finished: '🏁 Terminada',
-            day: '☀️ Día',
-            night: '🌙 Noche',
+        // iconos para cada estado
+        const stateIcons: Record<string, string> = {
+            waiting: '⏳',
+            playing: '🎮',
+            finished: '🏁',
+            day: '☀️',
+            night: '🌙',
         }
 
         const cssClass = stateColors[state.toLowerCase()] || 'state-default'
-        const label = stateLabels[state.toLowerCase()] || state
+        const icon = stateIcons[state.toLowerCase()] || '📋'
 
-        return `<span class="state-badge ${cssClass}">${label}</span>`
+        // mostramos el nombre original del back con el icono
+        return `<span class="state-badge ${cssClass}">${icon} ${state.toUpperCase()}</span>`
     }
 
     /**
@@ -163,6 +171,19 @@ export class AdminGamesTableComponent {
         if (success) {
             // quitamos la partida de la lista local y repintamos
             this.allGames = this.allGames.filter((g) => g.id !== game.id)
+            this.renderTableBody(this.allGames)
+        }
+    }
+
+    /**
+     * crea una partida nueva
+     */
+    private async handleCreateGame() {
+        const newGame = await gameController.createGame()
+
+        if (newGame) {
+            // añadimos la partida nueva a la lista y repintamos
+            this.allGames.unshift(newGame) // la ponemos al principio
             this.renderTableBody(this.allGames)
         }
     }
