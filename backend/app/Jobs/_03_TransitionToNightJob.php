@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Events\GameEvent;
+use App\Http\Controllers\GameChannelController;
 use App\Http\Controllers\VoteController;
 use App\Models\Game;
 use Illuminate\Bus\Queueable;
@@ -35,6 +36,9 @@ class _03_TransitionToNightJob implements ShouldQueue
         $text = 'La aldea se sumerge en la oscuridad. Todos duermen... excepto los lobos.';
 
         $message = $game->addMessage('system', null, $text);
+
+
+        GameChannelController::systemSend('game.narrator', ['message' => '¡Cae la noche en la aldea!'], $this->gameId);
 
         broadcast(new GameEvent(
             'chat.message',

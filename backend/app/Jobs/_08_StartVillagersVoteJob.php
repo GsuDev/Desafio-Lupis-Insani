@@ -29,7 +29,7 @@ class _08_StartVillagersVoteJob implements ShouldQueue
         try {
             $game = Game::find($this->gameId);
 
-            if (! $game) {
+            if (!$game) {
                 // TODO
                 return;
             }
@@ -44,6 +44,9 @@ class _08_StartVillagersVoteJob implements ShouldQueue
             $nextDay = $lastDay + 1;
             VoteController::startVotation($this->gameId, 'day', $nextDay);
 
+
+            GameChannelController::systemSend('game.narrator', ['message' => '¡SILENCIO! A VOTAR'], $this->gameId);
+
             GameChannelController::systemSend('vote.start', null, $this->gameId);
 
             // 4. Encadenar siguiente Job (Resolución)
@@ -53,7 +56,7 @@ class _08_StartVillagersVoteJob implements ShouldQueue
         } catch (Exception $e) {
 
             EventController::systemMessage(
-                'Error al empezar votación'.json_encode($e->getMessage()),
+                'Error al empezar votación' . json_encode($e->getMessage()),
                 'game',
                 $this->gameId
             );

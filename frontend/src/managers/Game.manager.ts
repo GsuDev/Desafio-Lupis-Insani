@@ -5,6 +5,7 @@ import type { ChatEvent, Event } from '../types/events.types'
 import { GameOverContainer } from '../components/gameOverContainer/gameOverContainer'
 import type { GameOverData } from '../components/gameOver/gameOverDetails'
 import type { ApiResponse } from '../types/api.types'
+import { NarratorOverlay } from '../components/narratorOverlay/NarratorOverlay'
 import { GameComponent } from '../components/game/game'
 
 /**
@@ -42,6 +43,18 @@ export class GameManager {
                     event.data
                 )
                 break
+            case 'game.narrator':
+
+
+                // Despachar evento al DOM para que GameComponent lo pinte
+                // event.data debería tener { message: "Texto", id: "uuid..." }
+                const detail = {
+                    message: event.data.message || "¡Atención Aldeanos!",
+                };
+                 console.log('📣 Anuncio del narrador:', detail);
+                NarratorOverlay.spawnMessage(detail.message);
+
+                break;
 
             //hu 45 pantalla game over
             case 'game.conditions':

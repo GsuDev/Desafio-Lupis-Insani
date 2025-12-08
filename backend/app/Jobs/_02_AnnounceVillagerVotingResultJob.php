@@ -39,7 +39,7 @@ class _02_AnnounceVillagerVotingResultJob implements ShouldQueue
         try { // 1. Cargar la partida
             $game = Game::find($this->gameId);
 
-            if (! $game) {
+            if (!$game) {
                 // TODO: Lanzar error (usar logger)
                 return;
             }
@@ -49,7 +49,7 @@ class _02_AnnounceVillagerVotingResultJob implements ShouldQueue
             $response = VoteController::resolveVoting($this->gameId, 'day', $latestVotation->day_number);
             $latestVotation = VoteController::closeLatestVotation($latestVotation);
 
-            if (! isset($response['success']) || ! $response['success']) {
+            if (!isset($response['success']) || !$response['success']) {
                 $this->handleVotingError($game, $response);
 
                 return;
@@ -64,7 +64,7 @@ class _02_AnnounceVillagerVotingResultJob implements ShouldQueue
                 $victimId,
                 $this->isFirstDay
             );
-
+            GameChannelController::systemSend('game.narrator', ['message' => $votingResult['message']], $this->gameId);
             // 5. Emitir evento chat.message
             EventController::systemMessage($votingResult['message'], 'game', $this->gameId);
             // 6. Comprobar condiciones de victoria
@@ -81,7 +81,7 @@ class _02_AnnounceVillagerVotingResultJob implements ShouldQueue
             );
 
             // 8. Continuar el ciclo o finalizar juego
-            if (! $winStatus['data']['winner']) {
+            if (!$winStatus['data']['winner']) {
                 _03_TransitionToNightJob::dispatch($this->gameId)->delay(now()->addSeconds($duration));
             } else {
                 GameController::finishGame($this->gameId);
@@ -92,7 +92,7 @@ class _02_AnnounceVillagerVotingResultJob implements ShouldQueue
                 );
             }
         } catch (Exception $e) {
-            EventController::systemMessage('ERROR'.json_encode($e->getFile()).'LINEA:  '.json_encode($e->getLine()), 'game', $this->gameId);
+            EventController::systemMessage('ERROR' . json_encode($e->getFile()) . 'LINEA:  ' . json_encode($e->getLine()), 'game', $this->gameId);
         }
     }
 
@@ -101,7 +101,7 @@ class _02_AnnounceVillagerVotingResultJob implements ShouldQueue
      */
     private function handleVotingError($game, $response): void
     {
-        $messageText = 'Hubo un error al intentar resolver la votación :c'.json_encode($response);
+        $messageText = 'Hubo un error al intentar resolver la votación :c' . json_encode($response);
 
         EventController::systemMessage($messageText, 'game', $this->gameId);
     }

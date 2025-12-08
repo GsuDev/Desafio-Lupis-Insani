@@ -85,18 +85,81 @@
     width: 100%;
     height: 100%;
     display: block;
-    z-index: 1;
+    z-index: auto;
+    pointer-events: none;
+
 }
+
+.campfire-image-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+}
+
+.campfire-image {
+    width: 100%;
+    height: 100%;
+    /* Configuración del fondo */
+    background-size: contain;
+    /* O 'cover' según prefieras el ajuste */
+    background-position: center;
+    background-repeat: no-repeat;
+
+    /* Estado inicial (DÍA) */
+    opacity: 0;
+    transition: opacity 2s ease-in-out;
+}
+
+.campfire-image.phase-night {
+    opacity: 1;
+    animation: fireLoop 0.8s infinite steps(1);
+}
+
+@keyframes fireLoop {
+    0% {
+        background-image: url('../../assets/campfire/FUEGO_1.png');
+    }
+
+    25% {
+        background-image: url('../../assets/campfire/FUEGO_2.png');
+    }
+
+    50% {
+        background-image: url('../../assets/campfire/FUEGO_3.png');
+    }
+
+    75% {
+        background-image: url('../../assets/campfire/FUEGO_4.png');
+    }
+
+    100% {
+        background-image: url('../../assets/campfire/FUEGO_1.png');
+    }
+}
+
+
 
 .game-participant-card {
     position: absolute;
     transform: translate(-50%, -50%);
     transition: all 0.5s ease-out;
     z-index: 10;
+    pointer-events: auto;
+}
+
+.game-participant-card:hover {
+    z-index: 100 !important;
+    /* transform: translate(-50%, -50%) scale(1.1);  */
 }
 
 .participant-card.is-bot {
     border: 2px solid #ccc;
+    /* Diferenciar bots visualmente */
 }
 
 .participant-avatar img {
@@ -131,6 +194,7 @@
         border-radius: 10px 10px 0 0;
     }
 }
+
 /* =========================================
    BOTÓN DE SALIDA Y MODAL (ESTILO PROYECTO)
    ========================================= */
@@ -143,9 +207,12 @@
     z-index: 1000;
 
     /* Estilo botón peligro pero con vuestra estética */
-    background-color: #374151; /* Fondo oscuro */
-    color: #ff6b6b; /* Texto rojo suave */
-    border: 2px solid #dc3545; /* Borde rojo */
+    background-color: #374151;
+    /* Fondo oscuro */
+    color: #ff6b6b;
+    /* Texto rojo suave */
+    border: 2px solid #dc3545;
+    /* Borde rojo */
 
     padding: 10px 20px;
     border-radius: 12px;
@@ -154,7 +221,8 @@
     text-transform: uppercase;
     letter-spacing: 1px;
     cursor: pointer;
-    box-shadow: 0 4px 0 #8a2530; /* Efecto 3D rojo oscuro */
+    box-shadow: 0 4px 0 #8a2530;
+    /* Efecto 3D rojo oscuro */
     transition: all 0.2s;
 }
 
@@ -172,12 +240,14 @@
 /* Overlay (Fondo oscuro borroso) */
 .exit-modal-overlay {
     position: fixed;
-    inset: 0; /* Top, right, bottom, left: 0 */
+    inset: 0;
+    /* Top, right, bottom, left: 0 */
     width: 100%;
     height: 100%;
 
     background-color: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(5px); /* Desenfoque del fondo */
+    backdrop-filter: blur(5px);
+    /* Desenfoque del fondo */
     z-index: 2000;
 
     display: grid;
@@ -188,8 +258,10 @@
 
 /* Tarjeta del Modal (Estilo User Settings) */
 .exit-modal {
-    background: rgba(20, 20, 30, 0.95); /* Vuestro fondo oscuro */
-    border: 2px solid #ff8f29; /* Vuestro borde naranja */
+    background: rgba(20, 20, 30, 0.95);
+    /* Vuestro fondo oscuro */
+    border: 2px solid #ff8f29;
+    /* Vuestro borde naranja */
     border-radius: 20px;
     padding: 2.5rem;
     width: 90%;
@@ -205,7 +277,8 @@
 
 .exit-modal h2 {
     font-family: var(--font-heading, sans-serif);
-    color: #ff8f29; /* Título naranja */
+    color: #ff8f29;
+    /* Título naranja */
     margin-top: 0;
     text-transform: uppercase;
     font-size: 1.8rem;
@@ -251,6 +324,7 @@
     color: white;
     border: 2px solid #4b5563;
 }
+
 .btn-cancel:hover {
     background: #4b5563;
 }
@@ -260,8 +334,10 @@
     background: #ff8f29;
     color: #1a1a1a;
     font-weight: bold;
-    box-shadow: 0 4px 0 #cc6e1b; /* Sombra 3D naranja oscuro */
+    box-shadow: 0 4px 0 #cc6e1b;
+    /* Sombra 3D naranja oscuro */
 }
+
 .btn-exit-title:hover {
     background: #ff9f4d;
     transform: translateY(-2px);
@@ -275,6 +351,7 @@
     border: 1px solid #ff8f29;
     box-shadow: 0 4px 0 rgba(255, 143, 41, 0.3);
 }
+
 .btn-exit-profile:hover {
     background: rgba(255, 143, 41, 0.1);
     transform: translateY(-2px);
@@ -285,6 +362,7 @@
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
@@ -295,6 +373,7 @@
         transform: translateY(30px) scale(0.9);
         opacity: 0;
     }
+
     to {
         transform: translateY(0) scale(1);
         opacity: 1;

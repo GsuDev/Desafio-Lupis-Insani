@@ -41,9 +41,11 @@ class _00_StartFirstDayJob implements ShouldQueue
 
         // 4. Emitir evento chat.message
         EventController::systemMessage($message, 'game', $this->gameId);
-
+        GameChannelController::systemSend('game.narrator', ['message'=>'Comienza la eleccion del alcalde'], $this->gameId);
         // 5. Emitir evento game.discussion
         GameChannelController::systemSend('game.discussion', null, $this->gameId);
+
+
 
         // 6. Encadenar el siguiente job (HU-02) con delay configurable
         _01_FirstDayStartMayorVoteJob::dispatch($this->gameId)

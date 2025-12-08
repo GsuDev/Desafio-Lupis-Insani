@@ -4,9 +4,9 @@ import { GameParticipant } from '../gameParticipant/gameParticipant'
 import { GameChat } from '../gameChat/gameChat'
 import { TimeBar } from '../timeBar/timeBar'
 import { RoleCard, type PlayerRole } from '../roleCard/roleCard'
+import { NarratorOverlay } from '../narratorOverlay/NarratorOverlay'
 import { gameController } from '../../controllers/GameController'
 
-import campfireImg from '../../assets/gameRenders/night_game_fire.png'
 import { emitGameEvent } from '../../providers/event.provider'
 // Asegúrate de que las rutas coinciden con tu estructura
 import AccessContainer from '../accessContainer/AccessContainer'
@@ -27,6 +27,11 @@ export class GameComponent {
     private timeBarContainer: HTMLElement
     private roleCardContainer: HTMLElement
 
+    //Componente letras
+    private campfireContainer: HTMLElement
+
+    private narratorOverlay: NarratorOverlay
+    //seguramente crezca en función de los elementos que necesite por ejemplo la carta, la barra de tiempo...
     // Estado de votación
     private static instance: GameComponent | null = null
     private isVotingActive: boolean = false
@@ -43,6 +48,11 @@ export class GameComponent {
         this.chatContainer = this.createChatContainer()
         this.timeBarContainer = this.createTimeBarContainer()
         this.roleCardContainer = this.createRoleCardContainer()
+
+        this.campfireContainer = this.createCampfireContainer()
+        this.narratorOverlay = new NarratorOverlay(this.container)
+
+
 
         // Guardar instancia singleton
         GameComponent.instance = this
@@ -100,6 +110,21 @@ export class GameComponent {
 
         GameComponent.instance.addVote(targetId, voterId)
     }
+
+    private createCampfireContainer(): HTMLElement {
+const container = document.createElement('div')
+        container.className = 'campfire-image-container'
+        
+        const fireDiv = document.createElement('div')
+        
+        fireDiv.className = 'campfire-image'
+        fireDiv.id = 'campfire-image'
+        
+        container.appendChild(fireDiv)
+        return container
+
+    }
+
 
     /**
      * Maneja cuando se cancela un voto
@@ -181,6 +206,10 @@ export class GameComponent {
             gameContainer.classList.remove('phase-night') // 👈 Quita noche
             gameContainer.classList.add('phase-day') // 👈 Añade día
         }
+        const campfireImg = document.getElementById('campfire-image')
+        if (campfireImg) {
+            campfireImg.classList.remove('phase-night');
+        }
 
         GameComponent.instance.hideWolves()
     }
@@ -208,6 +237,10 @@ export class GameComponent {
         if (gameContainer) {
             gameContainer.classList.remove('phase-day') // 👈 Quita día
             gameContainer.classList.add('phase-night') // 👈 Añade noche
+        }
+        const campfireImg = document.getElementById('campfire-image')
+        if (campfireImg) {
+            campfireImg.classList.add('phase-night');
         }
         if (GameComponent.instance.isCurrentParticipantWolf()) {
             GameComponent.instance.revealWolves()
@@ -545,6 +578,7 @@ export class GameComponent {
 
     private createTimeBarContainer(): HTMLElement {
         const div = document.createElement('div')
+        // TimeBar ya tiene sus estilos internos.
         div.className = 'game-time-bar-wrapper'
         div.style.position = 'absolute'
         div.style.top = '0'
@@ -575,7 +609,12 @@ export class GameComponent {
     // ========== MÉTODOS DE RENDERIZADO ==========
 
     public render(): HTMLElement {
+
+        //Renderizo la hoguera
+        this.container.appendChild(this.campfireContainer)
+
         this.container.appendChild(this.participantsContainer)
+
         this.container.appendChild(this.timeBarContainer)
         this.container.appendChild(this.chatContainer)
         this.container.appendChild(this.roleCardContainer)
@@ -592,6 +631,9 @@ export class GameComponent {
         const myRole = this.getMyRole()
         const roleCard = new RoleCard(this.roleCardContainer, myRole)
         roleCard.render()
+
+
+
 
         return this.container
     }
@@ -692,6 +734,8 @@ export class GameComponent {
 
         const angleStep = (2 * Math.PI) / list.length
 
+        const CAMPFIRE_Z_INDEX = 10;
+
         list.forEach((p, index) => {
             const angle = index * angleStep - Math.PI / 2
 
@@ -722,6 +766,13 @@ export class GameComponent {
 
             const pComponent = new GameParticipant(p, versionIndex)
             const pElement = pComponent.render()
+
+            //Logica de profundidad
+            const is_behind = y < midHeight;
+            pElement.style.zIndex = is_behind
+                ? (CAMPFIRE_Z_INDEX - 1).toString()
+                : (CAMPFIRE_Z_INDEX + 1).toString();
+
 
             // Configurar callback de voto
             pComponent.setOnVote((participantId) =>
