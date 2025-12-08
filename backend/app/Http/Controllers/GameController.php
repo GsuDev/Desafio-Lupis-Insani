@@ -227,8 +227,9 @@ class GameController extends Controller
                 // recargo los datos de partida
                 $game->load('users');
 
-                // trigger evento de nuevo usuario dentro lo dejo comentado mas o menos para tener una orientacion
-                // event(new UserJoinedGame($game, $user))
+                // Se emite el evento para que el front muestre al nuevo participante
+                GameChannelController::systemSend('player.joined', null, $gameId);
+
             }
 
             return response()->json([
@@ -423,6 +424,8 @@ class GameController extends Controller
             $game->refresh();
             $duration = (int) env('GAME_START_DELAY', 30);
             dispatch(new _00_StartFirstDayJob($gameId))->delay(now()->addSeconds($duration));
+            // Se emite el evento para que el front muestre al nuevo participante
+            GameChannelController::systemSend('game.start', null, $gameId);
 
             return response()->json([
                 'success' => true,
