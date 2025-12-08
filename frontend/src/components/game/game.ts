@@ -30,7 +30,6 @@ export class GameComponent {
     // Estado de votación
     private static instance: GameComponent | null = null
     private isVotingActive: boolean = false
-    private isCurrentParticipantDead: boolean = false
     private myCurrentVote: number | null = null
     private participantComponents: Map<number, GameParticipant> = new Map()
 
@@ -152,7 +151,6 @@ export class GameComponent {
         if (victim && victim.id && dead) {
             // Marcamos al muerto usando su ID real
             GameComponent.markParticipantAsDead(victim.id)
-            GameComponent.instance.isCurrentParticipantDead = true
         }
         if (victim && victim.id && !dead) {
             GameComponent.markParticipantAsMayor(victim.id)
@@ -228,6 +226,13 @@ export class GameComponent {
         if (!participant) return false
         return participant.characterId === this.WOLF_CHARACTER_ID
     }
+    private static checkIfDead(): boolean {
+        return (
+            GameComponent.instance!.getCurrentParticipant()!.states!.includes(
+                'DEAD'
+            ) || false
+        )
+    }
 
     private revealWolves(): void {
         this.participantComponents.forEach((component) => {
@@ -251,7 +256,6 @@ export class GameComponent {
         if (!GameComponent.instance) return
 
         console.log(`💀 Marcando como muerto al ID: ${participantId}`)
-        GameComponent.instance.isCurrentParticipantDead = true
         const component =
             GameComponent.instance.participantComponents.get(participantId)
 
@@ -408,7 +412,7 @@ export class GameComponent {
         if (!currentUserId) return
         const instance = GameComponent.instance
         if (!instance) return
-        if (instance.isCurrentParticipantDead) {
+        if (GameComponent.checkIfDead()) {
             console.warn('⚠️ No puedes votar si estás muerto')
             return
         }
@@ -505,6 +509,26 @@ export class GameComponent {
             if (!participant) return null
 
             return participant.id
+        } catch {
+            return null
+        }
+    }
+    /**
+     * Obtiene el ID del usuario actual (HACER PÚBLICO)
+     */
+    public getCurrentParticipant(): Participant | null {
+        try {
+            const cUser = userController.currentUser
+            if (!cUser) {
+                console.log('no existe usuario')
+                return null
+            }
+            const participant = gameController.currentGame?.participants.find(
+                (p) => p.nickname === cUser.nickname
+            )
+            if (!participant) return null
+
+            return participant
         } catch {
             return null
         }
