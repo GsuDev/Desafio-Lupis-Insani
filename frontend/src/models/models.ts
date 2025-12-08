@@ -26,6 +26,8 @@ export type User = {
 
     /**Indica si el usuario es anonimo */
     is_anonymous: boolean
+
+    roles?: Role[]
 }
 
 export type Participant = {
@@ -82,4 +84,9 @@ export type UserStatisticsData = {
     totalGames: number
     totalWins: number
     games: GameStatistic[]
+}
+
+export type Role = {
+    id: number
+    name: string
 }

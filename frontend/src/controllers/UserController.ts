@@ -379,6 +379,86 @@ class UserController {
             return undefined
         }
     }
+    /**
+     * Obtiene todos los usuarios del sistema (Admin)
+     */
+    async getAllUsers(): Promise<User[] | undefined> {
+        try {
+            const response = await userProvider.getUsers()
+
+            if (!response.success || !response.data?.users) {
+                if (showGlobalMessage) {
+                    showGlobalMessage(
+                        response.message || 'Error cargando lista de usuarios',
+                        false
+                    )
+                }
+                return undefined
+            }
+
+            return response.data.users
+        } catch (error: unknown) {
+            if (showGlobalMessage) {
+                showGlobalMessage(
+                    'Error de conexión al obtener usuarios',
+                    false
+                )
+            }
+            return undefined
+        }
+    }
+    /**
+     * Elimina un usuario del sistema (Admin)
+     */
+    async deleteUser(id: number): Promise<boolean> {
+        try {
+            const response = await userProvider.deleteUser(id)
+
+            if (response.success) {
+                console.log('Usuario eliminado:', id)
+                return true
+            } else {
+                console.error('Error al eliminar:', response.message)
+                alert(response.message || 'No se pudo eliminar al usuario')
+                return false
+            }
+        } catch (error) {
+            console.error('Error de conexión:', error)
+            return false
+        }
+    }
+    /**
+     * Admin actualiza los datos de un usuario (Nickname y Email)
+     */
+    async updateUser(
+        id: number,
+        data: { nickname: string; email: string }
+    ): Promise<boolean> {
+        try {
+            const response = await userProvider.updateUserById(id, data)
+
+            if (response.success) {
+                if (showGlobalMessage) {
+                    showGlobalMessage('Usuario actualizado correctamente', true)
+                }
+                return true
+            } else {
+                if (showGlobalMessage) {
+                    showGlobalMessage(
+                        response.message || 'Error al actualizar usuario',
+                        false
+                    )
+                }
+                return false
+            }
+        } catch (error) {
+            console.error('Error en controlador updateUser:', error)
+            if (showGlobalMessage) {
+                showGlobalMessage('Error de conexión al actualizar', false)
+            }
+            return false
+        }
+    }
 }
 
 /** Exporta la instancia singleton del UserController */

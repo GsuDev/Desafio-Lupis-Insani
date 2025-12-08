@@ -12,6 +12,8 @@ import {
     joinGameRequest,
     createGameRequest,
     startGame,
+    getGames,
+    deleteGame,
 } from '../providers/game.provider'
 
 class GameController {
@@ -263,6 +265,65 @@ class GameController {
             console.log('👋 Game Channel desconectado', 'info')
         } catch (error) {
             console.log(`❌ Error: ${error}`, 'error')
+        }
+    }
+
+    /**
+     * Obtiene todas las partidas disponibles
+     */
+    async getGamesList(): Promise<any[]> {
+        try {
+            // Importa * as gameProvider arriba si no lo tienes, o usa gameProvider.getGames()
+            const response = await getGames()
+
+            if (response.success && response.data?.games) {
+                return response.data.games
+            }
+            return []
+        } catch (error) {
+            console.error('Error cargando partidas:', error)
+            return []
+        }
+    }
+
+    /**
+     * Elimina una partida
+     */
+    async deleteGame(gameId: number): Promise<boolean> {
+        try {
+            const response = await deleteGame(gameId)
+
+            if (response.success) {
+                console.log('✅ Partida eliminada:', gameId)
+                return true
+            } else {
+                alert(response.message || 'No se pudo eliminar la partida')
+                return false
+            }
+        } catch (error) {
+            console.error('Error borrando partida:', error)
+            return false
+        }
+    }
+
+    /**
+     * Crea una partida nueva (admin)
+     * devuelve la partida creada o null si falla
+     */
+    async createGame(): Promise<Game | null> {
+        try {
+            const response = await createGameRequest()
+
+            if (response.success && response.data?.game) {
+                console.log('✅ Partida creada:', response.data.game)
+                return response.data.game
+            } else {
+                alert(response.message || 'No se pudo crear la partida')
+                return null
+            }
+        } catch (error) {
+            console.error('Error creando partida:', error)
+            return null
         }
     }
 }
