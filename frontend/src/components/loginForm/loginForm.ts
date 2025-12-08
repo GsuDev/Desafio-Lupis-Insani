@@ -64,7 +64,7 @@ export class LoginFormComponent {
             'Contraseña',
             '••••••••',
             'password',
-            'password' // TODO: QUITAR
+            'Password_123' // TODO: QUITAR
         )
 
         // Botón de submit

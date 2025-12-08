@@ -94,6 +94,7 @@ class UserController extends Controller
             'password.required' => 'La contraseña es obligatoria.',
             'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
+            'password.regex' => 'La contraseña debe incluir al menos 1 mayúscula, 1 minúscula, 1 número y 1 símbolo.',
             'profile_picture.image' => 'El archivo debe ser una imagen.',
             'profile_picture.max' => 'La imagen no puede pesar más de 2MB.',
         ];
@@ -103,7 +104,13 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/',
+            ],
             'birthdate' => 'nullable|date',
             // 'profile_picture' => 'nullable|file|image|max:2048',
         ], $messages);
@@ -387,9 +394,23 @@ class UserController extends Controller
         $user = $request->user();
 
         $validator = Validator::make($request->all(), [
-            'oldPassword' => 'required|string|min:8',
-            'password' => 'required|string|min:8',
+            'oldPassword' => [
+                'required',
+                'string',
+                'min:8',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/',
+            ],
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/',
+            ],
+        ], [
+            'oldPassword.regex' => 'La contraseña actual debe tener al menos 8 caracteres e incluir una mayúscula, una minúscula, un número y un símbolo.',
+            'password.regex' => 'La nueva contraseña debe tener al menos 8 caracteres e incluir una mayúscula, una minúscula, un número y un símbolo.',
         ]);
+
         if ($validator->fails()) {
 
             return response()->json([
