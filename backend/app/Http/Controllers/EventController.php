@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Game;
 use App\Models\participant;
 use App\Models\State;
 
@@ -124,23 +125,44 @@ class EventController extends Controller
         switch ($category[1]) {
             case 'left':
 
-                $participant = participant::where('game_id', $gameId)
+                // Cargar la partida
+                $game = Game::find($gameId);
+
+                $participant = Participant::where('game_id', $gameId)
                     ->where('user_id', $user->id)
                     ->first();
 
-                if ($participant) {
+                if ($participant && $game) {
 
-                    $deadState = State::firstOrCreate(['name' => 'DEAD']);
+                    if ($game->state === 'on_course') {
 
-                    // Usamos syncWithoutDetaching para no borrar otros estados (ej: si era Vidente)
-                    $participant->states()->syncWithoutDetaching([$deadState->id]);
+                        // Añadir estado DEAD sin borrar otros
+                        $deadState = State::firstOrCreate(['name' => 'DEAD']);
+                        $participant->states()->syncWithoutDetaching([$deadState->id]);
+                    } elseif ($game->state === 'waiting') {
+
+                        // Si la partida está esperando → borrar el participant
+                        $participant->delete();
+                    }
                 }
 
                 return $data;
                 break;
 
+            case 'joined':
+
+                $participant = participant::where('game_id', $gameId)
+                    ->where('user_id', $user->id)
+                    ->first();
+
+                if ($participant) {
+                    return $data;
+                }
+
+                return null;
+                break;
             default:
-                return $data;
+
                 break;
         }
     }
@@ -162,7 +184,9 @@ class EventController extends Controller
             case 'narrator':
                 return $data;
                 break;
-
+            case 'start':
+                return $data;
+                break;
             default:
 
                 break;

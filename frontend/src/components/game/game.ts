@@ -52,8 +52,6 @@ export class GameComponent {
         this.campfireContainer = this.createCampfireContainer()
         this.narratorOverlay = new NarratorOverlay(this.container)
 
-
-
         // Guardar instancia singleton
         GameComponent.instance = this
     }
@@ -112,19 +110,17 @@ export class GameComponent {
     }
 
     private createCampfireContainer(): HTMLElement {
-const container = document.createElement('div')
+        const container = document.createElement('div')
         container.className = 'campfire-image-container'
-        
+
         const fireDiv = document.createElement('div')
-        
+
         fireDiv.className = 'campfire-image'
         fireDiv.id = 'campfire-image'
-        
+
         container.appendChild(fireDiv)
         return container
-
     }
-
 
     /**
      * Maneja cuando se cancela un voto
@@ -208,7 +204,7 @@ const container = document.createElement('div')
         }
         const campfireImg = document.getElementById('campfire-image')
         if (campfireImg) {
-            campfireImg.classList.remove('phase-night');
+            campfireImg.classList.remove('phase-night')
         }
 
         GameComponent.instance.hideWolves()
@@ -240,7 +236,7 @@ const container = document.createElement('div')
         }
         const campfireImg = document.getElementById('campfire-image')
         if (campfireImg) {
-            campfireImg.classList.add('phase-night');
+            campfireImg.classList.add('phase-night')
         }
         if (GameComponent.instance.isCurrentParticipantWolf()) {
             GameComponent.instance.revealWolves()
@@ -609,7 +605,6 @@ const container = document.createElement('div')
     // ========== MÉTODOS DE RENDERIZADO ==========
 
     public render(): HTMLElement {
-
         //Renderizo la hoguera
         this.container.appendChild(this.campfireContainer)
 
@@ -631,9 +626,6 @@ const container = document.createElement('div')
         const myRole = this.getMyRole()
         const roleCard = new RoleCard(this.roleCardContainer, myRole)
         roleCard.render()
-
-
-
 
         return this.container
     }
@@ -734,7 +726,7 @@ const container = document.createElement('div')
 
         const angleStep = (2 * Math.PI) / list.length
 
-        const CAMPFIRE_Z_INDEX = 10;
+        const CAMPFIRE_Z_INDEX = 10
 
         list.forEach((p, index) => {
             const angle = index * angleStep - Math.PI / 2
@@ -768,11 +760,10 @@ const container = document.createElement('div')
             const pElement = pComponent.render()
 
             //Logica de profundidad
-            const is_behind = y < midHeight;
+            const is_behind = y < midHeight
             pElement.style.zIndex = is_behind
                 ? (CAMPFIRE_Z_INDEX - 1).toString()
-                : (CAMPFIRE_Z_INDEX + 1).toString();
-
+                : (CAMPFIRE_Z_INDEX + 1).toString()
 
             // Configurar callback de voto
             pComponent.setOnVote((participantId) =>

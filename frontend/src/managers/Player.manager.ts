@@ -1,4 +1,5 @@
 import { GameComponent } from '../components/game/game'
+import { gameController } from '../controllers/GameController'
 
 /**
  * PlayerManager maneja todos los eventos relacionados con jugadores
@@ -27,7 +28,7 @@ export class PlayerManager {
 
             case 'player.joined':
                 console.log('👤 Jugador se unió:', eventData)
-                // Aquí podríamos actualizar la lista de jugadores en el futuro
+                this.handlePlayerJoined(eventData)
                 break
 
             default:
@@ -39,8 +40,18 @@ export class PlayerManager {
      * Maneja cuando un jugador abandona la partida
      */
     private static handlePlayerLeft(data: any): void {
-        // El backend ya marcó al participante como muerto en la BD.
-        // Nosotros solo actualizamos la UI para que aparezca el fantasma inmediatamente.
-        GameComponent.updateParticipantsDeadStatus()
+        // Recargar la partida desde el servidor para actualizar la lista de participantes
+        gameController.reloadCurrentGame()
+        if (gameController.currentGame?.state === 'on_course') {
+            GameComponent.updateParticipantsDeadStatus()
+        }
+    }
+
+    /**
+     * Maneja cuando un jugador se une a la partida
+     */
+    private static handlePlayerJoined(data: any): void {
+        // Recargar la partida desde el servidor para actualizar la lista de participantes
+        gameController.reloadCurrentGame()
     }
 }

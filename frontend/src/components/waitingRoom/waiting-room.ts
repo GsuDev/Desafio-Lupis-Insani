@@ -13,13 +13,8 @@ import AccessContainer from '../accessContainer/AccessContainer.ts'
 import UserProfileContainer from '../userProfileContainer/userProfileContainer.ts'
 
 /**
- * Crea la columna derecha (Chat)
+ * Función principal de Renderizado
  */
-
-// --------------------------------------------------
-// Función principal de Renderizado
-// --------------------------------------------------
-
 export const renderWaitingRoom = async (
     container: HTMLElement,
     gameId: number
@@ -37,12 +32,32 @@ export const renderWaitingRoom = async (
     // Header
     const header = document.createElement('header')
     header.className = 'wr-header'
-    //boton de salir
+
+    // Botón de salir
     const exitBtn = document.createElement('button')
     exitBtn.className = 'wr-exit-btn'
     exitBtn.textContent = '<- SALIR'
 
-    exitBtn.onclick = () => {
+    exitBtn.onclick = async () => {
+        // Emitir evento player.left antes de salir
+        const currentGame = gameController.currentGame
+        if (currentGame?.id) {
+            try {
+                await emitGameEvent(currentGame.id, 'player.left', {
+                    gameId: currentGame.id,
+                    userId: userController.currentUser?.id,
+                })
+                console.log('📤 Evento player.left emitido')
+            } catch (error) {
+                console.error('❌ Error al emitir player.left:', error)
+            }
+        }
+
+        // Desconectar canales
+        gameController.disconnectGameChannel()
+        gameController.disconnectWolvesChannel()
+
+        // Navegar al perfil o acceso
         const user = userController.currentUser
         container.innerHTML = ''
 
@@ -56,15 +71,9 @@ export const renderWaitingRoom = async (
     }
 
     const title = document.createElement('h1')
-    title.textContent = 'LOBBY DE PARTIDA'
+    title.textContent = 'LOBBY DE PARTIDA Nº: ' + gameId
 
     header.append(exitBtn, title)
-
-    // Contenedor de mensajes globales (error/loading)
-    //const globalMessage = document.createElement('div')
-    //globalMessage.className = 'global-message' // Estilos en CSS
-    //globalMessage.id = 'global-message'
-    //container.appendChild(globalMessage)
 
     // Contenido principal
     const main = document.createElement('main')
@@ -95,19 +104,17 @@ export const renderWaitingRoom = async (
     main.append(chatContainerColumn)
 
     roomContainer.append(header)
-    //roomContainer.append(globalMessage)
     roomContainer.append(main)
 
     container.append(roomContainer)
 
     const showLoading = (isLoading: boolean) => {
-        // En vez de mostrar un cartel, le decimos a la lista que cambie su botón
         participantList.setLoading(isLoading)
     }
 
     const showGlobalError = (message: string) => {
         if (message) {
-            window.alert(`Error: ${message}`) // Temporal
+            window.alert(`Error: ${message}`)
         }
     }
 
@@ -125,11 +132,12 @@ export const renderWaitingRoom = async (
             game.state !== 'waiting' &&
             game.state !== 'finished' &&
             game.state !== undefined
+
         if (isGameStarted) {
             // A) Si el juego ha empezado y aún no hemos cambiado la vista:
             if (!isGameActive) {
                 console.log('🚀 La partida ha comenzado. Cambiando vista...')
-                //TODO: asignar roles
+
                 // 1. Limpiar el contenedor (borra la Waiting Room)
                 container.innerHTML = ''
 
@@ -143,12 +151,13 @@ export const renderWaitingRoom = async (
 
             // B) Actualizar los datos del componente de juego
             if (gameComponent) {
-                // console.log('Participantes: '+game.participants)
                 gameComponent.update(game, game.participants || [])
             }
+
             if (!gameController['gameChannel']) {
                 gameController.connectGameChannel(game.id)
             }
+
             // Salimos para no ejecutar lógica de la Waiting Room
             return
         }
@@ -158,7 +167,6 @@ export const renderWaitingRoom = async (
             // Si por alguna razón volvemos a estado 'waiting' y estábamos en juego (reset)
             if (isGameActive) {
                 isGameActive = false
-                // Aquí podrías recargar la página o volver a llamar a renderWaitingRoom
                 renderWaitingRoom(container, game.id)
                 return
             }
@@ -169,13 +177,11 @@ export const renderWaitingRoom = async (
             participantList.disableButton(!participantController.isHost())
 
             // Conectar canal si no está conectado
-            // (Nota: es mejor mover esto al controller o hacerlo solo una vez)
             if (!gameController['gameChannel']) {
                 gameController.connectGameChannel(game.id)
             }
         }
     }
-    //await renderGameDetails(gameId)
 
     // 5. Conectar la Vista con el Controlador
     gameController.init(
@@ -192,12 +198,10 @@ export const renderWaitingRoom = async (
     const startButton = container.querySelector('#start-game-button')!
     if (startButton) {
         startButton.addEventListener('click', () => {
-            // La vista solo le dice al controlador "han hecho clic"
             gameController.handleStartGame()
         })
     }
 
     // 7. Iniciar la carga de datos
-    // La vista le dice al controlador "ok, estoy lista, carga los datos"
     void gameController.handleLoadGame(gameId)
 }

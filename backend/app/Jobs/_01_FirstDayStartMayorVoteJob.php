@@ -29,7 +29,7 @@ class _01_FirstDayStartMayorVoteJob implements ShouldQueue
 
         $game = Game::find($this->gameId);
 
-        if (!$game) {
+        if (! $game) {
             // TODO
             return;
         }

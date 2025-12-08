@@ -37,7 +37,7 @@ class _07_AnnounceWolvesVotingResultJob implements ShouldQueue
             // 1. Cargar la partida
             $game = Game::find($this->gameId);
 
-            if (!$game) {
+            if (! $game) {
                 // TODO:
                 return;
             }
@@ -45,7 +45,7 @@ class _07_AnnounceWolvesVotingResultJob implements ShouldQueue
             // 2. Obtener última votación
             $latestVotation = VoteController::getLatestVotation($game);
 
-            if (!$latestVotation) {
+            if (! $latestVotation) {
                 EventController::systemMessage('No se encontró votación activa de lobos', 'game', $this->gameId);
 
                 return;
@@ -57,7 +57,7 @@ class _07_AnnounceWolvesVotingResultJob implements ShouldQueue
             // 4. Cerrar votación
             $latestVotation = VoteController::closeLatestVotation($latestVotation);
 
-            if (!isset($response['success']) || !$response['success']) {
+            if (! isset($response['success']) || ! $response['success']) {
                 $this->handleVotingError($game, $response);
 
                 return;
@@ -100,7 +100,7 @@ class _07_AnnounceWolvesVotingResultJob implements ShouldQueue
             $winStatus = GameController::checkGameStatus($this->gameId);
 
             // 8. Continuar el ciclo o finalizar juego
-            if (!$winStatus['data']['winner']) {
+            if (! $winStatus['data']['winner']) {
                 _08_StartVillagersVoteJob::dispatch($this->gameId)
                     ->delay(now()->addSeconds($duration));
             } else {
@@ -127,7 +127,7 @@ class _07_AnnounceWolvesVotingResultJob implements ShouldQueue
      */
     private function handleVotingError(Game $game, array $response): void
     {
-        $messageText = 'Hubo un error al intentar resolver la votación de los lobos: ' . json_encode($response);
+        $messageText = 'Hubo un error al intentar resolver la votación de los lobos: '.json_encode($response);
         EventController::systemMessage($messageText, 'game', $this->gameId);
     }
 

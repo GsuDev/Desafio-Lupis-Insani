@@ -44,17 +44,15 @@ export class GameManager {
                 )
                 break
             case 'game.narrator':
-
-
                 // Despachar evento al DOM para que GameComponent lo pinte
                 // event.data debería tener { message: "Texto", id: "uuid..." }
                 const detail = {
-                    message: event.data.message || "¡Atención Aldeanos!",
-                };
-                 console.log('📣 Anuncio del narrador:', detail);
-                NarratorOverlay.spawnMessage(detail.message);
+                    message: event.data.message || '¡Atención Aldeanos!',
+                }
+                console.log('📣 Anuncio del narrador:', detail)
+                NarratorOverlay.spawnMessage(detail.message)
 
-                break;
+                break
 
             //hu 45 pantalla game over
             case 'game.conditions':
@@ -85,8 +83,8 @@ export class GameManager {
                 }
                 break
 
-            case 'game.example':
-                // Cambiar para añadir
+            case 'game.start':
+                gameController.reloadCurrentGame()
                 break
 
             default:
