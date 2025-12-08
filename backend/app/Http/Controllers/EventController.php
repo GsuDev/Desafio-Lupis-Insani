@@ -159,6 +159,9 @@ class EventController extends Controller
                 return $data;
 
                 break;
+            case 'narrator':
+                return $data;
+                break;
 
             default:
 
