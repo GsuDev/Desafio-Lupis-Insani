@@ -36,6 +36,7 @@ export class VoteManager {
                 console.log('📊 Resultado de votación:', event.data)
                 // TODO HU futura: Mostrar quién fue eliminado
                 GameComponent.handleVoteResult(event.data)
+                GameComponent.updateParticipantsDeadStatus()
                 break
 
             default:

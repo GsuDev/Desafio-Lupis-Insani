@@ -1,5 +1,6 @@
 import './gameParticipant.css'
 import type { Participant } from '../../models/models'
+import sprite from '../../assets/charactersInGame/char_l_3.png'
 
 export class GameParticipant {
     private participant: Participant
@@ -10,6 +11,7 @@ export class GameParticipant {
     private isVotingEnabled: boolean = false
     private isVotedByMe: boolean = false
     private onVoteCallback: ((participantId: number) => void) | null = null
+    private isDead: boolean = false
 
     /**
      * @param participant Datos del jugador
@@ -49,12 +51,16 @@ export class GameParticipant {
         // Añadir evento de click
         this.element.addEventListener('click', () => this.handleClick())
 
+        // Verificar estado inicial
+        this.updateDeadStatus()
+
         return this.element
     }
 
     private handleClick(): void {
+        if (this.isDead) return
+
         if (!this.isVotingEnabled) return
-        // TODO: SERGIO HU futura: Verificar si está muerto y no permitir voto
 
         if (this.onVoteCallback) {
             this.onVoteCallback(this.participant.id)
@@ -65,6 +71,14 @@ export class GameParticipant {
      * Habilita o deshabilita la capacidad de votar
      */
     public setVotingEnabled(enabled: boolean): void {
+        //los muertos no pueden votar ni recibir votos
+        if (this.isDead) {
+            this.isVotingEnabled = false
+            this.element.classList.remove('votable')
+            this.element.style.cursor = 'not-allowed'
+            return
+        }
+
         this.isVotingEnabled = enabled
         if (enabled) {
             this.element.classList.add('votable')
@@ -161,6 +175,68 @@ export class GameParticipant {
      */
     public getParticipantId(): number {
         return this.participant.id
+    }
+
+    /**
+     * Fuerza el estado de muerte en el dato local y actualiza la vista
+     * (Usado cuando llega un evento de muerte en tiempo real)
+     */
+    public setDead(): void {
+        if (!this.participant.states) {
+            this.participant.states = []
+        }
+        // Si no está ya marcado como muerto, lo marcamos
+        if (!this.participant.states.includes('DEAD')) {
+            this.participant.states.push('DEAD')
+        }
+        // Actualizamos la vista
+        this.updateDeadStatus()
+    }
+
+    private checkIfDead(): boolean {
+        return this.participant.states?.includes('DEAD') || false
+    }
+
+    //actualiza el sprite del participante a fantasma si esta muerto
+    public updateDeadStatus(): void {
+        const wasDead = this.isDead
+        this.isDead = this.checkIfDead()
+
+        if (this.isDead && !wasDead) {
+            //transicion vivo -> muerto
+            this.setDeadSprite()
+            this.setVotingEnabled(false)
+            this.element.classList.add('is-dead')
+        } else if (!this.isDead && wasDead) {
+            //transicion muerto vivo
+            this.setAliveSprite()
+            this.element.classList.remove('is-dead')
+        }
+    }
+
+    // cambia sprite a fantasma
+    private setDeadSprite(): void {
+        const avatarImg = this.element.querySelector(
+            '.gp-avatar'
+        ) as HTMLImageElement
+        if (avatarImg) {
+            //aqui va el sprite del fantasma ///CAMBIAAAAAAAAAAAAAAAR SOLO PRUEBAAAA
+            // avatarImg.src = sprite
+
+            avatarImg.classList.add('ghost-sprite')
+        }
+    }
+
+    //restaurar el sprite normal
+    private setAliveSprite(): void {
+        const avatarImg = this.element.querySelector(
+            '.gp-avatar'
+        ) as HTMLImageElement
+        if (avatarImg) {
+            const imageUrl = this.getAvatarUrl()
+            avatarImg.src = imageUrl
+            avatarImg.classList.remove('ghost-sprite')
+        }
     }
 
     private getAvatarUrl(): string {

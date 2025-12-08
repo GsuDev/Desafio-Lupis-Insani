@@ -8,6 +8,11 @@ import { gameController } from '../../controllers/GameController'
 
 import campfireImg from '../../assets/gameRenders/night_game_fire.png'
 import { emitGameEvent } from '../../providers/event.provider'
+// Asegúrate de que las rutas coinciden con tu estructura
+import AccessContainer from '../accessContainer/AccessContainer'
+import UserProfileContainer from '../userProfileContainer/userProfileContainer'
+import { DeathModalContainer } from '../deathModalContainer/deathModalContainer'
+import { userController } from '../../controllers/UserController'
 
 /**
  * Clase GameComponent
@@ -105,6 +110,21 @@ export class GameComponent {
 
         GameComponent.instance.endVoting() // Finalizar votación
         // TODO: SERGIO HU futura: Marcar a los muertos como muertos
+        const victim =
+            data.participantId ||
+            data.participant_id ||
+            data.targetId ||
+            data.target_id
+
+        const dead = data.dead
+        if (victim && victim.id && dead) {
+            // Marcamos al muerto usando su ID real
+            GameComponent.markParticipantAsDead(victim.id)
+        }
+        //TODO MARCAR ALCALDE COMO ALCALDE
+
+        // Actualizamos estado general por si acaso
+        GameComponent.updateParticipantsDeadStatus()
     }
 
     // ========== MÉTODOS ESTÁTICOS PARA DÍA/NOCHE ==========
@@ -150,6 +170,55 @@ export class GameComponent {
             gameContainer.classList.add('phase-night') // 👈 Añade noche
         }
     }
+    // ========== MÉTODOS ESTÁTICOS PARA PLAYER EVENTS ==========
+
+    /**
+     * Actualiza los sprites de todos los participantes según sus states
+     */
+    /**
+     * Busca un participante por ID y lo marca como muerto inmediatamente
+     * (Esto se ejecuta en tiempo real cuando llega el evento del socket)
+     */
+    public static markParticipantAsDead(participantId: number): void {
+        if (!GameComponent.instance) return
+
+        console.log(`💀 Marcando como muerto al ID: ${participantId}`)
+
+        const component =
+            GameComponent.instance.participantComponents.get(participantId)
+
+        if (component) {
+            component.setDead()
+        }
+
+        const myId = GameComponent.instance.getCurrentParticipantId()
+        if (myId === participantId) {
+            console.log('⚰️ ¡He muerto yo! Mostrando modal...')
+
+            setTimeout(() => {
+                GameComponent.instance?.showDeathModal()
+            }, 1000)
+        }
+    }
+
+    public static updateParticipantsDeadStatus(): void {
+        if (!GameComponent.instance) {
+            console.warn('⚠️ No hay instancia de GameComponent')
+            return
+        }
+
+        console.log('💀 Actualizando estados de vida/muerte de participantes')
+        GameComponent.instance.refreshParticipantsDeadStatus()
+    }
+
+    /**
+     * Refresca el estado de vida/muerte de todos los participantes renderizados
+     */
+    private refreshParticipantsDeadStatus(): void {
+        this.participantComponents.forEach((component) => {
+            component.updateDeadStatus()
+        })
+    }
 
     // ========== MÉTODOS DE INSTANCIA PARA VOTACIÓN ==========
 
@@ -180,7 +249,7 @@ export class GameComponent {
         }
 
         // Si soy yo quien votó, marcar visualmente
-        const currentUser = this.getCurrentUserId()
+        const currentUser = this.getCurrentParticipantId()
         if (voterId === currentUser) {
             this.markMyVote(participantId)
         }
@@ -198,7 +267,7 @@ export class GameComponent {
         }
 
         // Si soy yo quien canceló, quitar marca visual
-        const currentUser = this.getCurrentUserId()
+        const currentUser = this.getCurrentParticipantId()
         if (voterId === currentUser) {
             component?.setVotedByMe(false)
         }
@@ -286,12 +355,19 @@ export class GameComponent {
     /**
      * Obtiene el ID del usuario actual
      */
-    private getCurrentUserId(): number | null {
+    private getCurrentParticipantId(): number | null {
         try {
-            const userStr = localStorage.getItem('currentUser')
-            if (!userStr) return null
-            const user = JSON.parse(userStr)
-            return user.id
+            const cUser = userController.currentUser
+            if (!cUser) {
+                console.log('no existe')
+                return null
+            }
+            const participant = gameController.currentGame?.participants.find(
+                (p) => p.nickname === cUser.nickname
+            )
+            if (!participant) return null
+
+            return participant.id
         } catch {
             return null
         }
@@ -342,6 +418,8 @@ export class GameComponent {
         this.container.appendChild(this.timeBarContainer)
         this.container.appendChild(this.chatContainer)
         this.container.appendChild(this.roleCardContainer)
+
+        this.addExitButton()
 
         const isWolf = this.checkIfPlayerIsWolf()
         const gameChat = new GameChat(this.chatContainer, isWolf)
@@ -509,5 +587,146 @@ export class GameComponent {
         const poses = [1, 8, 7, 6, 5, 4, 3, 2] as const
         const index = Math.round(normalizedAngle / 45) % 8
         return poses[index]
+    }
+
+    // ========== MÉTODOS DE SALIDA DE PARTIDA ==========
+
+    /**
+     * Añade el botón de salir de la partida
+     */
+    private addExitButton(): void {
+        const exitButton = document.createElement('button')
+        exitButton.className = 'game-exit-button'
+        exitButton.innerHTML = '🚪 Salir'
+        exitButton.addEventListener('click', () => this.showExitModal())
+
+        this.container.appendChild(exitButton)
+    }
+
+    /**
+     * Muestra el modal de confirmación de salida
+     */
+    private showExitModal(): void {
+        const modal = document.createElement('div')
+        modal.className = 'exit-modal-overlay'
+
+        const userStr = localStorage.getItem('currentUser')
+        const isAnonymous = !userStr || JSON.parse(userStr).isAnonymous
+
+        modal.innerHTML = `
+            <div class="exit-modal">
+                <h2>¿Salir de la partida?</h2>
+                <p>Si sales, quedarás marcado como muerto y no podrás volver.</p>
+                
+                <div class="exit-modal-buttons">
+                    <button class="btn-cancel">Cancelar</button>
+                    <button class="btn-exit-title">Salir al Título</button>
+                    ${!isAnonymous ? '<button class="btn-exit-profile">Ir a mi Perfil</button>' : ''}
+                </div>
+            </div>
+        `
+
+        modal.querySelector('.btn-cancel')?.addEventListener('click', () => {
+            modal.remove()
+        })
+
+        modal
+            .querySelector('.btn-exit-title')
+            ?.addEventListener('click', () => {
+                this.exitGame('title')
+            })
+
+        modal
+            .querySelector('.btn-exit-profile')
+            ?.addEventListener('click', () => {
+                this.exitGame('profile')
+            })
+
+        document.body.appendChild(modal)
+    }
+
+    /**
+     * Muestra el modal de muerte cuando el jugador pierde
+     */
+    private showDeathModal(): void {
+        const app = document.getElementById('app')
+        if (!app) return
+
+        // 1. Definimos qué pasa al pulsar "Seguir Viendo"
+        const onSpectate = () => {
+            // Solo quitamos el modal
+            const modal = document.querySelector('.death-modal-container')
+            if (modal) modal.remove()
+            document.body.classList.remove('death-modal-active')
+        }
+
+        // 2. Definimos qué pasa al pulsar "Salir"
+        const onExitTitle = () => this.exitGame('title')
+        const onExitProfile = () => this.exitGame('profile')
+
+        // 3. Creamos y mostramos el modal (lo enchufamos al body para tapar todo)
+        const deathModal = new DeathModalContainer(
+            document.body, // Root node
+            onSpectate,
+            onExitTitle,
+            onExitProfile
+        )
+
+        deathModal.render()
+    }
+
+    /**
+     * Envía el evento player.left, desconecta sockets y cambia de pantalla
+     */
+    private async exitGame(target: 'title' | 'profile'): Promise<void> {
+        // 1. Limpiamos el modal de SALIR (tu código original)
+        const modal = document.querySelector('.exit-modal-overlay')
+        if (modal) {
+            modal.remove()
+        }
+
+        // 👇 AÑADIR ESTO: Limpiamos también el modal de MUERTE si está abierto
+        const deathModal = document.querySelector('.death-modal-container')
+        if (deathModal) {
+            deathModal.remove()
+        }
+        // 👇 AÑADIR ESTO: Limpiamos las clases del body
+        document.body.classList.remove('death-modal-active')
+        document.body.classList.remove('game-over-active')
+
+        try {
+            const gameStr = localStorage.getItem('currentGame')
+
+            if (gameStr) {
+                const game = JSON.parse(gameStr)
+
+                // Respetamos TU método: getCurrentParticipantId()
+                await emitGameEvent(game.id, 'player.left', {
+                    participantId: this.getCurrentParticipantId(),
+                })
+                console.log('✅ Evento player.left enviado')
+            }
+        } catch (error) {
+            console.error('Error al salir de la partida:', error)
+        }
+
+        gameController.disconnectGameChannel()
+        gameController.disconnectWolvesChannel()
+
+        const app = document.getElementById('app')
+        if (!app) {
+            console.error('❌ No se encontró el contenedor #app')
+            return
+        }
+
+        app.innerHTML = ''
+
+        if (target === 'title') {
+            const access = new AccessContainer(app)
+            access.render()
+        } else {
+            const profile = new UserProfileContainer(app)
+            profile.render()
+        }
     }
 }

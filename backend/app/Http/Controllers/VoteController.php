@@ -46,10 +46,10 @@ class VoteController extends Controller
             ->with('states')
             ->first();
 
-        $check = $participant->id !== $voteData['targetId'];
+        /*$check = ($participant->id != $voteData['targetId']);
         if (! $check['success']) {
             return $check;
-        }
+        }*/
 
         $check = self::validateUserInGame($participant);
         if (! $check['success']) {

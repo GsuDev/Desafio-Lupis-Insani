@@ -159,3 +159,37 @@
     height: 100%;
     object-fit: cover;
 }
+
+/* =========================================
+   ESTILOS PARA JUGADORES MUERTOS (FANTASMAS)
+   ========================================= */
+
+/* El contenedor principal se vuelve semitransparente y gris */
+.game-participant-card.is-dead {
+    opacity: 0.7;
+    filter: grayscale(100%);
+    pointer-events: none;
+    transition: all 0.5s ease;
+}
+
+/* Animación de flotar (efecto fantasma) */
+.game-participant-card.is-dead .gp-avatar {
+    animation: float-ghost 3s ease-in-out infinite;
+}
+
+/* Cambiamos el fondo del nombre a un tono más fúnebre */
+.game-participant-card.is-dead .gp-name-container {
+    background-color: rgba(50, 50, 50, 0.9);
+    border: 1px solid #444;
+}
+
+/* Definición de la animación de flotación */
+@keyframes float-ghost {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px); /* Sube un poco */
+    }
+}

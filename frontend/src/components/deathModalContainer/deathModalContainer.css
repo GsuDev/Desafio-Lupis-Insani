@@ -1,0 +1,29 @@
+.death-modal-container {
+    position: fixed;
+    inset: 0; /* Atajo para top:0, right:0, bottom:0, left:0 */
+    width: 100vw;
+    height: 100vh;
+
+    background-color: rgba(20, 5, 5, 0.8);
+    backdrop-filter: blur(6px);
+
+    z-index: 50;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.death-modal-container.visible {
+    opacity: 1;
+}
+
+/* Cuando el modal de muerte está activo, podemos difuminar o esconder 
+   elementos del juego de fondo para centrar la atención 
+*/
+body.death-modal-active .game-component {
+    filter: grayscale(80%) blur(2px);
+    transition: filter 0.5s ease;
+}
