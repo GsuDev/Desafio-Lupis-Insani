@@ -1,0 +1,152 @@
+
+:root {
+    --admin-bg: rgba(15, 12, 41, 0.95);
+    --admin-sidebar: rgba(10, 10, 30, 0.9);
+    --admin-hover: rgba(255, 143, 41, 0.1);
+    --admin-accent: #ff8f29;
+    --admin-text: #e0e0e0;
+    --admin-text-muted: #a0a0a0;
+    --admin-danger: #e74c3c;
+    --admin-border: rgba(255, 143, 41, 0.3);
+}
+
+.admin-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--admin-bg);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+    display: flex;
+    font-family: var(--font-body, 'Nunito', sans-serif);
+    color: var(--admin-text);
+}
+
+
+.admin-sidebar {
+    width: 220px;
+    background-color: var(--admin-sidebar);
+    display: flex;
+    flex-direction: column;
+    border-right: 2px solid var(--admin-border);
+    padding: 25px;
+    flex-shrink: 0;
+}
+
+.sidebar-header {
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--admin-accent);
+}
+
+.sidebar-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+}
+
+.menu-btn {
+    background: transparent;
+    border: none;
+    color: var(--admin-text-muted);
+    padding: 12px 15px;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.menu-btn:hover {
+    background-color: var(--admin-hover);
+    color: white;
+}
+
+.menu-btn.active {
+    background-color: var(--admin-accent);
+    color: #121212;
+    font-weight: bold;
+}
+
+.sidebar-footer {
+    border-top: 1px solid #333;
+    padding-top: 20px;
+}
+
+.btn-exit {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--admin-danger);
+    color: var(--admin-danger);
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-exit:hover {
+    background: var(--admin-danger);
+    color: white;
+}
+
+
+.admin-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    padding-top: 20px;
+    overflow: hidden; /* el scroll lo manejara el table-container */
+    background-color: transparent;
+    position: relative;
+}
+.admin-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 100%;
+    flex-shrink: 0; /* que no se encoja */
+}
+
+.admin-topbar h1 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 400;
+    font-family: var(--font-heading, 'Fredoka One', cursive);
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+
+.table-container {
+    background: rgba(10, 10, 30, 0.7);
+    border-radius: 12px;
+    border: 2px solid var(--admin-border);
+    padding: 20px;
+    box-shadow: 
+        0 0 20px rgba(255, 143, 41, 0.1),
+        0 10px 30px rgba(0, 0, 0, 0.5);
+    flex: 1; /* ocupa todo el espacio vertical disponible */
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* importante para que el scroll interno funcione */
+    min-height: 0; /* permite que flex-shrink funcione */
+}
