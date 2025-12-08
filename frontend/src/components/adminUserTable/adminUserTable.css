@@ -1,8 +1,45 @@
-.search-container {
+/* header con busqueda y boton crear */
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
     margin-bottom: 15px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+}
+
+.search-container {
     display: flex;
     justify-content: flex-start;
-    flex-shrink: 0; /* que no se encoja, siempre visible */
+    flex-shrink: 0;
+}
+
+.btn-create-user {
+    background: linear-gradient(135deg, #ff8f29, #ff6b00);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: var(--font-heading, 'Fredoka One', cursive);
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 143, 41, 0.3);
+    white-space: nowrap;
+}
+
+.btn-create-user:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 143, 41, 0.4);
+    background: linear-gradient(135deg, #ffaa55, #ff8f29);
+}
+
+.btn-create-user:active {
+    transform: translateY(0);
 }
 
 .search-input {
@@ -67,7 +104,6 @@
 }
 
 .users-table thead {
-    background: rgba(20, 15, 50, 1);
     position: sticky;
     top: 0;
     z-index: 10;
@@ -78,13 +114,13 @@
     text-align: left;
     font-weight: 700;
     text-transform: uppercase;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     letter-spacing: 1px;
     color: #ff8f29;
     font-family: var(--font-heading, 'Fredoka One', cursive);
     border-bottom: 2px solid rgba(255, 143, 41, 0.4);
     white-space: nowrap;
-    background: rgba(20, 15, 50, 1);
+    background: rgb(60, 40, 25);
 }
 
 .users-table td {

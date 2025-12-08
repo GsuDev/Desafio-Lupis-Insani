@@ -2,6 +2,7 @@ import './adminUserTable.css'
 import { userController } from '../../controllers/UserController'
 import type { User } from '../../models/models'
 import photo from '../../assets/characters/werewolf.png'
+import CreateUserModal from '../createUserModal/createUserModal'
 
 /**
  * tabla de usuarios para el panel de admin
@@ -38,6 +39,10 @@ export class AdminUsersTableComponent {
         this.allUsers = users
         this.container.innerHTML = ''
 
+        // cabecera con buscador y boton crear
+        const headerContainer = document.createElement('div')
+        headerContainer.className = 'table-header'
+
         // buscador
         const searchContainer = document.createElement('div')
         searchContainer.className = 'search-container'
@@ -59,7 +64,15 @@ export class AdminUsersTableComponent {
         }
 
         searchContainer.appendChild(searchInput)
-        this.container.appendChild(searchContainer)
+
+        // boton crear usuario
+        const createBtn = document.createElement('button')
+        createBtn.className = 'btn-create-user'
+        createBtn.textContent = '➕ Crear Usuario'
+        createBtn.onclick = () => this.handleCreateUser()
+
+        headerContainer.append(searchContainer, createBtn)
+        this.container.appendChild(headerContainer)
 
         // tabla
         const wrapper = document.createElement('div')
@@ -257,6 +270,27 @@ export class AdminUsersTableComponent {
             this.allUsers = this.allUsers.filter((u) => u.id !== user.id)
             this.renderTableBody(this.allUsers)
         }
+    }
+    /**
+     * recarga la lista de usuarios desde el servidor
+     */
+    private async loadUsers() {
+        const users = await userController.getAllUsers()
+        if (users) {
+            this.allUsers = users
+            this.renderTableBody(this.allUsers)
+        }
+    }
+
+    /**
+     * abre el modal para crear un nuevo usuario
+     */
+    private handleCreateUser() {
+        const modal = new CreateUserModal(() => {
+            // callback cuando se crea el usuario - refrescar la lista
+            this.loadUsers()
+        })
+        modal.show()
     }
 }
 
