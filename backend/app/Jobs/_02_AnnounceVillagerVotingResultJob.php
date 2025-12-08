@@ -84,6 +84,7 @@ class _02_AnnounceVillagerVotingResultJob implements ShouldQueue
             if (! $winStatus['data']['winner']) {
                 _03_TransitionToNightJob::dispatch($this->gameId)->delay(now()->addSeconds($duration));
             } else {
+                GameController::finishGame($this->gameId);
                 GameChannelController::systemSend(
                     'game.conditions',
                     $winStatus,
