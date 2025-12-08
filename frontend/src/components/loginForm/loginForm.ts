@@ -4,7 +4,8 @@ import { renderUserForm } from '../userForm/userForm'
 import UserProfileContainer from '../userProfileContainer/userProfileContainer'
 import { RestorePasswordModal } from '../restorePasswordModal/restorePasswordModal'
 import './loginForm.css'
-
+import closedEyeIcon from '../../assets/icons/closed-eye.png'
+import openEyeIcon from '../../assets/icons/open-eye.png'
 export class LoginFormComponent {
     private container: HTMLElement
     private rootElement!: HTMLDivElement
@@ -119,6 +120,10 @@ export class LoginFormComponent {
         label.htmlFor = id
         label.textContent = labelText
 
+        // 🚨 Nuevo: Wrapper para el input y el botón
+        const inputWrapper = document.createElement('div')
+        inputWrapper.className = 'login-input-wrapper'
+
         const input = document.createElement('input')
         input.type = inputType
         input.id = id
@@ -136,11 +141,50 @@ export class LoginFormComponent {
             input.autocomplete = 'off'
         }
 
+        inputWrapper.appendChild(input) // Añadir el input al wrapper
+
+        // 🚨 Nuevo: Añadir botón de mostrar/ocultar contraseña si es tipo password
+        if (inputType === 'password') {
+            const toggleButton = document.createElement('button')
+            toggleButton.type = 'button'
+            toggleButton.className = 'toggle-password'
+            toggleButton.setAttribute('aria-label', 'Mostrar contraseña')
+
+            const eyeIcon = document.createElement('img')
+            eyeIcon.src = closedEyeIcon
+            eyeIcon.alt = 'Mostrar contraseña'
+            eyeIcon.className = 'eye-icon'
+            toggleButton.appendChild(eyeIcon)
+
+            toggleButton.addEventListener('click', () => {
+                if (input.type === 'password') {
+                    input.type = 'text'
+                    eyeIcon.src = openEyeIcon
+                    eyeIcon.alt = 'Ocultar contraseña'
+                    toggleButton.setAttribute(
+                        'aria-label',
+                        'Ocultar contraseña'
+                    )
+                } else {
+                    input.type = 'password'
+                    eyeIcon.src = closedEyeIcon
+                    eyeIcon.alt = 'Mostrar contraseña'
+                    toggleButton.setAttribute(
+                        'aria-label',
+                        'Mostrar contraseña'
+                    )
+                }
+            })
+
+            inputWrapper.appendChild(toggleButton) // Añadir el botón al wrapper
+        }
+
         const errorP = document.createElement('p')
         errorP.className = 'error-message'
         errorP.dataset.input = id
 
-        group.append(label, input, errorP)
+        // 🚨 Cambiar: Añadir el wrapper en lugar del input directo
+        group.append(label, inputWrapper, errorP)
 
         return group
     }
@@ -195,16 +239,7 @@ export class LoginFormComponent {
         // Limpiar errores previos
         this.clearErrors()
 
-        // Validación de email
-        if (!email) {
-            this.showError('email', 'El correo electrónico es obligatorio')
-            return
-        }
-
-        if (!this.isValidEmail(email)) {
-            this.showError('email', 'Ingresa un correo electrónico válido')
-            return
-        }
+        // ... (código existente de validación)
 
         // Validación de contraseña
         if (!password) {
@@ -223,12 +258,24 @@ export class LoginFormComponent {
         console.log('Login enviado:', { email, password })
 
         // Hacemos login con el userController
-        const user = await userController.login(email, password)
+        await userController.login(email, password)
 
-        const app = document.getElementById('app')
-        if (app) {
-            const userProfileContainer = new UserProfileContainer(app)
-            userProfileContainer.render()
+        // Verificación del token y redirección
+        const token = localStorage.getItem('token')
+
+        if (token) {
+            console.log('✅ Login exitoso, token encontrado. Redirigiendo...')
+            const app = document.getElementById('app')
+            if (app) {
+                const userProfileContainer = new UserProfileContainer(app)
+                userProfileContainer.render()
+            }
+        } else {
+            // Manejar error si el login es exitoso pero no hay token
+            console.error(
+                '❌ Login exitoso, pero no se encontró el token de sesión.'
+            )
+            this.showError('password', 'Error de sesión. Intenta de nuevo.') // Mostrar un error genérico
         }
     }
 

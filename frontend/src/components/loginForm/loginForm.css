@@ -93,7 +93,13 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
-
+/* 🚨 NUEVO: Wrapper para input + botón de contraseña */
+.login-input-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
 .login-input-group input {
     width: 100%;
     background-color: rgba(255, 255, 255, 0.05);
@@ -107,7 +113,10 @@
     font-weight: 600;
     box-sizing: border-box;
 }
-
+/* 🚨 NUEVO: Añadir padding a la derecha si hay botón de mostrar contraseña */
+.login-input-wrapper:has(.toggle-password) input {
+    padding-right: 3rem;
+}
 .login-input-group input::placeholder {
     color: rgba(255, 255, 255, 0.4);
 }
@@ -128,7 +137,44 @@
     font-weight: 600;
     min-height: 1rem;
 }
+/* 🚨 NUEVO: Botón de mostrar/ocultar contraseña (copiado de userForm.css) */
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 2;
+    width: 28px;
+    height: 28px;
+}
 
+.toggle-password:hover {
+    transform: translateY(-50%) scale(1.1);
+}
+
+.toggle-password:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.eye-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: brightness(0.8) opacity(0.7);
+    transition: all 0.3s ease;
+}
+
+.toggle-password:hover .eye-icon {
+    filter: brightness(1) opacity(1);
+}
 /* Botón de submit - similar a btn-action primary */
 .login-submit-button {
     width: 100%;

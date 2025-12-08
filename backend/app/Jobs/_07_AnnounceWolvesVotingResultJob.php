@@ -78,7 +78,8 @@ class _07_AnnounceWolvesVotingResultJob implements ShouldQueue
             GameChannelController::systemSend(
                 'vote.result',
                 [
-                    'dead_participant' => $votingResult['victim'],
+                    'participant_id' => $votingResult['victim'],
+                    'dead' => true,
                 ],
                 $this->gameId
             );

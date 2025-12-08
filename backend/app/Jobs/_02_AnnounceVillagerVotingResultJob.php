@@ -74,7 +74,8 @@ class _02_AnnounceVillagerVotingResultJob implements ShouldQueue
             GameChannelController::systemSend(
                 'vote.result',
                 [
-                    'dead_participant' => $votingResult['victim'],
+                    'participant_id' => $votingResult['victim'],
+                    'dead' => ! $this->isFirstDay,
                 ],
                 $this->gameId
             );

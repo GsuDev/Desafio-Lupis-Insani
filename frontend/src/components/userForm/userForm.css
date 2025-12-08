@@ -227,6 +227,14 @@
     letter-spacing: 0.5px;
 }
 
+/* Wrapper para input + botón de contraseña */
+.input-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
 .input-group input {
     width: 100%;
     padding: 0.85rem 1rem;
@@ -241,6 +249,11 @@
     transition: all 0.3s ease;
 }
 
+/* Añadir padding a la derecha si hay botón de mostrar contraseña */
+.input-wrapper:has(.toggle-password) input {
+    padding-right: 3rem;
+}
+
 .input-group input:focus {
     outline: none;
     border-color: #ff8f29;
@@ -251,6 +264,45 @@
 .input-group input::placeholder {
     color: rgba(255, 255, 255, 0.4);
     font-weight: 400;
+}
+
+/* Botón de mostrar/ocultar contraseña */
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 2;
+    width: 28px;
+    height: 28px;
+}
+
+.toggle-password:hover {
+    transform: translateY(-50%) scale(1.1);
+}
+
+.toggle-password:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.eye-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: brightness(0.8) opacity(0.7);
+    transition: all 0.3s ease;
+}
+
+.toggle-password:hover .eye-icon {
+    filter: brightness(1) opacity(1);
 }
 
 /* Filas de inputs */

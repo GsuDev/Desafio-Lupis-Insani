@@ -36,6 +36,7 @@ export type Participant = {
     nickname: string
     characterId: number | null
     profileUrl: string | null
+    states: string[]
 }
 
 export type GameData = {
