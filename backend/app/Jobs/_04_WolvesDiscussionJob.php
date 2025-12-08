@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Events\GameEvent;
 use App\Events\WolvesEvent;
+use App\Http\Controllers\GameChannelController;
 use App\Models\Game;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -36,6 +37,8 @@ class _04_WolvesDiscussionJob implements ShouldQueue
 
         $text = 'Unos aullidos rompen el silencio. Los lobos se comunican...';
         $message = $game->addMessage('system', null, $text);
+
+        GameChannelController::systemSend('game.narrator', ['message' => '¡Se escuchan aullidos de fondo!'], $this->gameId);
 
         broadcast(new GameEvent(
             'chat.message',

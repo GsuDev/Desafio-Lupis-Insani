@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Game;
 use App\Models\participant;
 use App\Models\State;
 
@@ -85,33 +86,34 @@ class EventController extends Controller
     {
         $category = explode('.', $event);
         switch ($category[1]) {
-
             case 'emitted':
                 $result = VoteController::vote($data, $gameId, $user);
+
+                // 🔥 Si falla, devolver null para que no se emita el evento
                 if (! $result['success']) {
-                    return null;
+                    return ['dontEmit'];
                 }
 
-                return $data;
-                break;
+                // Obtener voterId del participante actual
+                $participant = Participant::where('user_id', $user->id)
+                    ->where('game_id', $gameId)
+                    ->first();
 
+                if (! $participant) {
+                    return ['dontEmit'];
+                }
+
+                return [
+                    'vote' => $result['data']['vote'],
+                    'isAnUnvote' => $result['data']['isAnUnvote'],
+                    'voterId' => $participant->id,
+                    'targetId' => $data['targetId'],
+                ];
+                break;
             case 'result':
-
-                // Lógica en el job
-
                 return $data;
-
                 break;
-
-            case 'canceled':
-                $result = VoteController::cancelVote($data, $gameId, $user);
-                if (! $result['success']) {
-
-                }
-
-                return $data;
             default:
-
                 break;
         }
     }
@@ -123,23 +125,44 @@ class EventController extends Controller
         switch ($category[1]) {
             case 'left':
 
-                $participant = participant::where('game_id', $gameId)
+                // Cargar la partida
+                $game = Game::find($gameId);
+
+                $participant = Participant::where('game_id', $gameId)
                     ->where('user_id', $user->id)
                     ->first();
 
-                if ($participant) {
+                if ($participant && $game) {
 
-                    $deadState = State::firstOrCreate(['name' => 'DEAD']);
+                    if ($game->state === 'on_course') {
 
-                    // Usamos syncWithoutDetaching para no borrar otros estados (ej: si era Vidente)
-                    $participant->states()->syncWithoutDetaching([$deadState->id]);
+                        // Añadir estado DEAD sin borrar otros
+                        $deadState = State::firstOrCreate(['name' => 'DEAD']);
+                        $participant->states()->syncWithoutDetaching([$deadState->id]);
+                    } elseif ($game->state === 'waiting') {
+
+                        // Si la partida está esperando → borrar el participant
+                        $participant->delete();
+                    }
                 }
 
                 return $data;
                 break;
 
+            case 'joined':
+
+                $participant = participant::where('game_id', $gameId)
+                    ->where('user_id', $user->id)
+                    ->first();
+
+                if ($participant) {
+                    return $data;
+                }
+
+                return null;
+                break;
             default:
-                return $data;
+
                 break;
         }
     }
@@ -158,7 +181,12 @@ class EventController extends Controller
                 return $data;
 
                 break;
-
+            case 'narrator':
+                return $data;
+                break;
+            case 'start':
+                return $data;
+                break;
             default:
 
                 break;

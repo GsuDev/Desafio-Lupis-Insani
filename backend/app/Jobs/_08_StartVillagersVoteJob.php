@@ -44,6 +44,8 @@ class _08_StartVillagersVoteJob implements ShouldQueue
             $nextDay = $lastDay + 1;
             VoteController::startVotation($this->gameId, 'day', $nextDay);
 
+            GameChannelController::systemSend('game.narrator', ['message' => '¡SILENCIO! A VOTAR'], $this->gameId);
+
             GameChannelController::systemSend('vote.start', null, $this->gameId);
 
             // 4. Encadenar siguiente Job (Resolución)

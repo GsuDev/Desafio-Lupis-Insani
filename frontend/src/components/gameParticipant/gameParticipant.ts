@@ -189,8 +189,21 @@ export class GameParticipant {
         if (!this.participant.states.includes('DEAD')) {
             this.participant.states.push('DEAD')
         }
+
         // Actualizamos la vista
         this.updateDeadStatus()
+    }
+    public setMayor(): void {
+        if (!this.participant.states) {
+            this.participant.states = []
+        }
+        // Si no está ya marcado como alcalde, lo marcamos
+        if (!this.participant.states.includes('COUNCIL')) {
+            this.participant.states.push('COUNCIL')
+        }
+
+        // Actualizamos la vista
+        this.updateMayorStatus()
     }
 
     private checkIfDead(): boolean {
@@ -211,6 +224,13 @@ export class GameParticipant {
             //transicion muerto vivo
             this.setAliveSprite()
             this.element.classList.remove('is-dead')
+        }
+    }
+    private updateMayorStatus(): void {
+        const nameContainer = this.element.querySelector('.gp-name-container')
+        const nameSpan = this.element.querySelector('.gp-name')
+        if (nameSpan && !nameSpan.textContent?.startsWith('👑')) {
+            nameSpan.textContent = '👑 ' + nameSpan.textContent
         }
     }
 
@@ -252,5 +272,35 @@ export class GameParticipant {
             }
         }
         return `/src/assets/charactersInGame/char_w_${this.version}.png`
+    }
+    /**
+     * Revela el sprite de lobo (para fase nocturna en canal lobos)
+     */
+    public revealAsWolf(): void {
+        const avatarImg = this.element.querySelector(
+            '.gp-avatar'
+        ) as HTMLImageElement
+        if (avatarImg) {
+            this.setVotingEnabled(false)
+            avatarImg.src = `/src/assets/charactersInGame/char_l_${this.version}.png`
+            avatarImg.classList.add('revealed-wolf')
+        }
+    }
+
+    /**
+     * Oculta el sprite de lobo, volviendo a aldeano (para fase diurna)
+     */
+    public hideAsVillager(): void {
+        const avatarImg = this.element.querySelector(
+            '.gp-avatar'
+        ) as HTMLImageElement
+        if (avatarImg) {
+            // Si está muerto, mantener sprite de muerto
+            if (this.isDead) {
+                return
+            }
+            avatarImg.src = `/src/assets/charactersInGame/char_w_${this.version}.png`
+            avatarImg.classList.remove('revealed-wolf')
+        }
     }
 }

@@ -5,6 +5,7 @@ import type { ChatEvent, Event } from '../types/events.types'
 import { GameOverContainer } from '../components/gameOverContainer/gameOverContainer'
 import type { GameOverData } from '../components/gameOver/gameOverDetails'
 import type { ApiResponse } from '../types/api.types'
+import { NarratorOverlay } from '../components/narratorOverlay/NarratorOverlay'
 import { GameComponent } from '../components/game/game'
 
 /**
@@ -26,11 +27,13 @@ export class GameManager {
             case 'game.day':
                 console.log('☀️ Evento de DÍA recibido:', event.data)
                 GameComponent.handleDayPhase(event.data)
+                GameComponent.handleVoteEnd // 🔥 Cerrar cualquier votación activa
                 break
 
             case 'game.night':
                 console.log('🌙 Evento de NOCHE recibido:', event.data)
                 GameComponent.handleNightPhase(event.data)
+                GameComponent.handleVoteEnd // 🔥 Cerrar cualquier votación activa
                 break
 
             case 'game.discussion':
@@ -39,6 +42,16 @@ export class GameManager {
                     'Empieza la discusion: Cambiame por humo',
                     event.data
                 )
+                break
+            case 'game.narrator':
+                // Despachar evento al DOM para que GameComponent lo pinte
+                // event.data debería tener { message: "Texto", id: "uuid..." }
+                const detail = {
+                    message: event.data.message || '¡Atención Aldeanos!',
+                }
+                console.log('📣 Anuncio del narrador:', detail)
+                NarratorOverlay.spawnMessage(detail.message)
+
                 break
 
             //hu 45 pantalla game over
@@ -70,8 +83,8 @@ export class GameManager {
                 }
                 break
 
-            case 'game.example':
-                // Cambiar para añadir
+            case 'game.start':
+                gameController.reloadCurrentGame()
                 break
 
             default:

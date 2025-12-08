@@ -24,14 +24,21 @@ export class VoteManager {
 
             case 'vote.emitted':
                 console.log('✅ Voto emitido:', event.data)
-                GameComponent.handleVoteEmitted(event.data)
+                if (!event.data) {
+                    console.warn(
+                        `⚠️ Voto no exitoso: Te has votado a ti mismo o algo has liado`,
+                        event.data
+                    )
+                    return
+                }
+                if (event.data.isAnUnvote) {
+                    console.log('❌ Voto cancelado:', event.data)
+                    GameComponent.handleVoteCanceled(event.data)
+                } else {
+                    console.log('🗳️ Nuevo voto:', event.data)
+                    GameComponent.handleVoteEmitted(event.data)
+                }
                 break
-
-            case 'vote.canceled':
-                console.log('❌ Voto cancelado:', event.data)
-                GameComponent.handleVoteCanceled(event.data)
-                break
-
             case 'vote.result':
                 console.log('📊 Resultado de votación:', event.data)
                 // TODO HU futura: Mostrar quién fue eliminado
