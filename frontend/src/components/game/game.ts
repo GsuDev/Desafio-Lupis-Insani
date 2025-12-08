@@ -30,6 +30,7 @@ export class GameComponent {
     // Estado de votación
     private static instance: GameComponent | null = null
     private isVotingActive: boolean = false
+    private isCurrentParticipantDead: boolean = false
     private myCurrentVote: number | null = null
     private participantComponents: Map<number, GameParticipant> = new Map()
 
@@ -62,6 +63,17 @@ export class GameComponent {
     }
 
     /**
+     * Maneja el final del período de votación
+     */
+    public static handleVoteEnd(data: any): void {
+        if (!GameComponent.instance) {
+            console.warn('⚠️ No hay instancia de GameComponent')
+            return
+        }
+        GameComponent.instance.endVoting()
+    }
+
+    /**
      * Maneja cuando se emite un voto
      */
     public static handleVoteEmitted(data: any): void {
@@ -70,14 +82,24 @@ export class GameComponent {
             return
         }
 
-        const participantId =
-            data.participantId ||
-            data.participant_id ||
-            data.targetId ||
-            data.target_id
+        const targetId = data.targetId || data.target_id
         const voterId = data.voterId || data.voter_id
 
-        GameComponent.instance.addVote(participantId, voterId)
+        if (!targetId || !voterId) {
+            console.error('❌ Datos incompletos en vote.emitted:', data)
+            return
+        }
+
+        // 🔥 IMPORTANTE: No procesar mi propio voto (ya se hizo optimistamente)
+        const currentUserId = GameComponent.instance.getCurrentParticipantId()
+        if (voterId === currentUserId) {
+            console.log(
+                'ℹ️ Ignorando mi propio voto (ya procesado optimistamente)'
+            )
+            return
+        }
+
+        GameComponent.instance.addVote(targetId, voterId)
     }
 
     /**
@@ -89,14 +111,24 @@ export class GameComponent {
             return
         }
 
-        const participantId =
-            data.participantId ||
-            data.participant_id ||
-            data.targetId ||
-            data.target_id
+        const targetId = data.targetId || data.target_id
         const voterId = data.voterId || data.voter_id
 
-        GameComponent.instance.removeVote(participantId, voterId)
+        if (!targetId || !voterId) {
+            console.error('❌ Datos incompletos en vote canceled:', data)
+            return
+        }
+
+        // 🔥 IMPORTANTE: No procesar mi propia cancelación (ya se hizo optimistamente)
+        const currentUserId = GameComponent.instance.getCurrentParticipantId()
+        if (voterId === currentUserId) {
+            console.log(
+                'ℹ️ Ignorando mi propia cancelación (ya procesada optimistamente)'
+            )
+            return
+        }
+
+        GameComponent.instance.removeVote(targetId, voterId)
     }
 
     /*
@@ -120,8 +152,11 @@ export class GameComponent {
         if (victim && victim.id && dead) {
             // Marcamos al muerto usando su ID real
             GameComponent.markParticipantAsDead(victim.id)
+            GameComponent.instance.isCurrentParticipantDead = true
         }
-        //TODO MARCAR ALCALDE COMO ALCALDE
+        if (victim && victim.id && !dead) {
+            GameComponent.markParticipantAsMayor(victim.id)
+        }
 
         // Actualizamos estado general por si acaso
         GameComponent.updateParticipantsDeadStatus()
@@ -148,6 +183,13 @@ export class GameComponent {
             gameContainer.classList.remove('phase-night') // 👈 Quita noche
             gameContainer.classList.add('phase-day') // 👈 Añade día
         }
+
+        GameComponent.instance.hideWolves()
+    }
+    private hideWolves(): void {
+        this.participantComponents.forEach((component) => {
+            component.hideAsVillager()
+        })
     }
 
     /**
@@ -169,6 +211,32 @@ export class GameComponent {
             gameContainer.classList.remove('phase-day') // 👈 Quita día
             gameContainer.classList.add('phase-night') // 👈 Añade noche
         }
+        if (GameComponent.instance.isCurrentParticipantWolf()) {
+            GameComponent.instance.revealWolves()
+        }
+    }
+
+    private isCurrentParticipantWolf(): boolean {
+        const myRole = this.getMyRole()
+        return myRole === 'wolf'
+    }
+
+    private isThisParticipantWolf(participantId: number): boolean {
+        const participant = gameController.currentGame?.participants.find(
+            (p) => p.id === participantId
+        )
+        if (!participant) return false
+        return participant.characterId === this.WOLF_CHARACTER_ID
+    }
+
+    private revealWolves(): void {
+        this.participantComponents.forEach((component) => {
+            const participantId = component.getParticipantId()
+            const isWolf = this.isThisParticipantWolf(participantId)
+            if (isWolf) {
+                component.revealAsWolf()
+            }
+        })
     }
     // ========== MÉTODOS ESTÁTICOS PARA PLAYER EVENTS ==========
 
@@ -183,7 +251,7 @@ export class GameComponent {
         if (!GameComponent.instance) return
 
         console.log(`💀 Marcando como muerto al ID: ${participantId}`)
-
+        GameComponent.instance.isCurrentParticipantDead = true
         const component =
             GameComponent.instance.participantComponents.get(participantId)
 
@@ -197,6 +265,32 @@ export class GameComponent {
 
             setTimeout(() => {
                 GameComponent.instance?.showDeathModal()
+            }, 1000)
+        }
+    }
+    /**
+     * Busca un participante por ID y lo marca como muerto inmediatamente
+     * (Esto se ejecuta en tiempo real cuando llega el evento del socket)
+     */
+    public static markParticipantAsMayor(participantId: number): void {
+        if (!GameComponent.instance) return
+
+        console.log(`👑 Marcando como alcalde al ID: ${participantId}`)
+
+        const component =
+            GameComponent.instance.participantComponents.get(participantId)
+
+        if (component) {
+            component.setMayor()
+        }
+
+        const myId = GameComponent.instance.getCurrentParticipantId()
+        if (myId === participantId) {
+            console.log('👑 ¡He sido elegido como alcalde! Mostrando modal...')
+
+            setTimeout(() => {
+                // TODO: Implementar modal de alcalde
+                // GameComponent.instance?.showMayorModal()
             }, 1000)
         }
     }
@@ -240,36 +334,38 @@ export class GameComponent {
     /**
      * Añade un voto a un participante
      */
-    private addVote(participantId: number, voterId: number): void {
-        console.log(`✅ Voto emitido: ${voterId} -> ${participantId}`)
+    private addVote(targetId: number, voterId: number): void {
+        console.log(`✅ Voto añadido: ${voterId} -> ${targetId}`)
 
-        const component = this.participantComponents.get(participantId)
+        const component = this.participantComponents.get(targetId)
         if (component) {
             component.incrementVote()
         }
 
         // Si soy yo quien votó, marcar visualmente
-        const currentUser = this.getCurrentParticipantId()
-        if (voterId === currentUser) {
-            this.markMyVote(participantId)
+        const currentUserId = this.getCurrentParticipantId()
+        if (voterId === currentUserId) {
+            this.markMyVote(targetId)
+            this.myCurrentVote = targetId
         }
     }
 
     /**
      * Remueve un voto de un participante
      */
-    private removeVote(participantId: number, voterId: number): void {
-        console.log(`❌ Voto cancelado: ${voterId} -> ${participantId}`)
+    private removeVote(targetId: number, voterId: number): void {
+        console.log(`❌ Voto eliminado: ${voterId} -> ${targetId}`)
 
-        const component = this.participantComponents.get(participantId)
+        const component = this.participantComponents.get(targetId)
         if (component) {
             component.decrementVote()
         }
 
         // Si soy yo quien canceló, quitar marca visual
-        const currentUser = this.getCurrentParticipantId()
-        if (voterId === currentUser) {
+        const currentUserId = this.getCurrentParticipantId()
+        if (voterId === currentUserId) {
             component?.setVotedByMe(false)
+            this.myCurrentVote = null
         }
     }
 
@@ -293,9 +389,13 @@ export class GameComponent {
 
     /**
      * Maneja el click en un participante para votar
+     * Con actualización optimista del UI
      */
     private handleParticipantVote(participantId: number): void {
-        if (!this.isVotingActive) return
+        if (!this.isVotingActive) {
+            console.warn('⚠️ No hay votación activa')
+            return
+        }
 
         const gameStr = localStorage.getItem('currentGame')
         if (!gameStr) return
@@ -303,63 +403,100 @@ export class GameComponent {
         const game = JSON.parse(gameStr)
         const gameId = game.id
 
-        // Preparar payload según especificaciones del backend
         const isDay = this.currentPhase === 'day'
+        const currentUserId = this.getCurrentParticipantId()
+        if (!currentUserId) return
+        const instance = GameComponent.instance
+        if (!instance) return
+        if (instance.isCurrentParticipantDead) {
+            console.warn('⚠️ No puedes votar si estás muerto')
+            return
+        }
 
-        // Si ya tengo un voto activo
+        // 🔥 VALIDACIÓN: No puedes votarte a ti mismo
+        if (participantId === currentUserId) {
+            console.warn('⚠️ No puedes votarte a ti mismo')
+            return
+        }
+        // 🔥 VALIDACIÓN: No puedes votarte a ti mismo
+        if (
+            this.currentPhase === 'night' &&
+            this.isThisParticipantWolf(participantId) &&
+            this.isThisParticipantWolf(currentUserId)
+        ) {
+            console.warn('⚠️ No puedes votar a otros lobos de noche')
+            return
+        }
+
+        // 🔥 ACTUALIZACIÓN OPTIMISTA DEL UI (antes de enviar al backend)
+
+        // Caso 1: Ya tengo un voto activo
         if (this.myCurrentVote !== null) {
-            // Si es el mismo participante, cancelar voto
+            const previousTarget = this.myCurrentVote
+
+            // Caso 1A: Click en el mismo → Cancelar voto
             if (this.myCurrentVote === participantId) {
-                emitGameEvent(gameId, 'vote.canceled', {
+                console.log(`🗳️ Cancelando voto a ${participantId} (optimista)`)
+                this.removeVote(participantId, currentUserId)
+
+                emitGameEvent(gameId, 'vote.emitted', {
                     targetId: participantId,
                     isDay: isDay,
                     dayNumber: this.currentDayNumber,
                 })
-                this.myCurrentVote = null
                 return
             }
 
-            // Si es diferente, cancelar el anterior y emitir el nuevo
-            emitGameEvent(gameId, 'vote.canceled', {
-                targetId: this.myCurrentVote,
+            // Caso 1B: Click en otro → Cambiar voto
+            console.log(
+                `🗳️ Cambiando voto de ${previousTarget} a ${participantId} (optimista)`
+            )
+            this.removeVote(previousTarget, currentUserId)
+            this.addVote(participantId, currentUserId)
+
+            emitGameEvent(gameId, 'vote.emitted', {
+                targetId: participantId,
                 isDay: isDay,
                 dayNumber: this.currentDayNumber,
             })
+            return
         }
 
-        // Emitir nuevo voto
+        // Caso 2: No tengo voto activo → Nuevo voto
+        console.log(`🗳️ Nuevo voto a ${participantId} (optimista)`)
+        this.addVote(participantId, currentUserId)
+
         emitGameEvent(gameId, 'vote.emitted', {
             targetId: participantId,
             isDay: isDay,
             dayNumber: this.currentDayNumber,
         })
-        this.myCurrentVote = participantId
     }
 
     /**
      * Marca visualmente a quién he votado
      */
-    private markMyVote(participantId: number): void {
+    private markMyVote(targetId: number): void {
         // Quitar marca de todos
         this.participantComponents.forEach((component) => {
             component.setVotedByMe(false)
         })
 
         // Marcar el nuevo
-        const component = this.participantComponents.get(participantId)
+        const component = this.participantComponents.get(targetId)
         if (component) {
             component.setVotedByMe(true)
         }
     }
 
     /**
-     * Obtiene el ID del usuario actual
+     * Obtiene el ID del usuario actual (HACER PÚBLICO)
      */
-    private getCurrentParticipantId(): number | null {
+    public getCurrentParticipantId(): number | null {
         try {
             const cUser = userController.currentUser
             if (!cUser) {
-                console.log('no existe')
+                console.log('no existe usuario')
                 return null
             }
             const participant = gameController.currentGame?.participants.find(

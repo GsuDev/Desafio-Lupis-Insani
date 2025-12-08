@@ -1,6 +1,6 @@
 import { GlobalChannel } from '../channels/GlobalChannel'
 import { ChatManager } from '../managers/Chat.manager'
-import type { EventData } from '../types/events.types'
+import type { Event } from '../types/events.types'
 
 export class GlobalEventRouter {
     private channel: GlobalChannel
@@ -9,7 +9,7 @@ export class GlobalEventRouter {
         this.channel = channel
     }
 
-    routeEvent(event: string, data: EventData): void {
+    routeEvent(event: string, data: Event): void {
         //const category = event.split('.')[0];
 
         ChatManager.handleEvent(event, data, 'game')

@@ -15,14 +15,6 @@ class VoteController extends Controller
 {
     public static function vote($data, $gameId, $user)
     {
-        /*
-        $validated = $request->validate([
-            'game_id' => 'required|integer|exists:games,id',
-            'voter_id' => 'required|integer|exists:participants,id',
-            'target_id' => 'required|integer|exists:participants,id',
-            'is_day' => 'required|boolean',
-            'day_number' => 'required|integer|min:1',
-        */
         // 1. Validación básica de inputs
         $validator = Validator::make($data, [
             'targetId' => 'required|integer|exists:participants,id',
@@ -46,37 +38,31 @@ class VoteController extends Controller
             ->with('states')
             ->first();
 
-        /*$check = ($participant->id != $voteData['targetId']);
-        if (! $check['success']) {
-            return $check;
-        }*/
-
         $check = self::validateUserInGame($participant);
         if (! $check['success']) {
             return $check;
         }
 
-        // 3. Validar ciclo día/noche según BBDD
+        // 3. Validar ciclo día/noche
         $check = self::validateCycle($gameId, $voteData['dayNumber'], $voteData['isDay']);
         if (! $check['success']) {
             return $check;
         }
 
-        // 4. Validaciones según fase (día o noche)
+        // 4. Validaciones según fase
         $check = self::validatePhaseRestrictions($participant, $voteData['targetId'], $voteData['isDay']);
         if (! $check['success']) {
             return $check;
         }
 
         // 5. Validar objetivo vivo
-
         $check = self::validateTargetAlive($voteData['targetId']);
         if (! $check['success']) {
             return $check;
         }
 
+        // 6. Cargar partida
         $game = Game::find($gameId);
-
         if (! $game) {
             return [
                 'success' => false,
@@ -85,10 +71,10 @@ class VoteController extends Controller
                 'data' => null,
             ];
         }
-        // Busco la votación activa o la creo si es el primer voto del turno
+
+        // Buscar la votación activa
         $votation = self::getLatestVotation($game);
 
-        // Comprobacion de seguridad: ¿Está cerrada la votación?
         if ($votation->is_closed) {
             return [
                 'success' => false,
@@ -98,14 +84,60 @@ class VoteController extends Controller
             ];
         }
 
-        // 6. Validar que no haya votado ya (AHORA USANDO EL ID DE LA VOTACIÓN)
-        $check = self::validateRepeatedVote($participant->id, $votation->id);
-        if (! $check['success']) {
-            return $check;
+        // 7. No puede votarse a sí mismo
+        if ($participant->id === $voteData['targetId']) {
+            return [
+                'success' => false,
+                'message' => 'No puedes votarte a ti mismo.',
+                'status' => 403,
+                'data' => null,
+            ];
         }
 
-        // Registrar voto (SOLO DATOS DE LA TABLA VOTES)
-        $vote = Vote::create([
+        // === LÓGICA UNIFICADA DE VOTO ===
+        // Buscar si ya existe un voto del participante en esta votación lógica
+        $previousVote = Vote::where('voter_id', $participant->id)
+            ->where('votation_id', $votation->id)
+            ->first();
+
+        // Caso 1: Ya había votado antes
+        if ($previousVote) {
+
+            // 1A — Está votando al MISMO → eliminar voto (unvote)
+            if ($previousVote->target_id == $voteData['targetId']) {
+                $previousVote->delete();
+
+                return [
+                    'success' => true,
+                    'message' => 'Voto eliminado.',
+                    'data' => [
+                        'vote' => null,
+                        'isAnUnvote' => true,
+                    ],
+                ];
+            }
+
+            // 1B — Votaba a OTRO distinto → cambiar voto
+            $previousVote->delete();
+
+            $newVote = Vote::create([
+                'votation_id' => $votation->id,
+                'voter_id' => $participant->id,
+                'target_id' => $voteData['targetId'],
+            ]);
+
+            return [
+                'success' => true,
+                'message' => 'Voto cambiado correctamente.',
+                'data' => [
+                    'vote' => $newVote,
+                    'isAnUnvote' => false,
+                ],
+            ];
+        }
+
+        // Caso 2: No había votado todavía
+        $newVote = Vote::create([
             'votation_id' => $votation->id,
             'voter_id' => $participant->id,
             'target_id' => $voteData['targetId'],
@@ -113,143 +145,11 @@ class VoteController extends Controller
 
         return [
             'success' => true,
-            'message' => 'Voto registrado correctamente',
-            'data' => ['vote' => $vote],
-        ];
-    }
-
-    public static function cancelVote($data, $gameId, $user)
-    {
-        /*
-        $validated = $request->validate([
-            'game_id' => 'required|integer|exists:games,id',
-            'voter_id' => 'required|integer|exists:participants,id',
-            'target_id' => 'required|integer|exists:participants,id',
-            'is_day' => 'required|boolean',
-            'day_number' => 'required|integer|min:1',
-        */
-        // 1. Validación básica de inputs
-        $validator = Validator::make($data, [
-            'targetId' => 'required|integer|exists:participants,id',
-            'isDay' => 'required|boolean',
-            'dayNumber' => 'required|integer|min:1',
-        ]);
-
-        if ($validator->fails()) {
-            return [
-                'success' => false,
-                'message' => $validator->errors(),
-                'data' => null,
-            ];
-        }
-
-        $voteData = $validator->validated();
-
-        // 2. Participante votante
-        $participant = Participant::where('user_id', $user->id)
-            ->where('game_id', $gameId)
-            ->with('states')
-            ->first();
-
-        $check = self::validateUserInGame($participant);
-        if (! $check['success']) {
-            return $check;
-        }
-
-        // 3. Validar ciclo día/noche según BBDD
-        $check = self::validateCycle($gameId, $voteData['dayNumber'], $voteData['isDay']);
-        if (! $check['success']) {
-            return $check;
-        }
-
-        // 4. Validaciones según fase (día o noche)
-        $check = self::validatePhaseRestrictions($participant, $voteData['targetId'], $voteData['isDay']);
-        if (! $check['success']) {
-            return $check;
-        }
-
-        // 5. Validar objetivo vivo
-
-        $check = self::validateTargetAlive($voteData['targetId']);
-        if (! $check['success']) {
-            return $check;
-        }
-
-        $game = Game::find($gameId);
-
-        if (! $game) {
-            return [
-                'success' => false,
-                'message' => 'La partida no existe.',
-                'status' => 404,
-                'data' => null,
-            ];
-        }
-        // Busco la votación activa o la creo si es el primer voto del turno
-        $votation = self::getLatestVotation($game);
-
-        // Comprobacion de seguridad: ¿Está cerrada la votación?
-        if ($votation->is_closed) {
-            return [
-                'success' => false,
-                'message' => 'Esta votación ya está cerrada.',
-                'status' => 403,
-                'data' => null,
-            ];
-        }
-
-        // 6. Validar que no haya votado ya (AHORA USANDO EL ID DE LA VOTACIÓN)
-        $check = self::validateRepeatedVote($participant->id, $votation->id);
-        if (! $check['success']) {
-            return $check;
-        }
-
-        // Borrar voto
-        $vote = Vote::where('voter_id', $voteData['voterId'])
-            ->where('target_id', $voteData['targetId'])
-            ->where('votation_id', $votation->id)
-            ->first();
-
-        if ($vote) {
-            $vote->delete();
-        }
-
-        return [
-            'success' => true,
-            'message' => 'Voto cancelado correctamente',
-            'data' => ['vote' => $vote],
-        ];
-    }
-
-    /**
-     * Obtiene los votos filtrados por partida, fase y ciclo.
-     */
-    public function getVotes(Request $request, $gameId)
-    {
-        $request->validate([
-            'is_day' => 'required|boolean',
-            'day_number' => 'required|integer',
-        ]);
-
-        // Uso la auxiliar que devuelve el objeto Votation
-        $votation = $this->queryVotation(
-            (int) $gameId,
-            $request->boolean('is_day'),
-            (int) $request->input('day_number')
-        );
-
-        // $votes = Vote::where('game_id', $gameId)
-        //     ->where('is_day', $request->boolean('is_day'))
-        //     ->where('day_number', $request->input('day_number'))
-        //     ->get();
-
-        // Si no existe la votación, devuelvo el array vacío para no romper el front pero si quereis se puede cambiar por return success false
-        $votes = $votation ? $votation->votes : [];
-
-        return [
-            'success' => true,
-            'message' => 'Votos recuperados con éxito',
-            'data' => ['votes' => $votes],
+            'message' => 'Voto registrado correctamente.',
+            'data' => [
+                'vote' => $newVote,
+                'isAnUnvote' => false,
+            ],
         ];
     }
 
