@@ -440,19 +440,53 @@ class UserController extends Controller
     public function getStatistics(Request $request)
     {
         $user = $request->user();
+        $wolfId = (int) env('WOLF_ID', 2);
 
         $finishedParticipations = $user->participants()
             ->whereHas('game', function ($query) {
                 $query->where('state', 'finished');
             })
-            ->with(['states', 'character']) // se cargan los estados para ver si murio
+            ->with([
+                'states',
+                'character',
+                'game.participants.states',
+                'game.participants.character',
+            ])
             ->get();
 
-        $gamesData = $finishedParticipations->map(function ($participant) {
+        $gamesData = $finishedParticipations->map(function ($participant) use ($wolfId) {
 
-            // si no tiene el estado dead esque gano
-            $isDead = $participant->states->contains('name', 'DEAD');
-            $won = ! $isDead;
+            $game = $participant->game;
+
+            // Participantes vivos (no tienen el estado DEAD)
+            $aliveParticipants = $game->participants->filter(function ($p) {
+                return ! $p->states->contains('name', 'DEAD');
+            });
+
+            // ¿Quedan lobos vivos?
+            $wolvesAlive = $aliveParticipants->where('character_id', $wolfId)->count() > 0;
+
+            // ¿Quedan NO lobos vivos?
+            $othersAlive = $aliveParticipants->where('character_id', '!=', $wolfId)->count() > 0;
+
+            // Determinar equipo ganador
+            $winner = null; // 'wolves' | 'villagers' | null
+
+            if ($wolvesAlive && ! $othersAlive) {
+                $winner = 'wolves';
+            } elseif (! $wolvesAlive && $othersAlive) {
+                $winner = 'villagers';
+            }
+
+            // Determinar si este participante ganó
+            $isWolf = $participant->character_id === $wolfId;
+
+            $won = false;
+            if ($winner === 'wolves' && $isWolf) {
+                $won = true;
+            } elseif ($winner === 'villagers' && ! $isWolf) {
+                $won = true;
+            }
 
             return [
                 'gameId' => $participant->game_id,
@@ -462,16 +496,13 @@ class UserController extends Controller
             ];
         });
 
-        $totalGames = $gamesData->count();
-        $totalWins = $gamesData->where('won', true)->count();
-
         return response()->json([
             'success' => true,
             'message' => 'Estadísticas recuperadas correctamente',
             'data' => [
-                'totalGames' => $totalGames,
-                'totalWins' => $totalWins,
-                'games' => $gamesData->values(), // esto reindexa el array por si acaso
+                'totalGames' => $gamesData->count(),
+                'totalWins' => $gamesData->where('won', true)->count(),
+                'games' => $gamesData->values(),
             ],
         ], 200);
     }
