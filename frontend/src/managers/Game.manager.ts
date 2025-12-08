@@ -27,11 +27,13 @@ export class GameManager {
             case 'game.day':
                 console.log('☀️ Evento de DÍA recibido:', event.data)
                 GameComponent.handleDayPhase(event.data)
+                GameComponent.handleVoteEnd // 🔥 Cerrar cualquier votación activa
                 break
 
             case 'game.night':
                 console.log('🌙 Evento de NOCHE recibido:', event.data)
                 GameComponent.handleNightPhase(event.data)
+                GameComponent.handleVoteEnd // 🔥 Cerrar cualquier votación activa
                 break
 
             case 'game.discussion':

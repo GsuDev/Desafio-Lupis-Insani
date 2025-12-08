@@ -104,6 +104,7 @@ class _07_AnnounceWolvesVotingResultJob implements ShouldQueue
                 _08_StartVillagersVoteJob::dispatch($this->gameId)
                     ->delay(now()->addSeconds($duration));
             } else {
+                GameController::finishGame($this->gameId);
                 GameChannelController::systemSend(
                     'game.conditions',
                     $winStatus,

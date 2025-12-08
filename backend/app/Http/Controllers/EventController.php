@@ -26,7 +26,7 @@ class EventController extends Controller
                 break;
 
             case 'game':
-                return $data;
+                return EventController::gameEventFilter($event, $data, $gameId, $user);
                 break;
 
             default:
@@ -85,33 +85,34 @@ class EventController extends Controller
     {
         $category = explode('.', $event);
         switch ($category[1]) {
-
             case 'emitted':
                 $result = VoteController::vote($data, $gameId, $user);
+
+                // 🔥 Si falla, devolver null para que no se emita el evento
                 if (! $result['success']) {
-                    return null;
+                    return ['dontEmit'];
                 }
 
-                return $data;
-                break;
+                // Obtener voterId del participante actual
+                $participant = Participant::where('user_id', $user->id)
+                    ->where('game_id', $gameId)
+                    ->first();
 
+                if (! $participant) {
+                    return ['dontEmit'];
+                }
+
+                return [
+                    'vote' => $result['data']['vote'],
+                    'isAnUnvote' => $result['data']['isAnUnvote'],
+                    'voterId' => $participant->id,
+                    'targetId' => $data['targetId'],
+                ];
+                break;
             case 'result':
-
-                // Lógica en el job
-
                 return $data;
-
                 break;
-
-            case 'canceled':
-                $result = VoteController::cancelVote($data, $gameId, $user);
-                if (! $result['success']) {
-
-                }
-
-                return $data;
             default:
-
                 break;
         }
     }
@@ -140,6 +141,27 @@ class EventController extends Controller
 
             default:
                 return $data;
+                break;
+        }
+    }
+
+    public static function gameEventFilter($event, $data, $gameId, $user)
+    {
+        $category = explode('.', $event);
+        switch ($category[1]) {
+
+            case 'discussion':
+                return $data;
+                break;
+
+            case 'conditions':
+                // Lógica en el job
+                return $data;
+
+                break;
+
+            default:
+
                 break;
         }
     }

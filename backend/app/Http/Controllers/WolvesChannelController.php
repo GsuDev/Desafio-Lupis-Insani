@@ -40,7 +40,13 @@ class WolvesChannelController extends Controller
 
         // GESTIÓN DE LAS ACCIONES DEL EVENTO
         $data = EventController::eventCategoryFilter($validator->validated()['event'], $validator->validated()['data'], $gameId, $user);
-
+        if (isset($data) && $data === ['dontEmit']) {
+            return response()->json([
+                'success' => true,
+                'message' => 'No se debia emitir evento y no se emitió',
+                'data' => null,
+            ], 200);
+        }
         // se emite el evento al canal privado
         // usamos toOthers() para que no se le reenvie el mensaje al que lo escribó
         broadcast(new WolvesEvent(

@@ -507,4 +507,25 @@ class GameController extends Controller
             ];
         }
     }
+
+    public static function finishGame($gameId)
+    {
+        $game = Game::find($gameId);
+
+        if (! $game) {
+            // TODO: Lanzar error
+            return;
+        }
+
+        $game->update(['state' => 'finished']);
+
+        $latestVotation = VoteController::getLatestVotation($game);
+        VoteController::closeLatestVotation($latestVotation);
+
+        return [
+            'success' => true,
+            'message' => 'Partida y su ultima votación cerrada correctamente',
+            'data' => null,
+        ];
+    }
 }
