@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\participant; 
+
+use App\Models\participant;
 use App\Models\State;
 
 class EventController extends Controller
@@ -121,16 +122,15 @@ class EventController extends Controller
 
         switch ($category[1]) {
             case 'left':
-                
+
                 $participant = participant::where('game_id', $gameId)
                     ->where('user_id', $user->id)
                     ->first();
 
                 if ($participant) {
-                    
+
                     $deadState = State::firstOrCreate(['name' => 'DEAD']);
 
-                    
                     // Usamos syncWithoutDetaching para no borrar otros estados (ej: si era Vidente)
                     $participant->states()->syncWithoutDetaching([$deadState->id]);
                 }
@@ -143,5 +143,4 @@ class EventController extends Controller
                 break;
         }
     }
-
 }

@@ -31,7 +31,7 @@ export class GameEventRouter {
                 // Pasar 'game' para que VoteManager sepa que va a la pestaña general
                 VoteManager.handleEvent(event, data, 'game')
                 break
-                
+
             case 'player':
                 PlayerManager.handleEvent(event, data, 'game')
                 break

@@ -193,13 +193,12 @@ export class GameParticipant {
         this.updateDeadStatus()
     }
 
-     private checkIfDead():boolean{
-        
+    private checkIfDead(): boolean {
         return this.participant.states?.includes('DEAD') || false
     }
 
     //actualiza el sprite del participante a fantasma si esta muerto
-    public updateDeadStatus():void{
+    public updateDeadStatus(): void {
         const wasDead = this.isDead
         this.isDead = this.checkIfDead()
 
@@ -208,7 +207,7 @@ export class GameParticipant {
             this.setDeadSprite()
             this.setVotingEnabled(false)
             this.element.classList.add('is-dead')
-        }else if (!this.isDead && wasDead) {
+        } else if (!this.isDead && wasDead) {
             //transicion muerto vivo
             this.setAliveSprite()
             this.element.classList.remove('is-dead')
@@ -216,8 +215,10 @@ export class GameParticipant {
     }
 
     // cambia sprite a fantasma
-    private setDeadSprite():void{
-        const avatarImg = this.element.querySelector('.gp-avatar') as HTMLImageElement
+    private setDeadSprite(): void {
+        const avatarImg = this.element.querySelector(
+            '.gp-avatar'
+        ) as HTMLImageElement
         if (avatarImg) {
             //aqui va el sprite del fantasma ///CAMBIAAAAAAAAAAAAAAAR SOLO PRUEBAAAA
             // avatarImg.src = sprite
@@ -227,15 +228,16 @@ export class GameParticipant {
     }
 
     //restaurar el sprite normal
-    private setAliveSprite():void{
-        const avatarImg = this.element.querySelector('.gp-avatar') as HTMLImageElement
+    private setAliveSprite(): void {
+        const avatarImg = this.element.querySelector(
+            '.gp-avatar'
+        ) as HTMLImageElement
         if (avatarImg) {
             const imageUrl = this.getAvatarUrl()
             avatarImg.src = imageUrl
             avatarImg.classList.remove('ghost-sprite')
         }
     }
-
 
     private getAvatarUrl(): string {
         const userStr = localStorage.getItem('currentUser')
@@ -251,6 +253,4 @@ export class GameParticipant {
         }
         return `/src/assets/charactersInGame/char_w_${this.version}.png`
     }
-
-   
 }

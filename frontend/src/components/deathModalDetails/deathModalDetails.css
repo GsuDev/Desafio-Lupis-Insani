@@ -1,0 +1,137 @@
+.death-modal-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    width: 90%;
+    max-width: 450px;
+    background: rgba(20, 20, 30, 0.95);
+    backdrop-filter: blur(4px);
+    border: 2px solid #ff4757;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow:
+        0 0 25px rgba(255, 71, 87, 0.2),
+        0 15px 40px rgba(0, 0, 0, 0.9);
+
+    text-align: center;
+    color: #ffffff;
+    font-family: var(--font-body, sans-serif);
+
+    /* Animación de entrada (Rebote) */
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* --- LOGO --- */
+.death-modal-logo-container {
+    margin-bottom: 0.5rem;
+}
+
+.death-modal-logo {
+    width: 100px;
+    height: auto;
+    filter: drop-shadow(0 0 10px rgba(255, 71, 87, 0.5));
+    transition: transform 0.3s ease;
+}
+
+.death-modal-logo:hover {
+    transform: scale(1.1) rotate(5deg);
+}
+
+/* --- TÍTULO --- */
+.death-modal-title {
+    font-family: var(--font-heading, sans-serif);
+    font-size: 2.2rem;
+    line-height: 1.1;
+    text-transform: uppercase;
+    margin: 0;
+    color: #ff4757;
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 1);
+    letter-spacing: 2px;
+}
+
+/* --- MENSAJE --- */
+.death-modal-message {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+    margin-top: 0.5rem;
+    line-height: 1.5;
+}
+
+/* --- BOTONES --- */
+.death-modal-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    margin-top: 1.5rem;
+}
+
+.death-modal-buttons .btn {
+    padding: 14px;
+    border-radius: 10px;
+    font-family: var(--font-heading, sans-serif);
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    width: 100%;
+    font-weight: bold;
+}
+
+.death-modal-buttons .btn:active {
+    transform: translateY(2px) !important;
+    box-shadow: none !important;
+}
+
+.btn-spectate {
+    background-color: #2ecc71;
+    color: #1a1a1a;
+    box-shadow: 0 4px 0 #27ae60;
+}
+.btn-spectate:hover {
+    background-color: #27ae60;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #1e8449;
+    color: white;
+}
+
+/* 2. Botón Título (Naranja Clásico) */
+.btn-title {
+    background-color: #ff8f29;
+    color: #1a1a1a;
+    box-shadow: 0 4px 0 #cc6e1b;
+}
+.btn-title:hover {
+    background-color: #ff9f4d;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #cc6e1b;
+}
+
+/* 3. Botón Perfil (Oscuro/Discreto) */
+.btn-profile {
+    background: transparent;
+    border: 2px solid #57606f;
+    color: #a4b0be;
+    box-shadow: none;
+}
+.btn-profile:hover {
+    border-color: #ffffff;
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Animación Keyframes */
+@keyframes popIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.8) translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}

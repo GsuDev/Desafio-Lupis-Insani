@@ -354,7 +354,7 @@ class GameController extends Controller
                     'nickname' => $participant->nickname,
                     'characterId' => $participant->character_id,
                     'profileUrl' => (bool) $participant->is_bot ? null : $participant->user->profile_url,
-                    'states' => $participant->states->pluck('name')->toArray(), //nuevo
+                    'states' => $participant->states->pluck('name')->toArray(), // nuevo
                 ];
             });
 
