@@ -258,7 +258,6 @@
     background-color: rgba(46, 204, 113, 0.4);
 }
 
-
 /* boton cancelar en la tabla: gris (solo dentro de users-table) */
 .users-table .btn-cancel {
     background-color: rgba(150, 150, 150, 0.2);
