@@ -326,6 +326,27 @@ class GameController {
             return false
         }
     }
+
+    /**
+     * Crea una partida nueva (admin)
+     * devuelve la partida creada o null si falla
+     */
+    async createGame(): Promise<Game | null> {
+        try {
+            const response = await createGameRequest()
+
+            if (response.success && response.data?.game) {
+                console.log('✅ Partida creada:', response.data.game)
+                return response.data.game
+            } else {
+                alert(response.message || 'No se pudo crear la partida')
+                return null
+            }
+        } catch (error) {
+            console.error('Error creando partida:', error)
+            return null
+        }
+    }
 }
 
 // (Aquí iría 'handleSendMessage' para el chat )
