@@ -215,11 +215,11 @@ class UserController extends Controller
         ];
 
         $validator = Validator::make($request->all(), [
-            'nickname' => 'required|string|max:255|unique:users',
-            'name' => 'required|string|max:255',
-            'lastname' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'birthdate' => 'nullable|date',
+            'nickname' => 'sometimes|string|max:255|unique:users,nickname,'.$id,
+            'name' => 'sometimes|string|max:255',
+            'lastname' => 'sometimes|string|max:255',
+            'email' => 'sometimes|string|email|max:255|unique:users,email,'.$id,
+            'birthdate' => 'sometimes|nullable|date',
             // 'profile_picture' => 'nullable|file|image|max:2048',
         ], $messages);
 
