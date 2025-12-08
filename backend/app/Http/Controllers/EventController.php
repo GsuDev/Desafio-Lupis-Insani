@@ -138,9 +138,20 @@ class EventController extends Controller
 
                 return $data;
                 break;
+            case 'joined':
 
+                $participant = participant::where('game_id', $gameId)
+                    ->where('user_id', $user->id)
+                    ->first();
+
+                if ($participant) {
+                    return $data;
+                }
+
+                return null;
+                break;
             default:
-                return $data;
+
                 break;
         }
     }
@@ -162,7 +173,9 @@ class EventController extends Controller
             case 'narrator':
                 return $data;
                 break;
-
+            case 'start':
+                return $data;
+                break;
             default:
 
                 break;
