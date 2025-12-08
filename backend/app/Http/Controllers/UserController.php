@@ -176,6 +176,9 @@ class UserController extends Controller
             ], 404);
         }
 
+         
+        $user->load('roles');
+        
         return response()->json([
             'success' => true,
             'message' => 'Datos del usuario actual recuperados correctamente',
