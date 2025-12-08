@@ -88,7 +88,7 @@ export class UserProfileComponent {
         if (isAdmin) {
             adminBtn = document.createElement('button')
             adminBtn.className = 'config-btn-mini'
-            adminBtn.textContent = '🛡️ Panel'
+            adminBtn.textContent = '🛡️ Panel Admin'
             adminBtn.style.marginLeft = '10px'
             // Estilo rápido para diferenciarlo
 
