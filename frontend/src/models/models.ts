@@ -73,6 +73,7 @@ export interface SlideData {
     title: string
     description: string
     imageName: string
+    downloadLink?: string
 }
 
 export type GameStatistic = {
