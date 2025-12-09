@@ -143,7 +143,7 @@ class AuthController extends Controller
             'success' => true,
             'message' => 'Sesión iniciada correctamente',
             'data' => [
-                'user' => $user,
+                'user' => $user->load('roles'),
                 'token' => $token,
             ],
 
