@@ -1,4 +1,5 @@
 import type { SlideData } from '../../models/models'
+import instrucciones from '../../assets/Guía Hombres Lobo de Castronegro.pdf'
 
 export class Slide {
     private slideData: SlideData
@@ -37,10 +38,32 @@ export class Slide {
         //Contenido de texto
         const textContent = document.createElement('div')
         textContent.classList.add('slide-text-content')
-        //Titulo
-        const title = document.createElement('h3')
-        title.textContent = this.slideData.title
-        textContent.appendChild(title)
+        if (this.slideData.downloadLink) {
+            const titleLink = document.createElement('a')
+            titleLink.className = 'slide-title-download'
+            titleLink.textContent = `📄 ${this.slideData.title}`
+            titleLink.href = instrucciones
+            titleLink.target = '_blank'
+            //titleLink.rel = 'noopener noreferrer'
+            //titleLink.download = 'instrucciones-lupis-insani.pdf'
+            titleLink.addEventListener('click', () => {
+                
+                setTimeout(() => {
+                    const tempLink = document.createElement('a')
+                    tempLink.href = instrucciones
+                    tempLink.download = 'Guía Hombres Lobo de Castronegro.pdf' // Nombre del archivo descargado
+                    tempLink.style.display = 'none'
+                    document.body.appendChild(tempLink)
+                    tempLink.click()
+                    document.body.removeChild(tempLink)
+                }, 100)
+            })
+            textContent.appendChild(titleLink)
+        } else {
+            const title = document.createElement('h3')
+            title.textContent = this.slideData.title
+            textContent.appendChild(title)
+        }
 
         //Descripción
         const description = document.createElement('p')
