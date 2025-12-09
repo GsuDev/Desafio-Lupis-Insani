@@ -5,6 +5,7 @@ import type { SlideData } from '../../models/models'
 import { Slide } from './slideCarousel'
 import { Pagination } from './paginationCarousel'
 import rawSlidesData from '../../assets/data/tipSlides.json'
+import instrucciones from '../../assets/Guía Hombres Lobo de Castronegro.pdf'
 
 // --------------------------------------------------
 // Funciones "Constructoras" de HTML
@@ -62,6 +63,13 @@ export class Carousel {
         mainTitle.className = 'carousel-main-title'
         mainTitle.textContent = 'PISTAS / CONSEJOS'
 
+        // Enlace para descargar el PDF
+        //const downloadLink = document.createElement('a')
+        //downloadLink.className = 'carousel-download-link'
+        //downloadLink.href = instrucciones // ruta al PDF en assets
+        //downloadLink.download = 'instrucciones-lupis-insani.pdf' // nombre del archivo al descargar
+        //downloadLink.textContent = '📄 Descargar instrucciones del juego'
+
         //Contenedor para el slide y botones
         const slideAndControls = document.createElement('div')
         slideAndControls.className = 'carousel-slide-and-controls'
@@ -89,6 +97,7 @@ export class Carousel {
 
         //Añade todo al contenedor
         carouselContainer.appendChild(mainTitle)
+        //carouselContainer.appendChild(downloadLink)
 
         slideAndControls.appendChild(this.prevButton)
         slideAndControls.appendChild(this.slideDisplayElement)
