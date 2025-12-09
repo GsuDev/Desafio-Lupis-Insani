@@ -13,6 +13,7 @@ import AccessContainer from '../accessContainer/AccessContainer'
 import UserProfileContainer from '../userProfileContainer/userProfileContainer'
 import { DeathModalContainer } from '../deathModalContainer/deathModalContainer'
 import { userController } from '../../controllers/UserController'
+import { MayorElectedModal } from '../mayorElected/mayorElected'
 
 /**
  * Clase GameComponent
@@ -45,9 +46,6 @@ export class GameComponent {
     //Barra de tiempo
     private timeBar: TimeBar | null = null
 
-
-
-
     constructor() {
         this.container = this.createContainer()
         this.participantsContainer = this.createParticipantsContainer()
@@ -58,14 +56,13 @@ export class GameComponent {
         this.campfireContainer = this.createCampfireContainer()
         this.narratorOverlay = new NarratorOverlay(this.container)
 
-        this.timeBar = new TimeBar(4); // el numero de phases que tengamos
-        
+        this.timeBar = new TimeBar(4) // el numero de phases que tengamos
 
         // Guardar instancia singleton
         GameComponent.instance = this
 
         //harcodeada
-        GameComponent.instance.timeBar?.setPhase(1);
+        GameComponent.instance.timeBar?.setPhase(1)
     }
 
     // ========== MÉTODOS ESTÁTICOS PARA VOTACIÓN ==========
@@ -207,7 +204,6 @@ export class GameComponent {
         const dayNumber = data.dayNumber || data.day_number || data.day || 1
         console.log(`☀️ Fase de DÍA iniciada - Día ${dayNumber}`)
 
-
         GameComponent.instance.currentPhase = 'day'
         GameComponent.instance.currentDayNumber = dayNumber
         const gameContainer = document.getElementById('game-component')
@@ -333,8 +329,10 @@ export class GameComponent {
         const myId = GameComponent.instance.getCurrentParticipantId()
         if (myId === participantId) {
             console.log('👑 ¡He sido elegido como alcalde! Mostrando modal...')
-
             setTimeout(() => {
+                // cuando el jugador sea elegido alcalde:
+                const modal = new MayorElectedModal()
+                modal.show()
                 // TODO: Implementar modal de alcalde
                 // GameComponent.instance?.showMayorModal()
             }, 1000)
@@ -586,15 +584,15 @@ export class GameComponent {
     }
 
     private createTimeBarContainer(): HTMLElement {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'game-time-bar-wrapper'; // Usamos la clase del CSS nuevo
+        const wrapper = document.createElement('div')
+        wrapper.className = 'game-time-bar-wrapper' // Usamos la clase del CSS nuevo
 
         // Insertamos el elemento real del componente TimeBar
         if (this.timeBar) {
-            wrapper.appendChild(this.timeBar.getElement());
+            wrapper.appendChild(this.timeBar.getElement())
         }
 
-        return wrapper;
+        return wrapper
     }
 
     private createRoleCardContainer(): HTMLElement {
@@ -679,28 +677,30 @@ export class GameComponent {
     }
 
     public static onStateChange(newState: string) {
-        if (!GameComponent.instance) return;
+        if (!GameComponent.instance) return
         if (!GameComponent.instance.timeBar) {
             return
         }
         switch (newState) {
             case 'DAY':
-                GameComponent.instance.timeBar.reset(); // Reinicia al empezar el día
-                setTimeout(() => GameComponent.instance?.timeBar?.setPhase(1), 50);
-                break;
+                GameComponent.instance.timeBar.reset() // Reinicia al empezar el día
+                setTimeout(
+                    () => GameComponent.instance?.timeBar?.setPhase(1),
+                    50
+                )
+                break
             case 'DAY_DISCUSSION':
-                GameComponent.instance.timeBar.setPhase(2);
-                break;
+                GameComponent.instance.timeBar.setPhase(2)
+                break
             case 'NIGHT':
-                GameComponent.instance.timeBar.setPhase(3);
-                break;
+                GameComponent.instance.timeBar.setPhase(3)
+                break
             case 'NIGHT_DISCUSSION':
-                GameComponent.instance.timeBar.setPhase(4);
-                break;
+                GameComponent.instance.timeBar.setPhase(4)
+                break
             // case 'VOTING':
             //     GameComponent.instance.timeBar.setPhase(2);
             //     break;
-
         }
         // switch (newState) {
         //     case 'DAY_DISCUSSION':
@@ -714,8 +714,6 @@ export class GameComponent {
         //         GameComponent.instance.timeBar.setPhase(3);
         //         break;
         // }
-
-
     }
 
     private checkIfPlayerIsWolf(): boolean {
