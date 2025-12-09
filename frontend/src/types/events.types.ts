@@ -8,6 +8,8 @@ export type Event<T = null> = {
     gameId: number
     data: T | null
 }
+export type NarratorEvent = Event<{ message: string, phase: string }>
+
 export type ChatEvent = Event<{ message: Message }>
 export type EventHandler = (eventName: string, data: Event) => void
 

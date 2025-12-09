@@ -70,7 +70,7 @@ class _07_AnnounceWolvesVotingResultJob implements ShouldQueue
             $votingResult = VoteController::processWolvesVotingResult($game, $victimId);
 
             // 6. Emitir evento chat.message al canal de lobos
-            GameChannelController::systemSend('game.narrator', ['message' => $votingResult['message']], $this->gameId);
+            GameChannelController::systemSend('game.narrator', ['message' => $votingResult['message'],'phase'=>'DAY_DISCUSSION'], $this->gameId);
 
             EventController::systemMessage($votingResult['message'], 'game', $this->gameId);
 

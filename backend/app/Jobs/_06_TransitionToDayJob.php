@@ -42,7 +42,7 @@ class _06_TransitionToDayJob implements ShouldQueue
 
             $message = "Amanece en el pueblo... Un nuevo día comienza (Día {$currentDay})";
 
-            GameChannelController::systemSend('game.narrator', ['message' => $message], $this->gameId);
+            GameChannelController::systemSend('game.narrator', ['message' => $message, 'phase'=>'DAY_START'], $this->gameId);
 
             EventController::systemMessage($message, 'system', $this->gameId);
 
