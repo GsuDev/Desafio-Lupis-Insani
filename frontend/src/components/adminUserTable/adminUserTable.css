@@ -179,6 +179,14 @@
     color: white;
 }
 
+.role-badge.player_anonymous {
+    background: linear-gradient(135deg, #ff85c0 0%, #ff5da2 100%);
+    /* rosa degradado */
+    color: white;
+    box-shadow: 0 2px 8px rgba(255, 93, 162, 0.4);
+    /* sombra suave rosa */
+}
+
 .actions-cell {
     display: flex;
     gap: 8px;
