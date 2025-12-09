@@ -40,10 +40,10 @@ class _05_StartWolvesVoteJob implements ShouldQueue
 
         $duration = (int) env('_05_GAME_WOLVES_VOTATION_DURATION', 10);
 
-        $text = "Lobos, es hora de acechar. Tenéis {$duration} segundos.";
+        $text = "Lobos, es hora de cazar. Tenéis {$duration} segundos.";
         $message = $game->addMessage('system', null, $text);
 
-        GameChannelController::systemSend('game.narrator', ['message' => 'Senteis la presencia del terror','phase'=>'NIGHT_VOTING'], $this->gameId);
+        GameChannelController::systemSend('game.narrator', ['message' => 'Sentís la presencia del terror','phase'=>'NIGHT_VOTING'], $this->gameId);
 
         // envio al chat de los lobos que el evento a comenzado
         broadcast(new WolvesEvent(
