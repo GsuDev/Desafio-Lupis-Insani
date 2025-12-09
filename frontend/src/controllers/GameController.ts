@@ -6,7 +6,7 @@
 
 import { GameChannel } from '../channels/GameChannel'
 import { WolvesChannel } from '../channels/WolvesChannel'
-import type { Game, Message } from '../models/models'
+import type { Game, GameData, Message, Participant } from '../models/models'
 import {
     getGame,
     joinGameRequest,
@@ -14,6 +14,7 @@ import {
     startGame,
     getGames,
     deleteGame,
+    getParticipants,
 } from '../providers/game.provider'
 
 class GameController {
@@ -285,7 +286,52 @@ class GameController {
             return []
         }
     }
+    /**
+     * Obtiene todas las partidas públicas en estado 'waiting'
+     */
+    async getPublicGames(): Promise<GameData[]> {
+        try {
+            const response = await getGames()
+            console.log('Respuesta de getGames:', response)
+            if (!response.success || !response.data) {
+                console.error('❌ Error obteniendo partidas:', response.message)
+                return []
+            }
 
+            // Filtrar solo partidas públicas en estado 'waiting'
+            const publicGames = response.data.games.filter(
+                (game) => game.isPublic == true && game.state === 'waiting'
+            )
+
+            console.log('✅ Partidas públicas encontradas:', publicGames.length)
+            return publicGames
+        } catch (error) {
+            console.error('❌ Error en getPublicGames:', error)
+            return []
+        }
+    }
+
+    /**
+     * Obtiene los participantes de una partida específica
+     */
+    async getGameParticipants(gameId: number): Promise<Participant[]> {
+        try {
+            const response = await getParticipants(gameId)
+
+            if (!response.success || !response.data) {
+                console.error(
+                    '❌ Error obteniendo participantes:',
+                    response.message
+                )
+                return []
+            }
+
+            return response.data.participants
+        } catch (error) {
+            console.error('❌ Error en getGameParticipants:', error)
+            return []
+        }
+    }
     /**
      * Elimina una partida
      */

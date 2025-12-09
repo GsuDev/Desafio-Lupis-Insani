@@ -9,7 +9,7 @@ Content-Type: {{contentType}}
 
 {
   "email": "admin@example.com",
-  "password": "password"
+  "password": "Password_123"
 }
 
 ### Guardar como @adminToken (respuesta del login)
@@ -175,6 +175,6 @@ Authorization: Bearer 8|qXMOwSoxS6XU40YhaAaXDyPOhCBENJZedFBYf5I4e8c416e0
 
 
 ### Probar game engine para votación
-GET {{baseUrl}}/games/13/
-Authorization: Bearer 5|gZqtnGaZ5IibQPRHhMWTNyoUfbCqbUiqBLfB2iy3b3f5aef4
+GET {{baseUrl}}/games/1/
+Authorization: Bearer 1|Urs7QAjuvFn387neV1pV1GKWn1kU9JCYmV5Vcwkqfa7d1f12
 

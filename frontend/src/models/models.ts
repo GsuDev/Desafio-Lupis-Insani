@@ -45,12 +45,14 @@ export type GameData = {
     id: number
     state: string
     url: string
+    isPublic: boolean
 }
 
 export type Game = {
     id: number
     state: string
     url: string
+    isPublic: boolean
     messages: Message[]
     participants: Participant[]
 }
@@ -71,6 +73,7 @@ export interface SlideData {
     title: string
     description: string
     imageName: string
+    downloadLink?: string
 }
 
 export type GameStatistic = {

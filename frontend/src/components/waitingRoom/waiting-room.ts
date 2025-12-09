@@ -11,6 +11,7 @@ import { userController } from '../../controllers/UserController.ts'
 import UserProfileComponent from '../userProfile/userProfile.ts'
 import AccessContainer from '../accessContainer/AccessContainer.ts'
 import UserProfileContainer from '../userProfileContainer/userProfileContainer.ts'
+import { togglePublic } from '../../providers/game.provider.ts'
 
 /**
  * Función principal de Renderizado
@@ -36,7 +37,7 @@ export const renderWaitingRoom = async (
     // Botón de salir
     const exitBtn = document.createElement('button')
     exitBtn.className = 'wr-exit-btn'
-    exitBtn.textContent = '<- SALIR'
+    exitBtn.textContent = 'SALIR'
 
     exitBtn.onclick = async () => {
         // Emitir evento player.left antes de salir
@@ -70,10 +71,79 @@ export const renderWaitingRoom = async (
         }
     }
 
+    const titleContainer = document.createElement('div')
+    titleContainer.className = 'wr-title-container'
+
     const title = document.createElement('h1')
     title.textContent = 'LOBBY DE PARTIDA Nº: ' + gameId
 
-    header.append(exitBtn, title)
+    // Indicador público/privado
+    const visibilityBadge = document.createElement('span')
+    visibilityBadge.className = 'wr-visibility-badge'
+    visibilityBadge.id = 'visibility-badge'
+    visibilityBadge.textContent = '🌐 PÚBLICA'
+
+    titleContainer.append(title, visibilityBadge)
+
+    // Toggle button (solo para host)
+    const toggleBtn = document.createElement('button')
+    toggleBtn.className = 'wr-toggle-btn'
+    toggleBtn.id = 'toggle-public-btn'
+    toggleBtn.textContent = '🔒 Cambiar Visibilidad'
+    toggleBtn.style.display = 'none' // Oculto por defecto
+
+    toggleBtn.onclick = async () => {
+        // Guardar el estado actual para poder revertir
+        const currentGame = gameController.currentGame
+        if (!currentGame) {
+            console.error('❌ No hay partida actual')
+            return
+        }
+
+        const previousState = currentGame.isPublic
+        const newState = !previousState
+
+        try {
+            // 🚀 UPDATE OPTIMISTA: Cambiar inmediatamente la UI
+            toggleBtn.disabled = true
+            updateVisibilityUI(newState)
+            console.log('⚡ Update optimista: isPublic =', newState)
+
+            // Llamar al backend
+            const response = await togglePublic(gameId)
+
+            if (response.success && response.data) {
+                // ✅ Éxito: verificar que coincida con lo esperado
+                const serverState = response.data.isPublic
+                if (serverState !== newState) {
+                    console.warn(
+                        '⚠️ Estado del servidor difiere del optimista, corrigiendo...'
+                    )
+                    updateVisibilityUI(serverState)
+                }
+                console.log(
+                    '✅ Visibilidad cambiada correctamente:',
+                    serverState
+                )
+            } else {
+                // ❌ Error: revertir al estado anterior
+                console.error('❌ Error del servidor:', response.message)
+                updateVisibilityUI(previousState)
+                window.alert(
+                    'Error al cambiar visibilidad: ' + response.message
+                )
+            }
+        } catch (error) {
+            // ❌ Error de red: revertir al estado anterior
+            console.error('❌ Error en toggle:', error)
+            updateVisibilityUI(previousState)
+            window.alert('Error de conexión al cambiar visibilidad')
+        } finally {
+            toggleBtn.disabled = false
+        }
+    }
+
+    header.append(exitBtn, titleContainer, toggleBtn)
 
     // Contenido principal
     const main = document.createElement('main')
@@ -118,6 +188,25 @@ export const renderWaitingRoom = async (
         }
     }
 
+    const updateVisibilityUI = (isPublic: boolean | undefined) => {
+        const badge = document.getElementById('visibility-badge')
+        if (!badge) return
+
+        if (isPublic === undefined || isPublic === null) {
+            badge.textContent = '❓ DESCONOCIDA'
+            badge.className = 'wr-visibility-badge unknown'
+            return
+        }
+
+        if (isPublic) {
+            badge.textContent = '🌐 PÚBLICA'
+            badge.className = 'wr-visibility-badge public'
+        } else {
+            badge.textContent = '🔒 PRIVADA'
+            badge.className = 'wr-visibility-badge private'
+        }
+    }
+
     const renderGameDetails = (gameData: any) => {
         const game = gameData
 
@@ -125,6 +214,24 @@ export const renderWaitingRoom = async (
 
         if (!game || game === undefined) {
             return
+        }
+
+        // Actualizar indicador de visibilidad (solo si no estamos en medio de un toggle)
+        const toggleButton = document.getElementById(
+            'toggle-public-btn'
+        ) as HTMLButtonElement | null
+        const isTogglingNow = toggleButton?.disabled ?? false
+
+        if (!isTogglingNow) {
+            // Solo actualizar si NO estamos haciendo toggle (para no pisar el update optimista)
+            updateVisibilityUI(game.isPublic)
+        }
+
+        // Mostrar/ocultar toggle button según si es host
+        if (toggleButton) {
+            const isHost = participantController.isHost()
+            toggleButton.style.display =
+                isHost && game.state === 'waiting' ? 'block' : 'none'
         }
 
         // SI LA PARTIDA YA NO ESTÁ EN ESPERA, CAMBIAR VISTA
