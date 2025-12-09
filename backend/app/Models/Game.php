@@ -15,6 +15,7 @@ class Game extends Model
     protected $fillable = [
         'state',
         'url',
+        'isPublic',
     ];
 
     protected $hidden = [

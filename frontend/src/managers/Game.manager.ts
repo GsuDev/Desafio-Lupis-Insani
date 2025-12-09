@@ -94,7 +94,9 @@ export class GameManager {
             case 'game.start':
                 gameController.reloadCurrentGame()
                 break
-
+            case 'game.public':
+                gameController.reloadCurrentGame()
+                break
             default:
                 console.warn(`⚠️ Evento de game no manejado: ${event}`)
         }

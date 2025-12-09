@@ -136,11 +136,8 @@ export class UserProfileComponent {
         joinBtn.className = 'btn-action secondary'
         joinBtn.textContent = 'Unirse a Sala'
         joinBtn.onclick = async () => {
-            await gameController.handleLoadGame(1)
             const app = document.getElementById('app')
-            const game = gameController.currentGame
-
-            if (app && game) {
+            if (app) {
                 const modal = new JoinGameModal(app, () => {
                     app.innerHTML = ''
                     const accessContainer = new UserProfileContainer(app)

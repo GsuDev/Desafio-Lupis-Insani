@@ -89,10 +89,12 @@ export const getGame = async (
             id: gameData.id,
             state: gameData.state,
             url: gameData.url,
+            isPublic: gameData.isPublic,
             participants: participantsData,
             messages: messages,
         }
         console.log('Game Provider getGame()', game)
+
         // ✅ Respuesta API correcta
         return {
             success: true,
@@ -154,9 +156,9 @@ export const getTipSlides = async (): Promise<
         // ✅ Convertimos si fuera necesario (en este caso no hace falta)
         const slides: SlideData[] = slidesData.map((slide) => ({
             stepNumber: slide.stepNumber,
-            tittle: slide.tittle,
+            title: slide.title,
             description: slide.description,
-            imageUrl: slide.imageUrl.trim(), // quitamos espacios extra en URLs
+            imageName: slide.imageName.trim(), // quitamos espacios extra en URLs
         }))
 
         return {
@@ -265,6 +267,31 @@ export const getTipSlides = async (): Promise<
 //         }
 //     }
 // }
+
+/**
+ * Alterna la visibilidad pública/privada de una partida
+ * Endpoint: POST /games/{id}/toggle-public
+ */
+export async function togglePublic(
+    gameId: number
+): Promise<ApiResponse<{ isPublic: boolean }> | ApiErrorResponse> {
+    try {
+        const { data } = await apiClient.post<
+            ApiResponse<{ isPublic: boolean }>
+        >(`/games/${gameId}/toggle-public`)
+        return data
+    } catch (error) {
+        console.error('❌ Error en togglePublic:', error)
+        return {
+            success: false,
+            message:
+                error instanceof Error
+                    ? error.message
+                    : 'Error cambiando visibilidad de partida',
+            data: null,
+        }
+    }
+}
 
 export async function joinGameRequest(
     gameId: number

@@ -329,6 +329,7 @@ export class GameComponent {
         const myId = GameComponent.instance.getCurrentParticipantId()
         if (myId === participantId) {
             console.log('👑 ¡He sido elegido como alcalde! Mostrando modal...')
+
             setTimeout(() => {
                 // cuando el jugador sea elegido alcalde:
                 const modal = new MayorElectedModal()
@@ -854,7 +855,7 @@ export class GameComponent {
     private addExitButton(): void {
         const exitButton = document.createElement('button')
         exitButton.className = 'game-exit-button'
-        exitButton.innerHTML = '🚪 Salir'
+        exitButton.innerHTML = 'Salir'
         exitButton.addEventListener('click', () => this.showExitModal())
 
         this.container.appendChild(exitButton)

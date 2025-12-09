@@ -167,6 +167,9 @@ Route::middleware('auth:sanctum')->group(function () {
             // POST /api/games/{game}/start -> GameController@startGame
             Route::post('/start', [GameController::class, 'startGame']);
 
+            // POST /api/games/{game}/toggle-public -> GameController@startGame
+            Route::post('/toggle-public', [GameController::class, 'togglePublic']);
+
             // DELETE /api/games/{game} -> GameController@deleteGame
             Route::delete('/', [GameController::class, 'deleteGame']);
 
