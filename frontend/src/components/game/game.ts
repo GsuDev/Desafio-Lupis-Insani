@@ -59,9 +59,13 @@ export class GameComponent {
         this.narratorOverlay = new NarratorOverlay(this.container)
 
         this.timeBar = new TimeBar(4); // el numero de phases que tengamos
+        
 
         // Guardar instancia singleton
         GameComponent.instance = this
+
+        //harcodeada
+        GameComponent.instance.timeBar?.setPhase(1);
     }
 
     // ========== MÉTODOS ESTÁTICOS PARA VOTACIÓN ==========
