@@ -12,7 +12,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // Usuario system
-        $admin = User::firstOrCreate(
+        $system = User::firstOrCreate(
             ['email' => 'system@system.com'],
             [
                 'nickname' => 'system',
@@ -45,13 +45,27 @@ class UserSeeder extends Seeder
                 'birthdate' => '2000-05-05',
             ]
         );
+        $anonymous = User::firstOrCreate(
+            ['email' => null],
+            [
+                'nickname' => 'cabeza alberca',
+                'name' => 'cabeza alberca',
+                'lastname' => null,
+                'password' => null,
+                'birthdate' => null,
+            ]
+        );
 
         // Roles
         $adminRole = Role::where('name', 'admin')->first();
         $userRole = Role::where('name', 'user')->first();
+        $anonymousRole = Role::where('name', 'player_anonymous')->first();
 
         // Asignar roles (many-to-many)
         $admin->roles()->syncWithoutDetaching([$adminRole->id]);
         $user->roles()->syncWithoutDetaching([$userRole->id]);
+        $system->roles()->syncWithoutDetaching([$adminRole->id]);
+        $anonymous->roles()->syncWithoutDetaching([$anonymousRole->id]);
+        User::factory()->count(20)->create();
     }
 }
