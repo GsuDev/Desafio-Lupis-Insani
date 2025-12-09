@@ -243,6 +243,13 @@ export class GameParticipant {
             //aqui va el sprite del fantasma ///CAMBIAAAAAAAAAAAAAAAR SOLO PRUEBAAAA
             // avatarImg.src = sprite
             console.log(`EL SPRITE ES: ${this.getFinalNumberFromUrl(avatarImg.src)}`)
+            const spriteNumber = this.getFinalNumberFromUrl(avatarImg.src)
+            if (spriteNumber !== null) {
+                avatarImg.src ='/src/assets/charactersInGame/char_ghost_'+spriteNumber+'.png'; 
+                
+                //`/src/assets/charactersInGame/char_ghost_${spriteNumber}.png`
+            }
+
             avatarImg.classList.add('ghost-sprite')
         }
     }
