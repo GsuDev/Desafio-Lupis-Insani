@@ -42,6 +42,12 @@ export class GameComponent {
     private currentPhase: 'day' | 'night' = 'day'
     private currentDayNumber: number = 1
 
+    //Barra de tiempo
+    private timeBar: TimeBar | null = null
+
+
+
+
     constructor() {
         this.container = this.createContainer()
         this.participantsContainer = this.createParticipantsContainer()
@@ -52,8 +58,14 @@ export class GameComponent {
         this.campfireContainer = this.createCampfireContainer()
         this.narratorOverlay = new NarratorOverlay(this.container)
 
+        this.timeBar = new TimeBar(4); // el numero de phases que tengamos
+        
+
         // Guardar instancia singleton
         GameComponent.instance = this
+
+        //harcodeada
+        GameComponent.instance.timeBar?.setPhase(1);
     }
 
     // ========== MÉTODOS ESTÁTICOS PARA VOTACIÓN ==========
@@ -194,6 +206,7 @@ export class GameComponent {
 
         const dayNumber = data.dayNumber || data.day_number || data.day || 1
         console.log(`☀️ Fase de DÍA iniciada - Día ${dayNumber}`)
+
 
         GameComponent.instance.currentPhase = 'day'
         GameComponent.instance.currentDayNumber = dayNumber
@@ -573,14 +586,15 @@ export class GameComponent {
     }
 
     private createTimeBarContainer(): HTMLElement {
-        const div = document.createElement('div')
-        // TimeBar ya tiene sus estilos internos.
-        div.className = 'game-time-bar-wrapper'
-        div.style.position = 'absolute'
-        div.style.top = '0'
-        div.style.width = '100%'
-        div.style.zIndex = '50'
-        return div
+        const wrapper = document.createElement('div');
+        wrapper.className = 'game-time-bar-wrapper'; // Usamos la clase del CSS nuevo
+
+        // Insertamos el elemento real del componente TimeBar
+        if (this.timeBar) {
+            wrapper.appendChild(this.timeBar.getElement());
+        }
+
+        return wrapper;
     }
 
     private createRoleCardContainer(): HTMLElement {
@@ -620,12 +634,14 @@ export class GameComponent {
         const gameChat = new GameChat(this.chatContainer, isWolf)
         gameChat.render()
 
-        const timeBar = new TimeBar(this.timeBarContainer)
-        timeBar.render()
+        // const timeBar = new TimeBar(this.timeBarContainer)
+        // timeBar.render()
 
         const myRole = this.getMyRole()
         const roleCard = new RoleCard(this.roleCardContainer, myRole)
         roleCard.render()
+
+        this.container.appendChild(this.createTimeBarContainer())
 
         return this.container
     }
@@ -660,6 +676,46 @@ export class GameComponent {
             console.error(e)
             return 'villager'
         }
+    }
+
+    public static onStateChange(newState: string) {
+        if (!GameComponent.instance) return;
+        if (!GameComponent.instance.timeBar) {
+            return
+        }
+        switch (newState) {
+            case 'DAY':
+                GameComponent.instance.timeBar.reset(); // Reinicia al empezar el día
+                setTimeout(() => GameComponent.instance?.timeBar?.setPhase(1), 50);
+                break;
+            case 'DAY_DISCUSSION':
+                GameComponent.instance.timeBar.setPhase(2);
+                break;
+            case 'NIGHT':
+                GameComponent.instance.timeBar.setPhase(3);
+                break;
+            case 'NIGHT_DISCUSSION':
+                GameComponent.instance.timeBar.setPhase(4);
+                break;
+            // case 'VOTING':
+            //     GameComponent.instance.timeBar.setPhase(2);
+            //     break;
+
+        }
+        // switch (newState) {
+        //     case 'DAY_DISCUSSION':
+        //         this.timeBar?.reset(); // Reinicia al empezar el día
+        //         setTimeout(() => this.timeBar?.setPhase(1), 50);
+        //         break;
+        //     case 'VOTING':
+        //         this.timeBar?.setPhase(2);
+        //         break;
+        //     case 'NIGHT':
+        //         GameComponent.instance.timeBar.setPhase(3);
+        //         break;
+        // }
+
+
     }
 
     private checkIfPlayerIsWolf(): boolean {

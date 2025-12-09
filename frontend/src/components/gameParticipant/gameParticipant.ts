@@ -242,7 +242,6 @@ export class GameParticipant {
         if (avatarImg) {
             //aqui va el sprite del fantasma ///CAMBIAAAAAAAAAAAAAAAR SOLO PRUEBAAAA
             // avatarImg.src = sprite
-
             avatarImg.classList.add('ghost-sprite')
         }
     }
