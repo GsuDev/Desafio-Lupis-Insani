@@ -222,10 +222,12 @@ export class LoginFormComponent {
     }
 
     /**
-     * Maneja el submit del formulario
+     * Maneja el submit del formulario de login
      */
     private async handleSubmit(event: Event): Promise<void> {
         event.preventDefault()
+
+        if (!this.rootElement) return
 
         const form = event.target as HTMLFormElement
         const emailInput = form.querySelector('#email') as HTMLInputElement
@@ -239,43 +241,76 @@ export class LoginFormComponent {
         // Limpiar errores previos
         this.clearErrors()
 
-        // ... (código existente de validación)
+        // -----------------------
+        // Validación de email
+        // -----------------------
+        if (!email) {
+            this.showError('email', 'El correo electrónico es obligatorio')
+            return
+        }
 
+        if (!this.isValidEmail(email)) {
+            this.showError('email', 'Formato de correo electrónico inválido')
+            return
+        }
+
+        // -----------------------
         // Validación de contraseña
+        // -----------------------
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/
+
         if (!password) {
             this.showError('password', 'La contraseña es obligatoria')
             return
         }
 
-        if (password.length < 6) {
+        if (!passwordRegex.test(password)) {
             this.showError(
                 'password',
-                'La contraseña debe tener al menos 6 caracteres'
+                'La contraseña debe tener al menos 8 caracteres, incluyendo 1 mayúscula, 1 minúscula, 1 número y 1 símbolo.'
             )
             return
         }
 
         console.log('Login enviado:', { email, password })
 
-        // Hacemos login con el userController
-        await userController.login(email, password)
+        // -----------------------
+        // Llamada al controlador
+        // -----------------------
+        try {
+            const response = await userController.login(email, password)
 
-        // Verificación del token y redirección
-        const token = localStorage.getItem('token')
-
-        if (token) {
-            console.log('✅ Login exitoso, token encontrado. Redirigiendo...')
-            const app = document.getElementById('app')
-            if (app) {
-                const userProfileContainer = new UserProfileContainer(app)
-                userProfileContainer.render()
+            if (response.success && response.data) {
+                if (userController.isLoggedIn) {
+                    console.log(
+                        '✅ Login exitoso, token encontrado. Redirigiendo...'
+                    )
+                    const app = document.getElementById('app')
+                    if (app) {
+                        const userProfileContainer = new UserProfileContainer(
+                            app
+                        )
+                        userProfileContainer.render()
+                    }
+                } else {
+                    console.error(
+                        '❌ Login exitoso, pero no se encontró el token de sesión.'
+                    )
+                    this.showError(
+                        'password',
+                        'Error de sesión. Intenta de nuevo.'
+                    )
+                }
+            } else {
+                this.showError(
+                    'password',
+                    response.message ||
+                        'Nombre de usuario o contraseña incorrectos.'
+                )
             }
-        } else {
-            // Manejar error si el login es exitoso pero no hay token
-            console.error(
-                '❌ Login exitoso, pero no se encontró el token de sesión.'
-            )
-            this.showError('password', 'Error de sesión. Intenta de nuevo.') // Mostrar un error genérico
+        } catch (error) {
+            console.error('Error de conexión:', error)
+            this.showError('password', 'Error de credenciales o conexión.')
         }
     }
 
@@ -285,13 +320,14 @@ export class LoginFormComponent {
     private handleCreateAccountClick(event: Event): void {
         event.preventDefault()
         console.log('Redirigir a crear cuenta')
+
         const app = document.getElementById('app')
         if (!app) {
-            console.log('ERROR NO DOM')
+            console.error('ERROR: No se encontró el contenedor principal')
             return
         }
 
-        // Aquí se llamaría al router o controlador
+        // Aquí se llamaría al router o controlador para renderizar el formulario de registro
         renderUserForm(app, () => {
             const form = document.getElementById('register-container')
             form?.remove()
@@ -318,19 +354,22 @@ export class LoginFormComponent {
 
         if (errorElement) {
             errorElement.textContent = message
+            errorElement.style.display = 'block'
         }
     }
 
     /**
-     * Limpia todos los mensajes de error del formulario
+     * Limpia todos los errores visibles
      */
     private clearErrors(): void {
-        if (!this.formElement) return
+        if (!this.rootElement) return
 
         const errorElements =
-            this.formElement.querySelectorAll('.error-message')
-        errorElements.forEach((element) => {
-            element.textContent = ''
+            this.rootElement.querySelectorAll('.error-message')
+        errorElements.forEach((el) => {
+            const elem = el as HTMLElement
+            elem.textContent = ''
+            elem.style.display = 'none'
         })
     }
 
