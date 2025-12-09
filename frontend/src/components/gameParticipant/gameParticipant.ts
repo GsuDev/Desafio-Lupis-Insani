@@ -242,8 +242,33 @@ export class GameParticipant {
         if (avatarImg) {
             //aqui va el sprite del fantasma ///CAMBIAAAAAAAAAAAAAAAR SOLO PRUEBAAAA
             // avatarImg.src = sprite
+            console.log(`EL SPRITE ES: ${this.getFinalNumberFromUrl(avatarImg.src)}`)
+            const spriteNumber = this.getFinalNumberFromUrl(avatarImg.src)
+            if (spriteNumber !== null) {
+                avatarImg.src ='/src/assets/charactersInGame/char_ghost_'+spriteNumber+'.png'; 
+                
+                //`/src/assets/charactersInGame/char_ghost_${spriteNumber}.png`
+            }
+
             avatarImg.classList.add('ghost-sprite')
         }
+    }
+
+    private getFinalNumberFromUrl(url: string): number | null {
+        // 1. Dividir por "/" y coger el último fragmento
+        const parts = url.split("/");
+        const lastPart = parts[parts.length - 1]; // "char_w_1.png"
+
+        // 2. Dividir por "." y coger la primera parte
+        const nameWithoutExtension = lastPart.split(".")[0]; // "char_w_1"
+
+        // 3. Tomar el último carácter
+        const lastChar = nameWithoutExtension.charAt(nameWithoutExtension.length - 1);
+
+        // 4. Convertir a número
+        const number = parseInt(lastChar, 10);
+
+        return isNaN(number) ? null : number;
     }
 
     //restaurar el sprite normal
