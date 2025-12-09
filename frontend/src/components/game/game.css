@@ -16,7 +16,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('../../assets/gameRenders/day_game_without_fire.png');
+    background-image: url('../../assets/gameRenders/day_game_without_fire_845x475.png');
     background-size: 100% 100%;
     opacity: 1;
     transition: opacity 2s ease-in-out;
@@ -32,13 +32,44 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('../../assets/gameRenders/night_game_without_fire.png');
+    background-image: url('../../assets/gameRenders/night_game_without_fire_845x475.png');
     background-size: 100% 100%;
     opacity: 0;
     transition: opacity 2s ease-in-out;
     pointer-events: none;
     z-index: 0;
 }
+
+/* Para pantallas mayores a 845px -> Cargar versión HD (1280x720) */
+@media screen and (min-width: 846px) {
+    .game-component::before {
+        background-image: url('../../assets/gameRenders/day_game_without_fire_1280x720.png');
+    }
+    .game-component::after {
+        background-image: url('../../assets/gameRenders/night_game_without_fire_1280x720.png');
+    }
+}
+
+/* Para pantallas mayores a 1280px -> Cargar versión FHD (1920x1080) */
+@media screen and (min-width: 1281px) {
+    .game-component::before {
+        background-image: url('../../assets/gameRenders/day_game_without_fire_1920x1080.png');
+    }
+    .game-component::after {
+        background-image: url('../../assets/gameRenders/night_game_without_fire_1920x1080.png');
+    }
+}
+
+/* Para pantallas mayores a 1920px -> Cargar versión 2K (Original) */
+@media screen and (min-width: 1921px) {
+    .game-component::before {
+        background-image: url('../../assets/gameRenders/day_game_without_fire_2560x1440.png');
+    }
+    .game-component::after {
+        background-image: url('../../assets/gameRenders/night_game_without_fire_2560x1440.png');
+    }
+}
+
 
 /* Cuando es de NOCHE: ocultar día, mostrar noche */
 .game-component.phase-night::before {
