@@ -27,26 +27,25 @@ export class GameManager {
                 console.log('☀️ Evento de DÍA recibido:', event.data)
                 GameComponent.handleDayPhase(event.data)
                 GameComponent.handleVoteEnd // 🔥 Cerrar cualquier votación activa
-                GameComponent.onStateChange('DAY');
+                GameComponent.onStateChange('DAY')
                 break
 
             case 'game.night':
                 console.log('🌙 Evento de NOCHE recibido:', event.data)
                 GameComponent.handleNightPhase(event.data)
                 GameComponent.handleVoteEnd // 🔥 Cerrar cualquier votación activa
-                GameComponent.onStateChange('NIGHT');
+                GameComponent.onStateChange('NIGHT')
 
                 break
 
             case 'game.discussion':
                 // TODO: Sacar un enorme titulo para lobos o aldeanos
-                if(channel==='game'){
-                    GameComponent.onStateChange('DAY_DISCUSSION');
-                }else{
-                    GameComponent.onStateChange('NIGHT_DISCUSSION');
-                    
+                if (channel === 'game') {
+                    GameComponent.onStateChange('DAY_DISCUSSION')
+                } else {
+                    GameComponent.onStateChange('NIGHT_DISCUSSION')
                 }
-                
+
                 console.log(
                     'Empieza la discusion: Cambiame por humo',
                     event.data

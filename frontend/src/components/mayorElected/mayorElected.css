@@ -1,0 +1,154 @@
+.mayor-elected-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /*Soy consciente de este z index gema */
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.mayor-elected-overlay.visible {
+    opacity: 1;
+}
+
+.mayor-elected-overlay.hiding {
+    opacity: 0;
+}
+
+/* el modal en si */
+.mayor-elected-modal {
+    background: linear-gradient(
+        145deg,
+        rgba(30, 25, 50, 0.95),
+        rgba(20, 15, 40, 0.98)
+    );
+    border: 3px solid #ffd700;
+    border-radius: 20px;
+    padding: 2.5rem 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    box-shadow:
+        0 0 40px rgba(255, 215, 0, 0.4),
+        0 0 80px rgba(255, 215, 0, 0.2),
+        0 20px 60px rgba(0, 0, 0, 0.5);
+    pointer-events: auto;
+    transform: scale(0.8) translateY(-20px);
+    animation: mayorModalEnter 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+        forwards;
+}
+
+@keyframes mayorModalEnter {
+    to {
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* icono de corona */
+.mayor-crown-icon {
+    font-size: 5rem;
+    line-height: 1;
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6));
+    animation: crownBounce 1s ease-in-out infinite;
+}
+
+@keyframes crownBounce {
+    0%,
+    100% {
+        transform: translateY(0) rotate(-5deg);
+    }
+    50% {
+        transform: translateY(-10px) rotate(5deg);
+    }
+}
+
+/* titulo */
+.mayor-elected-title {
+    font-family: var(--font-heading, 'Fredoka One', sans-serif);
+    font-size: 2rem;
+    color: #ffd700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 0;
+    text-shadow:
+        2px 2px 0 rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+/* nombre del jugador */
+.mayor-elected-name {
+    font-family: var(--font-heading, 'Fredoka One', sans-serif);
+    font-size: 1.8rem;
+    color: #fff;
+    margin: 0;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+/* mensaje */
+.mayor-elected-message {
+    font-family: var(--font-body, sans-serif);
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+    text-align: center;
+}
+
+/* boton continuar */
+.mayor-elected-btn {
+    margin-top: 1rem;
+    padding: 12px 40px;
+    font-family: var(--font-heading, 'Fredoka One', sans-serif);
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #1a1a1a;
+    background: linear-gradient(180deg, #ffd700 0%, #ffb300 100%);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow:
+        0 4px 0 #b38600,
+        0 6px 20px rgba(255, 215, 0, 0.3);
+    transition: all 0.2s ease;
+}
+
+.mayor-elected-btn:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 6px 0 #b38600,
+        0 8px 25px rgba(255, 215, 0, 0.4);
+}
+
+.mayor-elected-btn:active {
+    transform: translateY(2px);
+    box-shadow:
+        0 2px 0 #b38600,
+        0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+/* responsive */
+@media (max-width: 500px) {
+    .mayor-elected-modal {
+        padding: 2rem 1.5rem;
+        margin: 1rem;
+    }
+
+    .mayor-crown-icon {
+        font-size: 4rem;
+    }
+
+    .mayor-elected-title {
+        font-size: 1.5rem;
+    }
+
+    .mayor-elected-name {
+        font-size: 1.4rem;
+    }
+}
