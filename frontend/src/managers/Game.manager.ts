@@ -27,25 +27,18 @@ export class GameManager {
                 console.log('☀️ Evento de DÍA recibido:', event.data)
                 GameComponent.handleDayPhase(event.data)
                 GameComponent.handleVoteEnd // 🔥 Cerrar cualquier votación activa
-                GameComponent.onStateChange('DAY')
                 break
 
             case 'game.night':
                 console.log('🌙 Evento de NOCHE recibido:', event.data)
                 GameComponent.handleNightPhase(event.data)
-                GameComponent.handleVoteEnd // 🔥 Cerrar cualquier votación activa
-                GameComponent.onStateChange('NIGHT')
+                GameComponent.handleVoteEnd // 🔥 Cerrar cualquier votación activo
 
                 break
 
             case 'game.discussion':
-                // TODO: Sacar un enorme titulo para lobos o aldeanos
-                if (channel === 'game') {
-                    GameComponent.onStateChange('DAY_DISCUSSION')
-                } else {
-                    GameComponent.onStateChange('NIGHT_DISCUSSION')
-                }
-
+                // TODO: Sacar un enorme titulo para lobos o aldeano
+                
                 console.log(
                     'Empieza la discusion: Cambiame por humo',
                     event.data
@@ -57,6 +50,10 @@ export class GameManager {
                 const detail = {
                     message: event.data.message || '¡Atención Aldeanos!',
                 }
+                console.log(`PHASE QUE HA LLEGADO`, event)
+                const phase= event.data.phase || 'DAY_DISCUSSION'
+                GameComponent.onStateChange(phase);
+                
                 console.log('📣 Anuncio del narrador:', detail)
                 NarratorOverlay.spawnMessage(detail.message)
 

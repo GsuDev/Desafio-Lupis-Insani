@@ -51,3 +51,65 @@
     display: flex;
     justify-content: center;
 }
+
+/* Estilo base para el icono debajo del marcador */
+.time-bar-marker.sol::after,
+.time-bar-marker.discusion::after,
+.time-bar-marker.votacion::after,
+.time-bar-marker.resultado::after,
+.time-bar-marker.lobo::after,
+.time-bar-marker.luna::after {
+  position: absolute;
+  top: 25px; /* Ajustamos la distancia para la imagen */
+  left: 50%;
+  transform: translateX(-50%); /* Centrar el icono respecto al punto */
+  width: 24px; /* Ancho del SVG */
+  height: 24px; /* Alto del SVG */
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  /* Opcional: Transición suave si se activan dinámicamente */
+  transition: all 0.3s ease;
+}
+
+/* Usando SVGs como archivos externos */
+.time-bar-marker.sol::after {
+  content: url('/src/assets/icons/sol.svg');
+}
+
+.time-bar-marker.luna::after {
+  content: url('/src/assets/icons/luna.svg');
+}
+.time-bar-marker.discusion::after{
+  content: url('/src/assets/icons/discusion.svg');
+}
+.time-bar-marker.votacion::after{
+  content: url('/src/assets/icons/votacion.svg');
+}
+.time-bar-marker.lobo::after{
+  content: url('/src/assets/icons/lobo.svg');
+}
+.time-bar-marker.resultado::after{
+  content: url('/src/assets/icons/elegido.svg');
+}
+
+/* Opción B: Usando Font Awesome (Requiere importar la librería) */
+/* .time-bar-marker.sol::after { content: "\f185"; font-family: "Font Awesome 5 Free"; font-weight: 900; } */
+/* .time-bar-marker.luna::after { content: "\f186"; font-family: "Font Awesome 5 Free"; font-weight: 900; } */
+/* .time-bar-marker.discusion::after { content: "\f075"; font-family: "Font Awesome 5 Free"; font-weight: 900; } */
+/* .time-bar-marker.votacion::after { content: "\f666"; font-family: "Font Awesome 5 Free"; font-weight: 900; } */
+/* .time-bar-marker.lobo::after { content: "\f542"; font-family: "Font Awesome 5 Free"; font-weight: 900; } */
+
+/* Texto de la fase (opcional, si quieres mostrar el nombre de la fase) */
+.time-bar-phase-label {
+  position: absolute;
+  top: -30px; /* Ajusta la posición vertical */
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  font-size: 0.9em;
+  font-weight: bold;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+  white-space: nowrap;
+  pointer-events: none; /* Para que no interfiera con clics */
+}

@@ -56,7 +56,8 @@ export class GameComponent {
         this.campfireContainer = this.createCampfireContainer()
         this.narratorOverlay = new NarratorOverlay(this.container)
 
-        this.timeBar = new TimeBar(4) // el numero de phases que tengamos
+        this.timeBar = new TimeBar(7) // el numero de phases que tengamos
+
 
         // Guardar instancia singleton
         GameComponent.instance = this
@@ -683,25 +684,32 @@ export class GameComponent {
             return
         }
         switch (newState) {
-            case 'DAY':
-                GameComponent.instance.timeBar.reset() // Reinicia al empezar el día
-                setTimeout(
-                    () => GameComponent.instance?.timeBar?.setPhase(1),
-                    50
-                )
-                break
+            case 'DAY_START':
+                GameComponent.instance.timeBar.reset(); // Reinicia al empezar el día
+                setTimeout(() => GameComponent.instance?.timeBar?.setPhase(1), 50);
+                break;
             case 'DAY_DISCUSSION':
-                GameComponent.instance.timeBar.setPhase(2)
-                break
-            case 'NIGHT':
-                GameComponent.instance.timeBar.setPhase(3)
-                break
+                GameComponent.instance.timeBar.setPhase(2);
+                break;
+            case 'DAY_VOTING':
+                GameComponent.instance.timeBar.setPhase(3);
+                break;
+            case 'DAY_RESULT':
+                GameComponent.instance.timeBar.setPhase(4);
+                break;
+            case 'NIGHT_START':
+                GameComponent.instance.timeBar.setPhase(5);
+                break;
             case 'NIGHT_DISCUSSION':
-                GameComponent.instance.timeBar.setPhase(4)
-                break
+                GameComponent.instance.timeBar.setPhase(6);
+                break;
+            case 'NIGHT_VOTING':
+                GameComponent.instance.timeBar.setPhase(7);
+                break;
             // case 'VOTING':
             //     GameComponent.instance.timeBar.setPhase(2);
             //     break;
+
         }
         // switch (newState) {
         //     case 'DAY_DISCUSSION':
@@ -715,6 +723,8 @@ export class GameComponent {
         //         GameComponent.instance.timeBar.setPhase(3);
         //         break;
         // }
+
+
     }
 
     private checkIfPlayerIsWolf(): boolean {

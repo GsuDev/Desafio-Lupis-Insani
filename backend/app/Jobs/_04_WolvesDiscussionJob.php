@@ -38,7 +38,7 @@ class _04_WolvesDiscussionJob implements ShouldQueue
         $text = 'Unos aullidos rompen el silencio. Los lobos se comunican...';
         $message = $game->addMessage('system', null, $text);
 
-        GameChannelController::systemSend('game.narrator', ['message' => '¡Se escuchan aullidos de fondo!'], $this->gameId);
+        GameChannelController::systemSend('game.narrator', ['message' => '¡Se escuchan aullidos de fondo!','phase'=>'NIGHT_DISCUSSION'], $this->gameId);
 
         broadcast(new GameEvent(
             'chat.message',
