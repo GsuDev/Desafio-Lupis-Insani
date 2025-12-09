@@ -38,7 +38,7 @@ export class GameManager {
 
             case 'game.discussion':
                 // TODO: Sacar un enorme titulo para lobos o aldeano
-                
+
                 console.log(
                     'Empieza la discusion: Cambiame por humo',
                     event.data
@@ -51,9 +51,9 @@ export class GameManager {
                     message: event.data.message || '¡Atención Aldeanos!',
                 }
                 console.log(`PHASE QUE HA LLEGADO`, event)
-                const phase= event.data.phase || 'DAY_DISCUSSION'
-                GameComponent.onStateChange(phase);
-                
+                const phase = event.data.phase || 'DAY_DISCUSSION'
+                GameComponent.onStateChange(phase)
+
                 console.log('📣 Anuncio del narrador:', detail)
                 NarratorOverlay.spawnMessage(detail.message)
 

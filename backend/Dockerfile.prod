@@ -1,0 +1,77 @@
+# ========================================
+# STAGE 1: Dependencias y Build
+# ========================================
+FROM php:8.2-fpm AS builder
+
+# Variables de entorno
+ENV COMPOSER_ALLOW_SUPERUSER=1
+ENV COMPOSER_NO_INTERACTION=1
+
+# Instalar dependencias del sistema
+RUN apt-get update && apt-get install -y \
+    zip unzip git curl libpng-dev libonig-dev libxml2-dev libzip-dev \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Instalar Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Copiar archivos de la aplicación
+WORKDIR /var/www/html
+COPY . .
+
+# Instalar dependencias de producción
+RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+
+# Optimizar Laravel
+RUN php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache
+
+# ========================================
+# STAGE 2: Runtime Production
+# ========================================
+FROM php:8.2-fpm
+
+# Instalar solo extensiones necesarias y herramientas mínimas
+RUN apt-get update && apt-get install -y \
+    libpng-dev libonig-dev libxml2-dev libzip-dev netcat-openbsd \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Configuración PHP-FPM para producción
+RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini && \
+    echo "opcache.enable=1" >> /usr/local/etc/php/php.ini && \
+    echo "opcache.memory_consumption=256" >> /usr/local/etc/php/php.ini && \
+    echo "opcache.max_accelerated_files=20000" >> /usr/local/etc/php/php.ini && \
+    echo "opcache.validate_timestamps=0" >> /usr/local/etc/php/php.ini
+
+# Copiar aplicación optimizada desde builder
+WORKDIR /var/www/html
+COPY --from=builder --chown=www-data:www-data /var/www/html /var/www/html
+
+# Crear directorios necesarios con permisos
+RUN mkdir -p storage/framework/{cache,sessions,views} \
+    storage/logs \
+    bootstrap/cache && \
+    chown -R www-data:www-data storage bootstrap/cache && \
+    chmod -R 775 storage bootstrap/cache
+
+# Script de healthcheck para PHP-FPM
+RUN echo '#!/bin/sh' > /usr/local/bin/php-fpm-healthcheck && \
+    echo 'SCRIPT_NAME=/ping SCRIPT_FILENAME=/ping REQUEST_METHOD=GET cgi-fcgi -bind -connect 127.0.0.1:9000 || exit 1' >> /usr/local/bin/php-fpm-healthcheck && \
+    chmod +x /usr/local/bin/php-fpm-healthcheck && \
+    apt-get update && apt-get install -y libfcgi-bin && apt-get clean
+
+# Exponer puerto PHP-FPM
+EXPOSE 9000
+
+# Usuario www-data
+USER www-data
+
+# Comando por defecto
+CMD ["php-fpm"]

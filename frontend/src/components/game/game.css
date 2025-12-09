@@ -70,7 +70,6 @@
     }
 }
 
-
 /* Cuando es de NOCHE: ocultar día, mostrar noche */
 .game-component.phase-night::before {
     opacity: 0;

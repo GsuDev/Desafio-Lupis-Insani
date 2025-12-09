@@ -37,7 +37,7 @@ class _03_TransitionToNightJob implements ShouldQueue
 
         $message = $game->addMessage('system', null, $text);
 
-        GameChannelController::systemSend('game.narrator', ['message' => '¡Cae la noche en la aldea!','phase'=>'NIGHT_START'], $this->gameId);
+        GameChannelController::systemSend('game.narrator', ['message' => '¡Cae la noche en la aldea!', 'phase' => 'NIGHT_START'], $this->gameId);
 
         broadcast(new GameEvent(
             'chat.message',

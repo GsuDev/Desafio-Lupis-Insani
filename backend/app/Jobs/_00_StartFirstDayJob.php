@@ -41,7 +41,7 @@ class _00_StartFirstDayJob implements ShouldQueue
 
         // 4. Emitir evento chat.message
         EventController::systemMessage($message, 'game', $this->gameId);
-        GameChannelController::systemSend('game.narrator', ['message' => 'Comienza la eleccion del alcalde', 'phase'=>'DAY_DISCUSSION'], $this->gameId);
+        GameChannelController::systemSend('game.narrator', ['message' => 'Comienza la eleccion del alcalde', 'phase' => 'DAY_DISCUSSION'], $this->gameId);
         // 5. Emitir evento game.discussion
         GameChannelController::systemSend('game.discussion', null, $this->gameId);
 

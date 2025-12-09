@@ -5,6 +5,7 @@
     "type": "module",
     "scripts": {
         "dev": "vite --host 0.0.0.0",
+        "build": "vite build",
         "lint:check": "xo",
         "lint:fix": "xo --fix",
         "format:fix": "prettier --write \"./**/*.{ts,js,css,html}\"",

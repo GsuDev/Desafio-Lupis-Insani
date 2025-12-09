@@ -47,7 +47,6 @@ export class Slide {
             //titleLink.rel = 'noopener noreferrer'
             //titleLink.download = 'instrucciones-lupis-insani.pdf'
             titleLink.addEventListener('click', () => {
-                
                 setTimeout(() => {
                     const tempLink = document.createElement('a')
                     tempLink.href = instrucciones

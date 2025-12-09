@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use Faker\Factory as FakerFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -18,7 +17,6 @@ class GameFactory extends Factory
      */
     public function definition(): array
     {
-        $faker = FakerFactory::create('es_Es');
         $uniqueUrl = (string) Str::uuid();
 
         return [

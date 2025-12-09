@@ -5,7 +5,6 @@ import { Carousel } from '../howToPlayCarousel/howToPlayCarousel'
 //import { getTipSlides } from '../../providers/game.provider'
 import tipSlidesData from '../../assets/data/tipSlides.json'
 import type { SlideData } from '../../models/models'
-
 class AccessContainer {
     private container: HTMLElement
 
@@ -30,7 +29,7 @@ class AccessContainer {
         // Logo SVG
         const logo = document.createElement('img')
         logo.className = 'logo'
-        logo.src = '/src/assets/icons/lupis-insani.png'
+        logo.src = '../../assets/icons/lupis-insani.png'
 
         const title = document.createElement('h1')
         title.textContent = 'LUPIS INSANI'

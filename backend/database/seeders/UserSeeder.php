@@ -66,6 +66,5 @@ class UserSeeder extends Seeder
         $user->roles()->syncWithoutDetaching([$userRole->id]);
         $system->roles()->syncWithoutDetaching([$adminRole->id]);
         $anonymous->roles()->syncWithoutDetaching([$anonymousRole->id]);
-        User::factory()->count(20)->create();
     }
 }

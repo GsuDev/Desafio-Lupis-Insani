@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\Game;
 use App\Models\User;
-use Faker\Factory as FakerFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -14,11 +13,10 @@ class MessageFactory extends Factory
 {
     public function definition(): array
     {
-        $faker = FakerFactory::create('es_ES');
 
         return [
-            'type' => $faker->randomElement(['SYSTEM', 'GAME_MANAGER', 'MESSAGE', 'ERROR']),
-            'message' => $faker->sentence(),
+            'type' => 'SYSTEM',
+            'message' => 'ejemplo',
             // 'game_id' => function () {
             //     return Game::inRandomOrder()->first()->id;
             // },
