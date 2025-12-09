@@ -1,6 +1,8 @@
 import type { User, UserStatisticsData } from '../models/models'
 import * as userProvider from '../providers/user.provider'
+import type { ApiErrorResponse } from '../types/api.types'
 import type { RegisterPayload } from '../types/payload.types'
+import type { AuthResponse, UserResponse } from '../types/response.types'
 
 let showValidationError: (field: string, message: string) => void
 let clearValidationErrors: () => void
@@ -41,16 +43,19 @@ class UserController {
         return userProvider.isLoggedIn() && Boolean(this._currentUser)
     }
 
-    async login(email: string, password: string): Promise<User | undefined> {
+    async login(
+        email: string,
+        password: string
+    ): Promise<UserResponse | ApiErrorResponse> {
         try {
             const response = await userProvider.login(email, password)
 
-            if (!response.success) {
-                showGlobalMessage(
-                    response.message || 'Error desconocido en login',
-                    false
-                )
-                return undefined
+            if (!response.success || !response.data) {
+                return {
+                    success: false,
+                    message: response.message || 'Error en login',
+                    data: null,
+                }
             }
 
             this._currentUser = response.data?.user
@@ -59,13 +64,17 @@ class UserController {
                 JSON.stringify(this._currentUser)
             )
 
-            return this._currentUser
+            return {
+                success: true,
+                message: 'Login exitoso',
+                data: { user: response.data.user },
+            }
         } catch (error: any) {
-            showGlobalMessage(
-                error.message || 'Error de conexión al servidor',
-                false
-            )
-            return undefined
+            return {
+                success: false,
+                message: error.message || 'Error de conexión',
+                data: null,
+            }
         }
     }
 
