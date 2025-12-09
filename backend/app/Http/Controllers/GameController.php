@@ -531,4 +531,45 @@ class GameController extends Controller
             'data' => null,
         ];
     }
+
+    // Alternar la partida entre pública y privada
+    public function togglePublic(Request $request, $gameId)
+    {
+        // Obtener el usuario autenticado
+        $user = $request->user();
+
+        // Buscar la partida
+        $game = Game::findOrFail($gameId);
+
+        // Verificar que el usuario es participante de la partida
+        $participant = $game->participants()
+            ->where('user_id', $user->id)
+            ->first();
+
+        if (! $participant) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No eres participante de esta partida',
+                'data' => null,
+            ], 403);
+        }
+
+        // Alternar el valor de isPublic
+        $game->isPublic = ! $game->isPublic;
+        $game->save();
+
+        $data = [
+            'isPublic' => $game->isPublic,
+        ];
+
+        GameChannelController::systemSend('game.public', $data, $gameId);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Visibilidad de la partida actualizada',
+            'data' => [
+                'isPublic' => $game->isPublic,
+            ],
+        ], 200);
+    }
 }
