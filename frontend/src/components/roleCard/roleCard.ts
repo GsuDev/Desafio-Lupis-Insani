@@ -1,14 +1,30 @@
 import './roleCard.css'
-import wolfCardImg from '../../assets/carta-lobo-prueba.png'
-import villagerCardImg from '../../assets/carta-aldeano-prueba.png'
+import type { Participant } from '../../models/models' // Asegúrate de tener los tipos si los necesitas, o define PlayerRole aquí como tenías.
 
-export type PlayerRole = 'villager' | 'wolf' | 'seer' | 'hunter'
+export type PlayerRole = 'villager' | 'wolf'
 
+// 1. Cargar imágenes de la raíz de assets (para las cartas de prueba)
+const rootAssets = import.meta.glob('../../assets/*.png', {
+    eager: true
+})
+
+
+// Función helper para obtener la URL final de la imagen
+function getAssetUrl(globMap: Record<string, unknown>, relativePath: string): string {
+    const module = globMap[relativePath]
+    if (module && typeof module === 'object' && 'default' in module) {
+        return (module as any).default
+    }
+    console.warn(`Imagen no encontrada: ${relativePath}`)
+    return ''
+}
+
+// 3. Mapear los roles a las rutas específicas usando el helper
 const roleImages: Record<PlayerRole, string> = {
-    wolf: wolfCardImg,
-    villager: villagerCardImg,
-    seer: '',
-    hunter: '',
+    // Usamos tus cartas de prueba actuales
+    wolf: getAssetUrl(rootAssets, '../../assets/carta-lobo-prueba.png'),
+    villager: getAssetUrl(rootAssets, '../../assets/carta-aldeano-prueba.png'),
+    
 }
 
 export class RoleCard {
@@ -25,8 +41,10 @@ export class RoleCard {
 
         card.className = `role-card role-${this.role}`
 
-        if (roleImages[this.role]) {
-            card.style.backgroundImage = `url(${roleImages[this.role]})`
+        // Asignar la imagen de fondo si existe
+        const imageUrl = roleImages[this.role]
+        if (imageUrl) {
+            card.style.backgroundImage = `url(${imageUrl})`
         }
 
         card.title = `Tu rol: ${this.role.toUpperCase()}`
