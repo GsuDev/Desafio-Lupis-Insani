@@ -56,6 +56,21 @@
     border-color: rgba(255, 255, 255, 0.3);
 }
 
+/* boton de panel admin */
+.config-btn-mini.admin-btn {
+    background: linear-gradient(135deg, #ff8f29 0%, #e67300 100%);
+    border: none;
+    color: #1a1a1a;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(255, 143, 41, 0.4);
+}
+
+.config-btn-mini.admin-btn:hover {
+    background: linear-gradient(135deg, #ffaa55 0%, #ff8f29 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 143, 41, 0.5);
+}
+
 /* botones grandes */
 .actions-section {
     display: flex;

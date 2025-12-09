@@ -94,6 +94,7 @@ class UserController extends Controller
             'password.required' => 'La contraseña es obligatoria.',
             'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
+            'password.regex' => 'La contraseña debe incluir al menos 1 mayúscula, 1 minúscula, 1 número y 1 símbolo.',
             'profile_picture.image' => 'El archivo debe ser una imagen.',
             'profile_picture.max' => 'La imagen no puede pesar más de 2MB.',
         ];
@@ -103,7 +104,13 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/',
+            ],
             'birthdate' => 'nullable|date',
             // 'profile_picture' => 'nullable|file|image|max:2048',
         ], $messages);
@@ -176,6 +183,8 @@ class UserController extends Controller
             ], 404);
         }
 
+        $user->load('roles');
+
         return response()->json([
             'success' => true,
             'message' => 'Datos del usuario actual recuperados correctamente',
@@ -213,11 +222,11 @@ class UserController extends Controller
         ];
 
         $validator = Validator::make($request->all(), [
-            'nickname' => 'required|string|max:255|unique:users',
-            'name' => 'required|string|max:255',
-            'lastname' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'birthdate' => 'nullable|date',
+            'nickname' => 'sometimes|string|max:255|unique:users,nickname,'.$id,
+            'name' => 'sometimes|string|max:255',
+            'lastname' => 'sometimes|string|max:255',
+            'email' => 'sometimes|string|email|max:255|unique:users,email,'.$id,
+            'birthdate' => 'sometimes|nullable|date',
             // 'profile_picture' => 'nullable|file|image|max:2048',
         ], $messages);
 
@@ -385,9 +394,23 @@ class UserController extends Controller
         $user = $request->user();
 
         $validator = Validator::make($request->all(), [
-            'oldPassword' => 'required|string|min:8',
-            'password' => 'required|string|min:8',
+            'oldPassword' => [
+                'required',
+                'string',
+                'min:8',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/',
+            ],
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/',
+            ],
+        ], [
+            'oldPassword.regex' => 'La contraseña actual debe tener al menos 8 caracteres e incluir una mayúscula, una minúscula, un número y un símbolo.',
+            'password.regex' => 'La nueva contraseña debe tener al menos 8 caracteres e incluir una mayúscula, una minúscula, un número y un símbolo.',
         ]);
+
         if ($validator->fails()) {
 
             return response()->json([
@@ -419,19 +442,53 @@ class UserController extends Controller
     public function getStatistics(Request $request)
     {
         $user = $request->user();
+        $wolfId = (int) env('WOLF_ID', 2);
 
         $finishedParticipations = $user->participants()
             ->whereHas('game', function ($query) {
                 $query->where('state', 'finished');
             })
-            ->with(['states', 'character']) // se cargan los estados para ver si murio
+            ->with([
+                'states',
+                'character',
+                'game.participants.states',
+                'game.participants.character',
+            ])
             ->get();
 
-        $gamesData = $finishedParticipations->map(function ($participant) {
+        $gamesData = $finishedParticipations->map(function ($participant) use ($wolfId) {
 
-            // si no tiene el estado dead esque gano
-            $isDead = $participant->states->contains('name', 'DEAD');
-            $won = ! $isDead;
+            $game = $participant->game;
+
+            // Participantes vivos (no tienen el estado DEAD)
+            $aliveParticipants = $game->participants->filter(function ($p) {
+                return ! $p->states->contains('name', 'DEAD');
+            });
+
+            // ¿Quedan lobos vivos?
+            $wolvesAlive = $aliveParticipants->where('character_id', $wolfId)->count() > 0;
+
+            // ¿Quedan NO lobos vivos?
+            $othersAlive = $aliveParticipants->where('character_id', '!=', $wolfId)->count() > 0;
+
+            // Determinar equipo ganador
+            $winner = null; // 'wolves' | 'villagers' | null
+
+            if ($wolvesAlive && ! $othersAlive) {
+                $winner = 'wolves';
+            } elseif (! $wolvesAlive && $othersAlive) {
+                $winner = 'villagers';
+            }
+
+            // Determinar si este participante ganó
+            $isWolf = $participant->character_id === $wolfId;
+
+            $won = false;
+            if ($winner === 'wolves' && $isWolf) {
+                $won = true;
+            } elseif ($winner === 'villagers' && ! $isWolf) {
+                $won = true;
+            }
 
             return [
                 'gameId' => $participant->game_id,
@@ -441,16 +498,13 @@ class UserController extends Controller
             ];
         });
 
-        $totalGames = $gamesData->count();
-        $totalWins = $gamesData->where('won', true)->count();
-
         return response()->json([
             'success' => true,
             'message' => 'Estadísticas recuperadas correctamente',
             'data' => [
-                'totalGames' => $totalGames,
-                'totalWins' => $totalWins,
-                'games' => $gamesData->values(), // esto reindexa el array por si acaso
+                'totalGames' => $gamesData->count(),
+                'totalWins' => $gamesData->where('won', true)->count(),
+                'games' => $gamesData->values(),
             ],
         ], 200);
     }

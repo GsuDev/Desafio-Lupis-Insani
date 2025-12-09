@@ -29,7 +29,7 @@ class UserSeeder extends Seeder
                 'nickname' => 'admin',
                 'name' => 'Administrador',
                 'lastname' => 'DelJuego',
-                'password' => Hash::make('password'), // cámbialo si quieres
+                'password' => Hash::make('Password_123'), // cámbialo si quieres
                 'birthdate' => '1990-01-01',
             ]
         );
@@ -41,7 +41,7 @@ class UserSeeder extends Seeder
                 'nickname' => 'usuario1',
                 'name' => 'Jugador',
                 'lastname' => 'Prueba',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('Password_123'),
                 'birthdate' => '2000-05-05',
             ]
         );

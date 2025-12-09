@@ -76,7 +76,7 @@ class AuthController extends Controller
         if (! $user || ! Hash::check($credentials['password'], $user->password)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Credenciales inválidas',
+                'message' => 'Correo electrónico o contraseña incorrectos.',
                 'data' => null,
             ], 401);
         }
@@ -143,7 +143,7 @@ class AuthController extends Controller
             'success' => true,
             'message' => 'Sesión iniciada correctamente',
             'data' => [
-                'user' => $user,
+                'user' => $user->load('roles'),
                 'token' => $token,
             ],
 
@@ -185,7 +185,14 @@ class AuthController extends Controller
     public function resetPassword(Request $request)
     {
         $validator = $request->validate([
-            'password' => 'required|string|min:8',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/',
+            ],
+        ], [
+            'password.regex' => 'La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, una minúscula, un número y un símbolo.',
         ]);
 
         // 4. Obtener usuario

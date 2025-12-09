@@ -1,6 +1,8 @@
 import type { User, UserStatisticsData } from '../models/models'
 import * as userProvider from '../providers/user.provider'
+import type { ApiErrorResponse } from '../types/api.types'
 import type { RegisterPayload } from '../types/payload.types'
+import type { AuthResponse, UserResponse } from '../types/response.types'
 
 let showValidationError: (field: string, message: string) => void
 let clearValidationErrors: () => void
@@ -41,16 +43,19 @@ class UserController {
         return userProvider.isLoggedIn() && Boolean(this._currentUser)
     }
 
-    async login(email: string, password: string): Promise<User | undefined> {
+    async login(
+        email: string,
+        password: string
+    ): Promise<UserResponse | ApiErrorResponse> {
         try {
             const response = await userProvider.login(email, password)
 
-            if (!response.success) {
-                showGlobalMessage(
-                    response.message || 'Error desconocido en login',
-                    false
-                )
-                return undefined
+            if (!response.success || !response.data) {
+                return {
+                    success: false,
+                    message: response.message || 'Error en login',
+                    data: null,
+                }
             }
 
             this._currentUser = response.data?.user
@@ -59,13 +64,17 @@ class UserController {
                 JSON.stringify(this._currentUser)
             )
 
-            return this._currentUser
+            return {
+                success: true,
+                message: 'Login exitoso',
+                data: { user: response.data.user },
+            }
         } catch (error: any) {
-            showGlobalMessage(
-                error.message || 'Error de conexión al servidor',
-                false
-            )
-            return undefined
+            return {
+                success: false,
+                message: error.message || 'Error de conexión',
+                data: null,
+            }
         }
     }
 
@@ -260,8 +269,6 @@ class UserController {
         disableForm = disableCallback
     }
 
-    // La función principal que el formulario llamará al hacer Submit
-    // Usamos 'async' porque llamaremos a una Promesa (el Provider)
     async handleRegister(formData: FormData) {
         clearValidationErrors()
         disableForm(true)
@@ -279,7 +286,24 @@ class UserController {
         }
 
         let hasError = false
-        if (data.password !== data.password_confirmation) {
+
+        // ============================
+        // VALIDACIÓN DE CONTRASEÑA
+        // ============================
+        const password = data.password
+
+        // Min 8 chars + 1 mayúscula + 1 minúscula + 1 número + 1 símbolo
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/
+
+        if (!passwordRegex.test(password)) {
+            showValidationError(
+                'password',
+                'La contraseña debe tener al menos 8 caracteres e incluir mínimo: 1 mayúscula, 1 minúscula, 1 número y 1 símbolo.'
+            )
+            hasError = true
+        }
+
+        if (password !== data.password_confirmation) {
             showValidationError(
                 'password_confirmation',
                 'Las contraseñas no coinciden.'
@@ -287,6 +311,7 @@ class UserController {
             hasError = true
         }
 
+        // Email básico
         if (!data.email.includes('@') || !data.email.includes('.')) {
             showValidationError(
                 'email',
@@ -295,6 +320,7 @@ class UserController {
             hasError = true
         }
 
+        // Nickname
         if (!data.nickname || data.nickname.length < 3) {
             showValidationError(
                 'nickname',
@@ -320,7 +346,6 @@ class UserController {
                 return
             }
 
-            // Registro exitoso
             this._currentUser = response.data?.user
             localStorage.setItem(
                 'currentUser',
@@ -361,6 +386,86 @@ class UserController {
                 showGlobalMessage(error.message || 'Error inesperado', false)
             }
             return undefined
+        }
+    }
+    /**
+     * Obtiene todos los usuarios del sistema (Admin)
+     */
+    async getAllUsers(): Promise<User[] | undefined> {
+        try {
+            const response = await userProvider.getUsers()
+
+            if (!response.success || !response.data?.users) {
+                if (showGlobalMessage) {
+                    showGlobalMessage(
+                        response.message || 'Error cargando lista de usuarios',
+                        false
+                    )
+                }
+                return undefined
+            }
+
+            return response.data.users
+        } catch (error: unknown) {
+            if (showGlobalMessage) {
+                showGlobalMessage(
+                    'Error de conexión al obtener usuarios',
+                    false
+                )
+            }
+            return undefined
+        }
+    }
+    /**
+     * Elimina un usuario del sistema (Admin)
+     */
+    async deleteUser(id: number): Promise<boolean> {
+        try {
+            const response = await userProvider.deleteUser(id)
+
+            if (response.success) {
+                console.log('Usuario eliminado:', id)
+                return true
+            } else {
+                console.error('Error al eliminar:', response.message)
+                alert(response.message || 'No se pudo eliminar al usuario')
+                return false
+            }
+        } catch (error) {
+            console.error('Error de conexión:', error)
+            return false
+        }
+    }
+    /**
+     * Admin actualiza los datos de un usuario (Nickname y Email)
+     */
+    async updateUser(
+        id: number,
+        data: { nickname: string; email: string }
+    ): Promise<boolean> {
+        try {
+            const response = await userProvider.updateUserById(id, data)
+
+            if (response.success) {
+                if (showGlobalMessage) {
+                    showGlobalMessage('Usuario actualizado correctamente', true)
+                }
+                return true
+            } else {
+                if (showGlobalMessage) {
+                    showGlobalMessage(
+                        response.message || 'Error al actualizar usuario',
+                        false
+                    )
+                }
+                return false
+            }
+        } catch (error) {
+            console.error('Error en controlador updateUser:', error)
+            if (showGlobalMessage) {
+                showGlobalMessage('Error de conexión al actualizar', false)
+            }
+            return false
         }
     }
 }

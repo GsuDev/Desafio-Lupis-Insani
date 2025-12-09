@@ -118,7 +118,8 @@ export class AnonymousSelectorComponent {
         const nicknameInput = document.createElement('input')
         nicknameInput.type = 'text'
         nicknameInput.id = 'nickname-input'
-        nicknameInput.placeholder = 'MiNickName522'
+        nicknameInput.placeholder =
+            'Dejalo en blanco para que los lobos lo elijan'
         nicknameInput.maxLength = 20
         nicknameInput.autocomplete = 'off'
 

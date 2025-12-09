@@ -9,6 +9,7 @@ import AccessContainer from '../accessContainer/AccessContainer'
 import { LoginFormComponent } from '../loginForm/loginForm'
 import UserProfileContainer from '../userProfileContainer/userProfileContainer'
 import defaultAvatar from '../../assets/characters/werewolf.png'
+import AdminPanelComponent from '../adminPanel/adminPanel'
 
 /**
  * Componente que muestra la tarjeta del perfil del usuario
@@ -78,8 +79,34 @@ export class UserProfileComponent {
             userSettings.render()
         }
 
-        // se añade el titulo y el boton al div de info
+        const isAdmin = this.userData.roles?.some(
+            (role) => role.name === 'admin'
+        )
+
+        let adminBtn: HTMLButtonElement | null = null
+
+        if (isAdmin) {
+            adminBtn = document.createElement('button')
+            adminBtn.className = 'config-btn-mini'
+            adminBtn.textContent = '🛡️ Panel Admin'
+            adminBtn.style.marginLeft = '10px'
+            // Estilo rápido para diferenciarlo
+
+            // Al hacer click, cargamos el Panel de Administración en #app
+            adminBtn.onclick = () => {
+                const app = document.getElementById('app')
+                if (!app) return
+                const adminPanel = new AdminPanelComponent(app)
+                adminPanel.render()
+            }
+        }
+        // -------------------------------------------
+
+        // Añadimos los elementos al infoDiv
         infoDiv.append(nickTitle, configBtn)
+        if (adminBtn) {
+            infoDiv.appendChild(adminBtn)
+        }
 
         // botones
         // div para los botones de jugar crear o unirse
