@@ -1,0 +1,296 @@
+/* el fondo oscuo */
+.modal-overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.3); /* fondo negro casi opaco */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10; /* se pone por encima de todo lo demas */
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    padding: 10px;
+}
+
+/* la tarjeta */
+.user-settings-card {
+    background-color: #1e1e2f;
+    width: 550px;
+    max-width: 100%;
+    max-height: 95vh;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 143, 41, 0.3);
+    padding: 2rem;
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: relative; /* para posicionar cosas dentro si hace falta */
+    color: white;
+    font-family: var(--font-body, sans-serif);
+    overflow-y: auto; /* scroll para moviles */
+}
+
+/* header */
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+    padding-bottom: 1rem;
+    margin-bottom: 0.5rem;
+    flex-shrink: 0; /* el header no se aplasta al hacer scroll */
+}
+
+.back-btn {
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 8px 14px;
+    font-size: 1.2rem;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.back-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(-3px);
+}
+
+.settings-title {
+    font-family: var(--font-heading, sans-serif);
+    text-transform: uppercase;
+    margin: 0;
+    font-size: 1.8rem;
+    color: #ff8f29;
+    letter-spacing: 1px;
+    text-align: center;
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+}
+
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* seccion superior */
+.top-section {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+.avatar-col {
+    display: flex;
+    flex-direction: column; /* columna por si metemos mas cosas */
+    align-items: center;
+    position: relative;
+    flex-shrink: 0; /* evita que se encoja si falta espacio */
+}
+
+.avatar-circle {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    border: 4px solid #ff8f29;
+    object-fit: cover; /* la imagen cubre todo sin deformarse */
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(255, 143, 41, 0.3);
+    transition: transform 0.2s;
+    background: rgba(0, 0, 0, 0.2);
+}
+.avatar-circle:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+/* icono cambiar foto del avatar */
+.avatar-col::after {
+    content: '📷';
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: #ff8f29;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    border: 2px solid #1e1e2f;
+    pointer-events: none;
+}
+/* OTRA OPCION CON CAMARA TRANSPARENTE
+.avatar-col::after {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: #FF8F29;
+    border: 2px solid #1e1e2f;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    background-image: url('../../assets/camera.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 60%;
+    pointer-events: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    
+}*/
+
+.info-col {
+    flex: 1; /* ocupa todo el espacio restante */
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+}
+
+.name-row {
+    display: flex;
+    gap: 1rem;
+}
+
+/* inputs oscuros */
+.input-box {
+    flex: 1; /* se reparten el espacio equitativamente */
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.input-field {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 12px 15px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: #fff;
+    transition: border 0.2s;
+    box-sizing: border-box;
+}
+.input-field::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+    font-style: italic;
+} /* color del texto de ayuda */
+.input-field:focus {
+    outline: none;
+    border-color: #ff8f29;
+    background: rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 10px rgba(255, 143, 41, 0.2);
+}
+
+/* boton password */
+.btn-change-pass {
+    align-self: center; /* se centra a si mismo */
+    background: rgba(220, 53, 69, 0.1);
+    border: 1px solid #dc3545;
+    color: #ff6b6b;
+    font-family: var(--font-body);
+    border-radius: 10px;
+    padding: 12px 24px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+    transition: all 0.2s;
+    width: 100%;
+    max-width: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+.btn-change-pass:hover {
+    background: rgba(220, 53, 69, 0.2);
+    box-shadow: 0 0 15px rgba(220, 53, 69, 0.3);
+    color: white;
+}
+
+/* footer */
+.settings-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid rgba(255, 255, 255, 0.05);
+    gap: 1rem;
+    flex-shrink: 0; /* no se encoge */
+}
+/* Estilo común de botones */
+.btn-cancel,
+.btn-save {
+    flex: 1;
+    padding: 14px;
+    border-radius: 10px;
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.2s;
+}
+
+.btn-cancel:active,
+.btn-save:active {
+    transform: scale(0.98);
+}
+
+.btn-cancel {
+    background-color: transparent;
+    border: 2px solid #6c757d;
+    color: #adb5bd;
+}
+.btn-cancel:hover {
+    border-color: #fff;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.btn-save {
+    background-color: #ff8f29;
+    color: #1a1a1a;
+    box-shadow: 0 4px 0 #cc6e1b; /* efecto 3d */
+}
+.btn-save:hover {
+    background-color: #ff9f4d;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #cc6e1b;
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+    .user-settings-card {
+        padding: 1.5rem;
+        width: 100%;
+        height: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+        border: none;
+    }
+
+    .top-section {
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .name-row {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .settings-title {
+        font-size: 1.4rem;
+    }
+}

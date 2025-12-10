@@ -1,0 +1,180 @@
+### Variables
+@baseUrl = http://localhost/api
+@contentType = application/json
+
+### ==================== AUTH ====================
+### Login para obtener token admin
+POST {{baseUrl}}/login
+Content-Type: {{contentType}}
+
+{
+  "email": "admin@example.com",
+  "password": "Password_123"
+}
+
+### Guardar como @adminToken (respuesta del login)
+### @adminToken = <token_aqui>
+
+### Login para obtener token usuario normal
+POST {{baseUrl}}/login
+Content-Type: {{contentType}}
+
+{
+  "email": "user@example.com",
+  "password": "password"
+}
+
+### Guardar como @userToken (respuesta del login)
+### @userToken = <token_aqui>
+
+### ==================== REGISTRO Y CREACIÓN ====================
+
+### 1. Registrar nuevo usuario (público)
+POST {{baseUrl}}/register
+Content-Type: {{contentType}}
+
+{
+  "nickname": "newuser123",
+  "name": "Juan",
+  "lastname": "Pérez",
+  "email": "juan@example.com",
+  "password": "password123",
+  "password_confirmation": "password123",
+  "birthdate": "1990-05-15"
+}
+
+### 2. Crear usuario (público - sin protección)
+POST {{baseUrl}}/users
+Content-Type: {{contentType}}
+
+{
+  "nickname": "testuser",
+  "name": "Test",
+  "lastname": "User",
+  "email": "test@example.com",
+  "password": "password123",
+  "birthdate": "1995-03-20",
+  "profile_url": null
+}
+
+### ==================== LISTADOS Y CONSULTAS ====================
+
+### 3. Obtener todos los usuarios (requiere admin + ability list-users)
+GET {{baseUrl}}/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+### 4. Obtener usuario por ID (requiere admin + ability view-user)
+GET {{baseUrl}}/users/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+### 5. Obtener usuario actual (requiere autenticación + ability show-itself)
+GET {{baseUrl}}/user
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+### ==================== ACTUALIZACIONES ====================
+
+### 6. Actualizar usuario por ID (requiere admin + ability update-user)
+PUT {{baseUrl}}/users/2
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: {{contentType}}
+
+{
+  "nickname": "userupdated",
+  "name": "Nombre Actualizado",
+  "lastname": "Apellido Actualizado",
+  "email": "updated@example.com",
+  "password": "newpassword123",
+  "password_confirmation": "newpassword123",
+  "birthdate": "1992-07-10"
+}
+
+### 7. Actualizar usuario actual (requiere autenticación + ability update-itself)
+PUT {{baseUrl}}/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: {{contentType}}
+
+{
+  "nickname": "myupdateduser",
+  "name": "Mi Nombre",
+  "lastname": "Mi Apellido",
+  "email": "myemail@example.com",
+  "birthdate": "1993-11-25"
+}
+
+### 8. Actualizar contraseña (requiere autenticación + ability update-itself)
+PUT {{baseUrl}}/users/password
+Authorization: Bearer 1|GtPVf32jG9aAdrowq0t0wqEDbno2VwSAbtzjvLNC7e83eb38
+Content-Type: {{contentType}}
+
+{
+  "oldPassword": "password",
+  "password": "newpassword456"
+}
+
+### ==================== GESTIÓN DE ROLES ====================
+
+### 9. Asignar rol a usuario (requiere admin + ability assign-roles)
+POST {{baseUrl}}/users/3/roles
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: {{contentType}}
+
+{
+  "roles": 2
+}
+
+### ==================== ELIMINACIONES ====================
+
+### 10. Eliminar usuario por ID (requiere admin + ability delete-user)
+DELETE {{baseUrl}}/users/4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+### 11. Eliminar usuario actual (requiere autenticación + ability delete-itself)
+DELETE {{baseUrl}}/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+### ==================== LOGOUT ====================
+
+### 12. Logout (requiere autenticación)
+POST {{baseUrl}}/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+###  Enviar eventos a canal de lobos  1
+
+POST {{baseUrl}}/games/1/wolves/send
+Authorization: Bearer 4|KnqB5pf2T67gHbb3yrpfn4qLFkHKrK9iT3wwdXIabcad27ef
+Content-Type: {{contentType}}
+
+{
+    "event": "chat.message",
+    "data": {
+        "message": "¡Hola desde el canal de lobos!"
+    },
+    "gameId": 1
+}
+###  Enviar eventos a canal de partida  1
+
+POST {{baseUrl}}/games/1/game/send
+Authorization: Bearer 2|7IDFfaNuSWSBsSEihvyxpLatt557FWYS7lyq79GP1dae803d
+Content-Type: {{contentType}}
+
+{
+    "event": "chat.message",
+    "data": {
+        "gameId": 1,
+        "userId": 2,
+        "message": "¡Hola! Este es un mensaje válido del chat general."
+
+    },
+    "gameId": 1
+}
+
+###  Enviar eventos a canal de lobos  1
+
+GET {{baseUrl}}/games/1/participants
+Authorization: Bearer 8|qXMOwSoxS6XU40YhaAaXDyPOhCBENJZedFBYf5I4e8c416e0
+
+
+### Probar game engine para votación
+GET {{baseUrl}}/games/1/
+Authorization: Bearer 1|Urs7QAjuvFn387neV1pV1GKWn1kU9JCYmV5Vcwkqfa7d1f12
+

@@ -1,0 +1,64 @@
+<?php
+
+namespace App\Jobs;
+
+use App\Events\GameEvent;
+use App\Http\Controllers\GameChannelController;
+use App\Http\Controllers\VoteController;
+use App\Models\Game;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+
+class _03_TransitionToNightJob implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    protected int $gameId;
+
+    public function __construct(int $gameId)
+    {
+        $this->gameId = $gameId;
+    }
+
+    public function handle(): void
+    {
+
+        $game = Game::find($this->gameId);
+
+        if (! $game) {
+            // TODO
+            return;
+        }
+
+        $text = 'La aldea se sumerge en la oscuridad. Todos duermen... excepto los lobos.';
+
+        $message = $game->addMessage('system', null, $text);
+
+        GameChannelController::systemSend('game.narrator', ['message' => '¡Cae la noche en la aldea!','phase'=>'NIGHT_START'], $this->gameId);
+
+        broadcast(new GameEvent(
+            'chat.message',
+            ['message' => $message->toStructured()],
+            $this->gameId
+        ));
+        // esto para calcular el dia y poder sumarle uno
+        $lastDay = VoteController::getLatestVotation($game)->day_number ?? 0;
+        broadcast(new GameEvent(
+            'game.night',
+            [
+                'phase' => 'night',
+                'dayNumber' => $lastDay,
+            ],
+            $this->gameId
+        ));
+
+        $delay = (int) env('_03_GAME_TRANSITION_TO_NIGHT_DURATION', 10);
+
+        _04_WolvesDiscussionJob::dispatch($this->gameId)
+            ->delay(now()->addSeconds($delay));
+
+    }
+}

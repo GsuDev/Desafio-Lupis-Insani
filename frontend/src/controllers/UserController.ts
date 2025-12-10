@@ -1,0 +1,474 @@
+import type { User, UserStatisticsData } from '../models/models'
+import * as userProvider from '../providers/user.provider'
+import type { ApiErrorResponse } from '../types/api.types'
+import type { RegisterPayload } from '../types/payload.types'
+import type { AuthResponse, UserResponse } from '../types/response.types'
+
+let showValidationError: (field: string, message: string) => void
+let clearValidationErrors: () => void
+let showGlobalMessage: (message: string, isSuccess: boolean) => void
+let disableForm: (disabled: boolean) => void
+
+/**
+ * Controlador de usuario
+ * Gestiona la sesión y la información del usuario actual.
+ */
+class UserController {
+    /** Instancia singleton del controlador */
+    private static instance: UserController
+
+    /** Usuario actual logueado */
+    private _currentUser: User | undefined
+
+    /** Constructor privado para singleton */
+    private constructor() {
+        this.restoreSession()
+    }
+
+    /**
+     * Devuelve la instancia singleton del controlador
+     */
+    static getInstance(): UserController {
+        UserController.instance ||= new UserController()
+        return UserController.instance
+    }
+
+    /** Usuario actual */
+    get currentUser(): User | undefined {
+        return this._currentUser
+    }
+
+    /** Comprueba si hay sesión activa */
+    get isLoggedIn(): boolean {
+        return userProvider.isLoggedIn() && Boolean(this._currentUser)
+    }
+
+    async login(
+        email: string,
+        password: string
+    ): Promise<UserResponse | ApiErrorResponse> {
+        try {
+            const response = await userProvider.login(email, password)
+
+            if (!response.success || !response.data) {
+                return {
+                    success: false,
+                    message: response.message || 'Error en login',
+                    data: null,
+                }
+            }
+
+            this._currentUser = response.data?.user
+            localStorage.setItem(
+                'currentUser',
+                JSON.stringify(this._currentUser)
+            )
+
+            return {
+                success: true,
+                message: 'Login exitoso',
+                data: { user: response.data.user },
+            }
+        } catch (error: any) {
+            return {
+                success: false,
+                message: error.message || 'Error de conexión',
+                data: null,
+            }
+        }
+    }
+
+    /**Registra un usuario anonimo  */
+    async registerAnonymous(
+        nickname?: string,
+        profileUrl?: string
+    ): Promise<User | undefined> {
+        try {
+            const response = await userProvider.registerAnonymous(
+                nickname,
+                profileUrl
+            )
+
+            if (!response.success || !response.data?.user) {
+                if (showGlobalMessage) {
+                    showGlobalMessage(
+                        response.message || 'Error en el registro anónimo',
+                        false
+                    )
+                }
+                return undefined
+            }
+
+            this._currentUser = response.data.user
+
+            localStorage.setItem(
+                'currentUser',
+                JSON.stringify(this._currentUser)
+            )
+
+            if (showGlobalMessage) {
+                showGlobalMessage(
+                    'Has entrado como anónimo correctamente',
+                    true
+                )
+            }
+
+            return this._currentUser
+        } catch (error: any) {
+            if (showGlobalMessage) {
+                showGlobalMessage(
+                    error.message || 'Error de conexion al intentar entrar',
+                    false
+                )
+            }
+
+            return undefined
+        }
+    }
+
+    /**
+     * Cierra sesión y elimina los datos locales
+     * @throws Error si falla el logout
+     */
+    async logout(): Promise<void> {
+        await userProvider.logout()
+
+        this._currentUser = undefined
+        localStorage.removeItem('currentUser')
+    }
+
+    async changePassword(
+        currentPass: string,
+        newPass: string,
+        repeatPass: string
+    ) {
+        try {
+            console.log('🔐 Iniciando cambio de password...')
+
+            const response = await userProvider.changePassword(
+                currentPass,
+                newPass,
+                repeatPass
+            )
+
+            return response
+        } catch (error: any) {
+            console.error('Error cambiando contraseña:', error)
+            return {
+                success: false,
+                message:
+                    error.response?.data?.message ||
+                    'Error al conectar con el servidor',
+                data: null,
+            }
+        }
+    }
+
+    async resetPassword(password: string) {
+        try {
+            console.log('🔐 Enviando nueva contraseña...')
+            const response = await userProvider.resetPassword(password)
+            return response
+        } catch (error: any) {
+            console.error('Error resetPassword controller:', error)
+            return {
+                success: false,
+                message: error.message || 'Error al restablecer la contraseña',
+                data: null,
+            }
+        }
+    }
+
+    async restorePassword(email: string) {
+        const response = userProvider.restorePassword(email)
+        return response
+    }
+    async loadProfile(): Promise<User | undefined> {
+        try {
+            const response = await userProvider.getProfile()
+
+            if (!response.success || !response.data?.user) {
+                showGlobalMessage(
+                    response.message || 'Error cargando perfil',
+                    false
+                )
+                return undefined
+            }
+
+            this._currentUser = response.data.user
+            localStorage.setItem(
+                'currentUser',
+                JSON.stringify(this._currentUser)
+            )
+
+            return this._currentUser
+        } catch (error: any) {
+            showGlobalMessage(
+                error.message || 'Error de conexión al servidor',
+                false
+            )
+            return undefined
+        }
+    }
+
+    async updateProfile(
+        data: Partial<User> | FormData
+    ): Promise<User | undefined> {
+        try {
+            const response = await userProvider.updateProfile(data)
+
+            if (!response.success || !response.data?.user) {
+                showGlobalMessage(
+                    response.message || 'Error actualizando perfil',
+                    false
+                )
+                return undefined
+            }
+
+            this._currentUser = response.data.user
+            localStorage.setItem(
+                'currentUser',
+                JSON.stringify(this._currentUser)
+            )
+
+            return this._currentUser
+        } catch (error: any) {
+            showGlobalMessage(
+                error.message || 'Error de conexión al servidor',
+                false
+            )
+            return undefined
+        }
+    }
+
+    /** Restaura la sesión desde localStorage si existe */
+    private restoreSession(): void {
+        const savedUser = localStorage.getItem('currentUser')
+        if (savedUser) {
+            try {
+                this._currentUser = JSON.parse(savedUser) as User
+            } catch {
+                // Si hay error al parsear, limpiamos el localStorage
+                localStorage.removeItem('currentUser')
+            }
+        }
+    }
+
+    // Declaramos variables globales para que la Vista las inicialice
+
+    // Funcion para inicializar el Controller con las funciones de la vista
+    async initController(
+        validationCallback: (field: string, message: string) => void,
+        clearCallback: () => void,
+        messageCallback: (message: string, isSucces: boolean) => void,
+        disableCallback: (disabled: boolean) => void
+    ) {
+        showValidationError = validationCallback
+        clearValidationErrors = clearCallback
+        showGlobalMessage = messageCallback
+        disableForm = disableCallback
+    }
+
+    async handleRegister(formData: FormData) {
+        clearValidationErrors()
+        disableForm(true)
+
+        const data: RegisterPayload = {
+            nickname: formData.get('nickname') as string,
+            name: formData.get('name') as string,
+            lastname: formData.get('lastname') as string,
+            email: formData.get('email') as string,
+            password: formData.get('password') as string,
+            password_confirmation: formData.get(
+                'password_confirmation'
+            ) as string,
+            birthdate: formData.get('birthdate') as string,
+        }
+
+        let hasError = false
+
+        // ============================
+        // VALIDACIÓN DE CONTRASEÑA
+        // ============================
+        const password = data.password
+
+        // Min 8 chars + 1 mayúscula + 1 minúscula + 1 número + 1 símbolo
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/
+
+        if (!passwordRegex.test(password)) {
+            showValidationError(
+                'password',
+                'La contraseña debe tener al menos 8 caracteres e incluir mínimo: 1 mayúscula, 1 minúscula, 1 número y 1 símbolo.'
+            )
+            hasError = true
+        }
+
+        if (password !== data.password_confirmation) {
+            showValidationError(
+                'password_confirmation',
+                'Las contraseñas no coinciden.'
+            )
+            hasError = true
+        }
+
+        // Email básico
+        if (!data.email.includes('@') || !data.email.includes('.')) {
+            showValidationError(
+                'email',
+                'Formato de correo electrónico inválido.'
+            )
+            hasError = true
+        }
+
+        // Nickname
+        if (!data.nickname || data.nickname.length < 3) {
+            showValidationError(
+                'nickname',
+                'El Nickname debe tener al menos 3 caracteres.'
+            )
+            hasError = true
+        }
+
+        if (hasError) {
+            disableForm(false)
+            return
+        }
+
+        try {
+            const response = await userProvider.registerUser(formData)
+
+            if (!response.success) {
+                showGlobalMessage(
+                    response.message || 'Error desconocido del servidor',
+                    false
+                )
+                disableForm(false)
+                return
+            }
+
+            this._currentUser = response.data?.user
+            localStorage.setItem(
+                'currentUser',
+                JSON.stringify(this._currentUser)
+            )
+
+            showGlobalMessage('¡Registro exitoso! Redirigiendo...', true)
+        } catch (error: any) {
+            showGlobalMessage(
+                error.message || 'Error desconocido del servidor',
+                false
+            )
+        } finally {
+            disableForm(false)
+        }
+    }
+
+    /**
+     * Obtiene las estadísticas del usuario actual
+     */
+    async getStatistics(): Promise<UserStatisticsData | undefined> {
+        try {
+            const response = await userProvider.getUserStatistics()
+
+            if (!response.success || !response.data) {
+                if (showGlobalMessage) {
+                    showGlobalMessage(
+                        response.message || 'Error al cargar las estadísticas',
+                        false
+                    )
+                }
+                return undefined
+            }
+
+            return response.data
+        } catch (error: any) {
+            if (showGlobalMessage) {
+                showGlobalMessage(error.message || 'Error inesperado', false)
+            }
+            return undefined
+        }
+    }
+    /**
+     * Obtiene todos los usuarios del sistema (Admin)
+     */
+    async getAllUsers(): Promise<User[] | undefined> {
+        try {
+            const response = await userProvider.getUsers()
+
+            if (!response.success || !response.data?.users) {
+                if (showGlobalMessage) {
+                    showGlobalMessage(
+                        response.message || 'Error cargando lista de usuarios',
+                        false
+                    )
+                }
+                return undefined
+            }
+
+            return response.data.users
+        } catch (error: unknown) {
+            if (showGlobalMessage) {
+                showGlobalMessage(
+                    'Error de conexión al obtener usuarios',
+                    false
+                )
+            }
+            return undefined
+        }
+    }
+    /**
+     * Elimina un usuario del sistema (Admin)
+     */
+    async deleteUser(id: number): Promise<boolean> {
+        try {
+            const response = await userProvider.deleteUser(id)
+
+            if (response.success) {
+                console.log('Usuario eliminado:', id)
+                return true
+            } else {
+                console.error('Error al eliminar:', response.message)
+                alert(response.message || 'No se pudo eliminar al usuario')
+                return false
+            }
+        } catch (error) {
+            console.error('Error de conexión:', error)
+            return false
+        }
+    }
+    /**
+     * Admin actualiza los datos de un usuario (Nickname y Email)
+     */
+    async updateUser(
+        id: number,
+        data: { nickname: string; email: string }
+    ): Promise<boolean> {
+        try {
+            const response = await userProvider.updateUserById(id, data)
+
+            if (response.success) {
+                if (showGlobalMessage) {
+                    showGlobalMessage('Usuario actualizado correctamente', true)
+                }
+                return true
+            } else {
+                if (showGlobalMessage) {
+                    showGlobalMessage(
+                        response.message || 'Error al actualizar usuario',
+                        false
+                    )
+                }
+                return false
+            }
+        } catch (error) {
+            console.error('Error en controlador updateUser:', error)
+            if (showGlobalMessage) {
+                showGlobalMessage('Error de conexión al actualizar', false)
+            }
+            return false
+        }
+    }
+}
+
+/** Exporta la instancia singleton del UserController */
+export const userController = UserController.getInstance()

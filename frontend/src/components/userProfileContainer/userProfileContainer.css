@@ -1,0 +1,163 @@
+/*  asegura que el fondo cubra toda la pantalla detras del contenedor */
+#app {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* parano salgan barras de scroll */
+    z-index: 1;
+}
+
+.video-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover; /* Para que cubra toda la pantalla sin deformarse */
+    z-index: -2;
+    filter: blur(8px);
+    transform: scale(1.05);
+}
+
+#app::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    background: linear-gradient(rgba(15, 12, 41, 0.6), rgba(15, 12, 41, 0.8));
+}
+
+/*Otra forma con imagen en vez de video*/
+/*#app::before {
+    content: ""; 
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0; 
+    z-index: -1; 
+
+   
+    background-image: 
+        linear-gradient(rgba(15, 12, 41, 0.5), rgba(15, 12, 41, 0.5)),
+        url('../../assets/fondoJuego.png'); 
+    
+    background-size: cover;
+    background-position: center;
+
+    
+    filter: blur(8px); 
+
+    
+    transform: scale(1.02);
+}*/
+
+/* el contenedor principal dashboard */
+.user-profile-container {
+    display: flex;
+    flex-direction: column;
+
+    width: 85%;
+    height: 85%;
+    max-width: 1400px;
+
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(
+        10px
+    ); /* con esto difumina lo que hay detras y hace un efecto cristal muy chulo */
+
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    color: var(--text-light);
+    overflow: hidden; /* si algo se sale se corta para que no se lie */
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 3rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dashboard-title {
+    margin: 0;
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: bold;
+
+    background: -webkit-linear-gradient(#eee, #aaa);
+    -webkit-background-clip: text; /* con esto el fondo se pone solo en el texto */
+    -webkit-text-fill-color: transparent; /* y con esto hacemos el texto transparente para ver el fondo */
+}
+
+.logout-btn {
+    padding: 0.6rem 1.5rem;
+    background-color: #ff6b6b;
+    font-family: var(--font-heading, sans-serif);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    transition:
+        transform 0.3s,
+        box-shadow 0.2s;
+    box-shadow: 0 4px 0 #c0392b;
+}
+
+.logout-btn:hover {
+    transform: translateY(-10%) scale(1.05);
+    box-shadow: 0 6px 0 #c0392b;
+    filter: brightness(1.1);
+}
+
+.logout-btn:active {
+    transform: translateY(-10%) translateY(2px);
+    box-shadow: 0 2px 0 #c0392b;
+}
+
+/*  grid para los huecos de derecha   */
+.dashboard-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /*dos columnas iguales*/
+    gap: 2rem;
+    padding: 2rem;
+    flex-grow: 1;
+    align-items: center;
+}
+
+/* Estilo para los huecos vacíos izquierda (temporal) */
+.dashboard-section {
+    height: 400px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    border-color: #ff8f29;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .dashboard-layout {
+        grid-template-columns: 1fr; /* una sola columna en tablets/moviles */
+        overflow-y: auto; /* Permitir scroll si no cabe */
+    }
+
+    .user-profile-container {
+        width: 95%;
+        height: 95%;
+    }
+}

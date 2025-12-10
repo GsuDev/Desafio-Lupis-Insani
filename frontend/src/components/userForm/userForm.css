@@ -1,0 +1,469 @@
+/* Overlay de fondo para el modal */
+#register-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 1rem;
+    box-sizing: border-box;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Card modal principal */
+.card {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    border: 2px solid #ff8f29;
+    border-radius: 15px;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.7),
+        0 0 40px rgba(255, 143, 41, 0.2);
+    position: relative;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Botón de cerrar (X) en la esquina superior derecha */
+.close-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.close-button:hover {
+    background: rgba(255, 107, 107, 0.2);
+    border-color: #ff6b6b;
+    color: #ff6b6b;
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+}
+
+.close-button:active {
+    transform: scale(1.05);
+}
+
+/* Scrollbar personalizado para el modal */
+.card::-webkit-scrollbar {
+    width: 8px;
+}
+
+.card::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.card::-webkit-scrollbar-thumb {
+    background: rgba(255, 143, 41, 0.4);
+    border-radius: 4px;
+}
+
+.card::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 143, 41, 0.6);
+}
+
+/* Formulario */
+#registration-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+    position: relative;
+    padding-top: 56px;
+}
+
+/* Sección superior: Perfil + Datos */
+.top-section {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+.profile-container {
+    flex-shrink: 0;
+    width: 120px;
+    height: 120px;
+}
+
+.profile-input-group {
+    width: 100%;
+    height: 100%;
+}
+
+.profile-input-group label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 120px;
+    height: 120px;
+    border: 3px solid #ff8f29;
+    border-radius: 50%;
+    background-color: rgba(255, 143, 41, 0.2);
+    color: #ff8f29;
+    font-family: var(--font-body);
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 0.5rem;
+    box-sizing: border-box;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.profile-input-group label:hover {
+    transform: scale(1.05);
+    border-color: #ff9f4d;
+    box-shadow: 0 0 25px rgba(255, 143, 41, 0.4);
+}
+
+/* Cuando no tiene imagen */
+.profile-input-group label:not(.has-image):hover {
+    background-color: rgba(255, 143, 41, 0.3);
+}
+
+/* Cuando tiene imagen, overlay sutil al hacer hover */
+.profile-input-group label.has-image:hover::after {
+    content: '📷';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    background-color: rgba(0, 0, 0, 0.7);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+}
+
+.profile-input-group label.has-image {
+    position: relative;
+    background-color: transparent;
+}
+
+.profile-input-group input {
+    display: none;
+}
+
+.profile-input-group .error-message {
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+}
+
+.right-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Estilos generales de inputs */
+.input-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 0.3rem;
+}
+
+.input-group label {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    font-family: var(--font-body);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Wrapper para input + botón de contraseña */
+.input-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #ecede6;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 600;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+/* Añadir padding a la derecha si hay botón de mostrar contraseña */
+.input-wrapper:has(.toggle-password) input {
+    padding-right: 3rem;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #ff8f29;
+    background-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 15px rgba(255, 143, 41, 0.2);
+}
+
+.input-group input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 400;
+}
+
+/* Botón de mostrar/ocultar contraseña */
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 2;
+    width: 28px;
+    height: 28px;
+}
+
+.toggle-password:hover {
+    transform: translateY(-50%) scale(1.1);
+}
+
+.toggle-password:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.eye-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: brightness(0.8) opacity(0.7);
+    transition: all 0.3s ease;
+}
+
+.toggle-password:hover .eye-icon {
+    filter: brightness(1) opacity(1);
+}
+
+/* Filas de inputs */
+.row-group {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.row-group > .input-group {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Botón submit - estilo unificado */
+#submit-button {
+    display: block;
+    margin: 1.5rem auto 0 auto;
+    width: 100%;
+    max-width: 300px;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 12px;
+    background-color: #ff8f29;
+    color: #1a1a1a;
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 0 #cc6e1b;
+}
+
+#submit-button:hover {
+    background-color: #ff9f4d;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #cc6e1b;
+}
+
+#submit-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 0 #cc6e1b;
+}
+
+#submit-button:disabled {
+    background-color: #6b7280;
+    cursor: not-allowed;
+    box-shadow: 0 4px 0 #4b5563;
+    opacity: 0.7;
+    transform: none;
+}
+
+/* Mensajes de error */
+.error-message {
+    color: #ff6b6b;
+    font-size: 0.8rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+    margin-top: 0.3rem;
+    min-height: 1rem;
+}
+
+.error-message:empty {
+    visibility: hidden;
+    height: 0;
+    min-height: 0;
+    margin: 0;
+}
+
+/* Mensajes globales */
+.global-message {
+    position: absolute;
+    top: 8px;
+    left: 0;
+    right: 0;
+    margin: 0;
+    font-size: 0.9rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+    padding: 0.8rem 1rem;
+    border-radius: 10px;
+    text-align: center;
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.global-message:not(:empty) {
+    visibility: visible;
+    opacity: 1;
+}
+
+.global-message.success {
+    background-color: rgba(52, 211, 153, 0.9);
+    color: #1a1a1a;
+    border: 2px solid #34d399;
+}
+
+.global-message.error {
+    background-color: rgba(255, 107, 107, 0.9);
+    color: white;
+    border: 2px solid #ff6b6b;
+}
+
+/* Responsive */
+@media (max-width: 650px) {
+    .card {
+        padding: 2rem 1.5rem;
+        max-width: 95%;
+    }
+
+    .top-section {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .profile-container {
+        width: 100px;
+        height: 100px;
+    }
+
+    .profile-input-group label {
+        width: 100px;
+        height: 100px;
+        font-size: 0.8rem;
+    }
+
+    .right-section {
+        width: 100%;
+    }
+
+    .row-group {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    #submit-button {
+        max-width: 100%;
+    }
+
+    .close-button {
+        width: 36px;
+        height: 36px;
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #register-container {
+        padding: 0.5rem;
+    }
+
+    .card {
+        padding: 1.5rem 1rem;
+        border-radius: 12px;
+    }
+
+    #registration-form {
+        gap: 1.5rem;
+        padding-top: 48px;
+    }
+}

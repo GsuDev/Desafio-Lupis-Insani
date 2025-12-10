@@ -1,0 +1,122 @@
+.participant-list {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+
+    background: rgba(30, 30, 47, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    border: 1px solid rgba(255, 143, 41, 0.3);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+
+    padding: 1.5rem;
+    gap: 1rem;
+    box-sizing: border-box;
+    overflow: hidden;
+    color: white;
+    font-family: var(--font-body, sans-serif);
+}
+
+.participant-list-header {
+    text-align: center;
+    font-family: var(--font-heading, sans-serif);
+    font-size: 1.4rem;
+    color: #ff8f29;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+
+    padding-bottom: 1rem;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.05);
+    flex-shrink: 0;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+.participant-list-body {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    padding-right: 5px;
+}
+
+.participant-list-body::-webkit-scrollbar {
+    width: 6px;
+}
+.participant-list-body::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 143, 41, 0.5);
+    border-radius: 4px;
+}
+.participant-list-body::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.participant-list-body > div,
+.player-item {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.8rem 1rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s;
+    font-weight: 600;
+    color: #ecede6;
+}
+
+.participant-list-body > div:hover,
+.player-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(3px);
+    border-color: rgba(255, 143, 41, 0.4);
+}
+
+.participant-list-footer {
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.btn-iniciar {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+
+    font-family: var(--font-heading, sans-serif);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+
+    background-color: #ff8f29;
+    color: #1a1a1a;
+    box-shadow: 0 4px 0 #cc6e1b; /* fecto 3d */
+    transition: all 0.1s;
+}
+
+.btn-iniciar:hover:not(:disabled) {
+    background-color: #ff9f4d;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #cc6e1b;
+}
+
+.btn-iniciar:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 0 #cc6e1b;
+}
+
+.btn-iniciar:disabled {
+    background-color: #4a5568;
+    color: #a0aec0;
+    box-shadow: none;
+    cursor: not-allowed;
+    opacity: 0.7;
+    transform: none;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}

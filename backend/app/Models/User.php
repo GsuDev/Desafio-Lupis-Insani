@@ -2,47 +2,70 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
+        'nickname',
+        'lastname',
         'email',
         'password',
+        'birthdate',
+        'profile_url',
+        'is_anonymous',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
+        'created_at',
+        'updated_at',
         'password',
         'remember_token',
+        'deleted_at',
+    ];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'birthdate' => 'date',
+        'is_anonymous' => 'boolean',
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Relación muchos a muchos con Role
      */
-    protected function casts(): array
+    public function roles()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->belongsToMany(Role::class);
+    }
+
+    /**
+     * Función helper para comprobar si el usuario tiene un rol
+     */
+    public function hasRole(string $roleName): bool
+    {
+        return $this->roles()->pluck('name')->contains($roleName);
+    }
+
+    /**helper para saber si el usuario es anonimo */
+    public function isAnonymous(): bool
+    {
+        return $this->is_anonymous;
+    }
+
+    /**
+     * si un jugador juega 5 partidas por ejemplo
+     * tiene que tener 5 registros en la tabla participants
+     * de ahi esta relacion
+     */
+    public function participants()
+    {
+        return $this->hasMany(participant::class);
     }
 }

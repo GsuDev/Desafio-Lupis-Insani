@@ -1,0 +1,52 @@
+
+[
+     {
+        "stepNumber": 1,
+        "title": "INSTRUCCIONES",
+        "description": "Descarga el PDF para aprender todas las reglas y roles de Los Lobos de Castronegro. ¡Prepárate para jugar!",
+        "imageName": "Instrucciones-juego.png",
+        "downloadLink": "../Guía Hombres Lobo de Castronegro.pdf"
+    },
+    {
+        "stepNumber": 2,
+        "title": "LOBO",
+        "description": "Actúa con calma y no llames la atención. Manipula las sospechas hacia otros jugadores y coordínate con tu manada para eliminar aldeanos clave.",
+        "imageName": "lobo.png"
+    },
+    {
+        "stepNumber": 3,
+        "title": "ALDEANO",
+        "description": "Observa los comportamientos y participa en las votaciones con lógica. Confía, pero mantén siempre la sospecha: cualquier error puede costarte la partida.",
+        "imageName": "aldeano.png"
+    },
+    {
+        "stepNumber": 4,
+        "title": "ENAMORADOS",
+        "description": "Unidos por el destino. Vuestro objetivo prioritario es sobrevivir juntos, sin importar vuestro bando original. Protege a tu pareja.",
+        "imageName": "enamorados-1.png"
+    },
+    {
+        "stepNumber": 5,
+        "title": "LA BRUJA",
+        "description": "Tienes el poder de la vida y la muerte. Cuentas con una poción para revivir y otra para matar. Úsalas en el momento crítico.",
+        "imageName": "bruja-1.png"
+    },
+    {
+        "stepNumber": 6,
+        "title": "LA VIDENTE",
+        "description": "La información es tu arma. Cada noche descubres la identidad real de un jugador. Guía al pueblo sutilmente sin exponer tu rol.",
+        "imageName": "vidente-2.png"
+    },
+    {
+        "stepNumber": 7,
+        "title": "LA NIÑA",
+        "description": "Tu curiosidad es peligrosa. Puedes espiar entrecerrando los ojos cuando los lobos despiertan, pero si te descubren, serás su próxima víctima.",
+        "imageName": "nina-1.png"
+    },
+    {
+        "stepNumber": 8,
+        "title": "CUPIDO",
+        "description": "El amor está en tus manos. Al inicio de la partida, debes flechar a dos jugadores para enamorarlos. Si uno muere, el otro morirá de pena.",
+        "imageName": "cupido-2.png"
+    }
+]

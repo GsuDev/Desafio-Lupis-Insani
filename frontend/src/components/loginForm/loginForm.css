@@ -1,0 +1,248 @@
+/* Contenedor principal del componente login */
+.login-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+}
+
+/* Tarjeta del formulario - similar a dashboard-section */
+.login-card {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    border: 2px solid #ff8f29;
+    border-radius: 15px;
+    width: 100%;
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(255, 143, 41, 0.15);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+}
+
+.login-card:hover {
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.6),
+        0 0 40px rgba(255, 143, 41, 0.25);
+}
+
+/* Header - estilo similar a dashboard-header */
+.login-header {
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid rgba(255, 143, 41, 0.3);
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.login-header h2 {
+    font-family: var(--font-heading);
+    font-size: 1.6rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    margin: 0;
+    letter-spacing: 2px;
+    background: linear-gradient(180deg, #fff 0%, #aaa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+}
+
+/* Cuerpo */
+.login-body {
+    padding: 2rem 1.7rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.login-description {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.95rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Formulario */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    flex: 1;
+}
+
+/* Grupo input */
+.login-input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.login-input-group label {
+    color: rgba(255, 255, 255, 0.9);
+    font-family: var(--font-body);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+/* 🚨 NUEVO: Wrapper para input + botón de contraseña */
+.login-input-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+.login-input-group input {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 0.85rem 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    color: #ecede6;
+    font-weight: 600;
+    box-sizing: border-box;
+}
+/* 🚨 NUEVO: Añadir padding a la derecha si hay botón de mostrar contraseña */
+.login-input-wrapper:has(.toggle-password) input {
+    padding-right: 3rem;
+}
+.login-input-group input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.login-input-group input:focus {
+    outline: none;
+    border-color: #ff8f29;
+    background-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 15px rgba(255, 143, 41, 0.2);
+}
+
+/* Mensaje de error */
+.error-message {
+    color: #ff6b6b;
+    font-size: 0.8rem;
+    font-family: var(--font-body);
+    margin-top: 0.3rem;
+    font-weight: 600;
+    min-height: 1rem;
+}
+/* 🚨 NUEVO: Botón de mostrar/ocultar contraseña (copiado de userForm.css) */
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 2;
+    width: 28px;
+    height: 28px;
+}
+
+.toggle-password:hover {
+    transform: translateY(-50%) scale(1.1);
+}
+
+.toggle-password:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.eye-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: brightness(0.8) opacity(0.7);
+    transition: all 0.3s ease;
+}
+
+.toggle-password:hover .eye-icon {
+    filter: brightness(1) opacity(1);
+}
+/* Botón de submit - similar a btn-action primary */
+.login-submit-button {
+    width: 100%;
+    background-color: #ff8f29;
+    color: #1a1a1a;
+    border: none;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-family: var(--font-heading);
+    font-weight: 400;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 0 #cc6e1b;
+    position: relative;
+    overflow: hidden;
+    margin-top: auto;
+}
+
+.login-submit-button:hover {
+    background-color: #ff9f4d;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #cc6e1b;
+}
+
+.login-submit-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 0 #cc6e1b;
+}
+
+.login-submit-button:disabled {
+    background-color: #6b7280;
+    cursor: not-allowed;
+    box-shadow: 0 4px 0 #4b5563;
+    opacity: 0.7;
+}
+
+/* Footer con enlace */
+.login-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+}
+
+.login-footer a {
+    color: #ff8f29;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.login-footer a:hover {
+    color: #ff9f4d;
+    text-decoration: underline;
+    text-shadow: 0 0 10px rgba(255, 143, 41, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .login-body {
+        padding: 1.5rem 1.25rem;
+    }
+
+    .login-form {
+        gap: 1rem;
+    }
+}

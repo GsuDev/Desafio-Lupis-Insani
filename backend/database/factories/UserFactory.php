@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Role;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -24,12 +25,32 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+            'name' => $this->faker->firstName(),
+            'lastname' => $this->faker->lastName(),
+            'nickname' => $this->faker->unique()->userName(),
+            'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => Hash::make('Password_123'), // contraseña por defecto
+            'birthdate' => $this->faker->date(),
+            // 'profile_image_url' => $this->faker->imageUrl(200, 200, 'people', true),
             'remember_token' => Str::random(10),
         ];
+    }
+
+    /**
+     * Configure the model factory.
+     */
+    public function configure(): static
+    {
+        return $this->afterCreating(function ($user) {
+            // Buscar o crear el rol 'user'
+            $userRole = Role::firstOrCreate(
+                ['name' => 'user']
+            );
+
+            // Asignar el rol al usuario
+            $user->roles()->attach($userRole->id);
+        });
     }
 
     /**
