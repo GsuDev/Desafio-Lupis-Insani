@@ -64,7 +64,7 @@ class _02_AnnounceVillagerVotingResultJob implements ShouldQueue
                 $victimId,
                 $this->isFirstDay
             );
-            GameChannelController::systemSend('game.narrator', ['message' => $votingResult['message'], 'phase'=>'DAY_RESULT'], $this->gameId);
+            GameChannelController::systemSend('game.narrator', ['message' => $votingResult['message'], 'phase' => 'DAY_RESULT'], $this->gameId);
             // 5. Emitir evento chat.message
             EventController::systemMessage($votingResult['message'], 'game', $this->gameId);
             // 6. Comprobar condiciones de victoria

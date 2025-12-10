@@ -1,8 +1,11 @@
 import './gameParticipant.css'
 import type { Participant } from '../../models/models'
-const characterImages = import.meta.glob('../../assets/charactersInGame/*.{png,PNG}', {
-    eager: true
-});
+const characterImages = import.meta.glob(
+    '../../assets/charactersInGame/*.{png,PNG}',
+    {
+        eager: true,
+    }
+)
 
 export class GameParticipant {
     private participant: Participant
@@ -238,12 +241,15 @@ export class GameParticipant {
 
     // cambia sprite a fantasma
     private setDeadSprite(): void {
-        const avatarImg = this.element.querySelector('.gp-avatar') as HTMLImageElement;
+        const avatarImg = this.element.querySelector(
+            '.gp-avatar'
+        ) as HTMLImageElement
         if (avatarImg) {
-            const spriteNumber = this.getFinalNumberFromUrl(avatarImg.src) || this.version;
+            const spriteNumber =
+                this.getFinalNumberFromUrl(avatarImg.src) || this.version
             // Usamos el helper para el fantasma
-            avatarImg.src = this.getAssetPath('char_ghost', spriteNumber);
-            avatarImg.classList.add('ghost-sprite');
+            avatarImg.src = this.getAssetPath('char_ghost', spriteNumber)
+            avatarImg.classList.add('ghost-sprite')
         }
     }
 
@@ -280,27 +286,32 @@ export class GameParticipant {
 
     private getAvatarUrl(): string {
         const userStr = localStorage.getItem('currentUser')
-        let prefix = 'char_w';
+        let prefix = 'char_w'
 
         if (userStr) {
             const user = JSON.parse(userStr)
-            if (this.participant.userId === user.id && this.participant.characterId == 2) {
-                prefix = 'char_l';
+            if (
+                this.participant.userId === user.id &&
+                this.participant.characterId == 2
+            ) {
+                prefix = 'char_l'
             }
         }
         // Usamos el helper
-        return this.getAssetPath(prefix, this.version);
+        return this.getAssetPath(prefix, this.version)
     }
     /**
      * Revela el sprite de lobo (para fase nocturna en canal lobos)
      */
     public revealAsWolf(): void {
-        const avatarImg = this.element.querySelector('.gp-avatar') as HTMLImageElement;
+        const avatarImg = this.element.querySelector(
+            '.gp-avatar'
+        ) as HTMLImageElement
         if (avatarImg) {
-            this.setVotingEnabled(false);
+            this.setVotingEnabled(false)
             // Usamos el helper
-            avatarImg.src = this.getAssetPath('char_l', this.version);
-            avatarImg.classList.add('revealed-wolf');
+            avatarImg.src = this.getAssetPath('char_l', this.version)
+            avatarImg.classList.add('revealed-wolf')
         }
     }
 
@@ -308,11 +319,13 @@ export class GameParticipant {
      * Oculta el sprite de lobo, volviendo a aldeano (para fase diurna)
      */
     public hideAsVillager(): void {
-        const avatarImg = this.element.querySelector('.gp-avatar') as HTMLImageElement;
+        const avatarImg = this.element.querySelector(
+            '.gp-avatar'
+        ) as HTMLImageElement
         if (avatarImg && !this.isDead) {
             // Usamos el helper
-            avatarImg.src = this.getAssetPath('char_w', this.version);
-            avatarImg.classList.remove('revealed-wolf');
+            avatarImg.src = this.getAssetPath('char_w', this.version)
+            avatarImg.classList.remove('revealed-wolf')
         }
     }
 
@@ -320,14 +333,14 @@ export class GameParticipant {
      * Método auxiliar para buscar la imagen en el mapa de glob de Vite
      */
     private getAssetPath(prefix: string, version: number): string {
-        const pathPng = `../../assets/charactersInGame/${prefix}_${version}.png`;
-        const pathPNG = `../../assets/charactersInGame/${prefix}_${version}.PNG`;
+        const pathPng = `../../assets/charactersInGame/${prefix}_${version}.png`
+        const pathPNG = `../../assets/charactersInGame/${prefix}_${version}.PNG`
 
-        const module = characterImages[pathPng] || characterImages[pathPNG];
+        const module = characterImages[pathPng] || characterImages[pathPNG]
 
         if (module && typeof module === 'object' && 'default' in module) {
-            return (module as any).default;
+            return (module as any).default
         }
-        return '';
+        return ''
     }
 }
