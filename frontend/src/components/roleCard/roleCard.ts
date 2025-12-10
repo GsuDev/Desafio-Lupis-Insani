@@ -5,12 +5,14 @@ export type PlayerRole = 'villager' | 'wolf'
 
 // 1. Cargar imágenes de la raíz de assets (para las cartas de prueba)
 const rootAssets = import.meta.glob('../../assets/*.png', {
-    eager: true
+    eager: true,
 })
 
-
 // Función helper para obtener la URL final de la imagen
-function getAssetUrl(globMap: Record<string, unknown>, relativePath: string): string {
+function getAssetUrl(
+    globMap: Record<string, unknown>,
+    relativePath: string
+): string {
     const module = globMap[relativePath]
     if (module && typeof module === 'object' && 'default' in module) {
         return (module as any).default
@@ -24,7 +26,6 @@ const roleImages: Record<PlayerRole, string> = {
     // Usamos tus cartas de prueba actuales
     wolf: getAssetUrl(rootAssets, '../../assets/carta-lobo-prueba.png'),
     villager: getAssetUrl(rootAssets, '../../assets/carta-aldeano-prueba.png'),
-    
 }
 
 export class RoleCard {

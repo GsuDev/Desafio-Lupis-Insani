@@ -51,7 +51,7 @@ class _01_FirstDayStartMayorVoteJob implements ShouldQueue
             ['message' => $message->toStructured()], // aplica patron dto para envio de datos al frontend, devuelve array
             $this->gameId
         ));
-        GameChannelController::systemSend('game.narrator', ['message' => 'Comienza la votación para elegir al alcalde', 'phase'=>'DAY_VOTING'], $this->gameId);
+        GameChannelController::systemSend('game.narrator', ['message' => 'Comienza la votación para elegir al alcalde', 'phase' => 'DAY_VOTING'], $this->gameId);
         $votation = new Votation(['game_id' => $this->gameId, 'is_day' => true, 'day_number' => 1, 'is_closed' => false]);
         $votation->save();
 

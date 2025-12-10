@@ -139,7 +139,10 @@ class BotVoteService
 
             // se obtienen los id de todos los compañeros lobo
             // se usa el scope que se creo antes
-            $werewolfIds = participant::werewolves()->pluck('id')->toArray();
+            $werewolfIds = participant::werewolves()
+                ->where('game_id', $bot->game_id)
+                ->pluck('id')
+                ->toArray();
 
             // se quitan de las listas de las posibles victimas
             $validCandidates = array_diff($validCandidates, $werewolfIds);
